@@ -1,6 +1,0 @@
-@Mibus_Backend_HostAddress = http://localhost:5263
-
-GET {{Mibus_Backend_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

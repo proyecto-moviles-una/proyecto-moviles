@@ -1,14 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37111.16 d17.14
+VisualStudioVersion = 17.14.37111.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mibus-Backend", "Mibus-Backend\Mibus-Backend.csproj", "{6A8B2AA7-9EA5-467B-8717-3BBB408F5974}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logica", "Logica\Logica.csproj", "{8E131B6D-A6D5-466A-BC4C-E4E8296112C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccesoDatos", "AccesoDatos\AccesoDatos.csproj", "{7CA6D391-FFFB-45DF-9587-7FF62F2FBAA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{B0BF121D-5BE8-4F5A-A98A-E405C6FB437D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "DTO\DTO.csproj", "{44CBE00D-53A6-4FC4-B0B9-A3035A3481F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilitarios", "Utilitarios\Utilitarios.csproj", "{07338936-A7BC-4C23-8650-0547D7E0044D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{3D9B6045-F3B2-4A49-AB16-92C2F434BB4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,10 +26,30 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6A8B2AA7-9EA5-467B-8717-3BBB408F5974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A8B2AA7-9EA5-467B-8717-3BBB408F5974}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6A8B2AA7-9EA5-467B-8717-3BBB408F5974}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6A8B2AA7-9EA5-467B-8717-3BBB408F5974}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E131B6D-A6D5-466A-BC4C-E4E8296112C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E131B6D-A6D5-466A-BC4C-E4E8296112C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E131B6D-A6D5-466A-BC4C-E4E8296112C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E131B6D-A6D5-466A-BC4C-E4E8296112C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CA6D391-FFFB-45DF-9587-7FF62F2FBAA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CA6D391-FFFB-45DF-9587-7FF62F2FBAA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CA6D391-FFFB-45DF-9587-7FF62F2FBAA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CA6D391-FFFB-45DF-9587-7FF62F2FBAA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0BF121D-5BE8-4F5A-A98A-E405C6FB437D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0BF121D-5BE8-4F5A-A98A-E405C6FB437D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0BF121D-5BE8-4F5A-A98A-E405C6FB437D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0BF121D-5BE8-4F5A-A98A-E405C6FB437D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44CBE00D-53A6-4FC4-B0B9-A3035A3481F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44CBE00D-53A6-4FC4-B0B9-A3035A3481F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44CBE00D-53A6-4FC4-B0B9-A3035A3481F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44CBE00D-53A6-4FC4-B0B9-A3035A3481F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07338936-A7BC-4C23-8650-0547D7E0044D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07338936-A7BC-4C23-8650-0547D7E0044D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07338936-A7BC-4C23-8650-0547D7E0044D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07338936-A7BC-4C23-8650-0547D7E0044D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D9B6045-F3B2-4A49-AB16-92C2F434BB4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D9B6045-F3B2-4A49-AB16-92C2F434BB4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D9B6045-F3B2-4A49-AB16-92C2F434BB4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D9B6045-F3B2-4A49-AB16-92C2F434BB4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
