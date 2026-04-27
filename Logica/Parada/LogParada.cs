@@ -69,7 +69,7 @@ namespace Logica.Parada
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
                     // Genera un identificador único (GUID) para la nueva parada
-                    string guid = Guid.NewGuid().ToString();
+                    Guid guid = Guid.NewGuid();
 
                     TB_PARADA nueva = new TB_PARADA
                     {
@@ -89,8 +89,8 @@ namespace Logica.Parada
                     // Mapea los datos de la entidad de base de datos a la
                     // entidad del Core para la respuesta
                     res.parada = new Core.Entidades.Parada
-                    { //Convierte el GUID a tipo Guid y lo asigna a la entidad de Core
-                        guid = Guid.Parse(guid),
+                    {
+                        guid = nueva.GUID_PARADA,
                         Nombre = nueva.NOMBRE,
                         Descripcion = nueva.DESCRIPCION,
                         Latitud = nueva.LATITUD,
@@ -102,13 +102,13 @@ namespace Logica.Parada
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 res.resultado = false;
                 res.error.Add(new Error
                 {
                     Codigo = (int)EnumErroresParada.errorCreandoParada,
-                    Mensaje = "Error al crear la parada"
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
                 });
 
             }
@@ -138,7 +138,7 @@ namespace Logica.Parada
                     // Mapeo de BD a Core
                     res.paradas = lista.Select(p => new Core.Entidades.Parada
                     {
-                        guid = Guid.Parse(p.GUID_PARADA),
+                        guid = p.GUID_PARADA,
                         Nombre = p.NOMBRE,
                         Descripcion = p.DESCRIPCION,
                         Latitud = p.LATITUD,
@@ -149,13 +149,13 @@ namespace Logica.Parada
                     res.error = null;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 res.resultado = false;
                 res.error.Add(new Error
                 {
                     Codigo = (int)EnumErroresParada.paradaNoEncontrada,
-                    Mensaje = "Error al listar las paradas"
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
                 });
             }
             finally
@@ -178,7 +178,7 @@ namespace Logica.Parada
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
                     var p = db.TB_PARADAs
-                              .FirstOrDefault(x => x.GUID_PARADA == guid.ToString());
+                              .FirstOrDefault(x => x.GUID_PARADA == guid);
 
                     if (p == null)
                     {
@@ -192,7 +192,7 @@ namespace Logica.Parada
 
                     res.parada = new Core.Entidades.Parada
                     {
-                        guid = Guid.Parse(p.GUID_PARADA),
+                        guid = p.GUID_PARADA,
                         Nombre = p.NOMBRE,
                         Descripcion = p.DESCRIPCION,
                         Latitud = p.LATITUD,
@@ -230,7 +230,7 @@ namespace Logica.Parada
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
                     var p = db.TB_PARADAs
-                              .FirstOrDefault(x => x.GUID_PARADA == guid.ToString());
+                              .FirstOrDefault(x => x.GUID_PARADA == guid);
 
                     if (p == null)
                     {
@@ -291,7 +291,7 @@ namespace Logica.Parada
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
                     var p = db.TB_PARADAs
-                              .FirstOrDefault(x => x.GUID_PARADA == guid.ToString());
+                              .FirstOrDefault(x => x.GUID_PARADA == guid);
 
                     if (p == null)
                     {
@@ -303,7 +303,7 @@ namespace Logica.Parada
                         return res;
                     }
 
-                    p.ESTADO = false; //  soft delete
+                    p.ESTADO = false;
                     db.SubmitChanges();
 
                     res.resultado = true;
