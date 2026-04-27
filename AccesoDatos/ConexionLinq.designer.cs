@@ -33,6 +33,9 @@ namespace AccesoDatos
     partial void InsertTB_HISTORIAL_VIAJE(TB_HISTORIAL_VIAJE instance);
     partial void UpdateTB_HISTORIAL_VIAJE(TB_HISTORIAL_VIAJE instance);
     partial void DeleteTB_HISTORIAL_VIAJE(TB_HISTORIAL_VIAJE instance);
+    partial void InsertTB_HISTORIAL_VIAJE1(TB_HISTORIAL_VIAJE1 instance);
+    partial void UpdateTB_HISTORIAL_VIAJE1(TB_HISTORIAL_VIAJE1 instance);
+    partial void DeleteTB_HISTORIAL_VIAJE1(TB_HISTORIAL_VIAJE1 instance);
     #endregion
 		
 		public ConexionLinqDataContext() : 
@@ -73,6 +76,14 @@ namespace AccesoDatos
 			}
 		}
 		
+		public System.Data.Linq.Table<TB_HISTORIAL_VIAJE1> TB_HISTORIAL_VIAJE1
+		{
+			get
+			{
+				return this.GetTable<TB_HISTORIAL_VIAJE1>();
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_REGISTRAR_HISTORIAL")]
 		public int SP_REGISTRAR_HISTORIAL([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_HISTORIAL", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> gUID_HISTORIAL, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
 		{
@@ -82,6 +93,27 @@ namespace AccesoDatos
 			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(4)));
 			eRRORDESCRIPCION = ((string)(result.GetParameterValue(5)));
 			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_OBTENER_HISTORIAL_POR_USUARIO")]
+		public ISingleResult<SP_OBTENER_HISTORIAL_POR_USUARIOResult> SP_OBTENER_HISTORIAL_POR_USUARIO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO);
+			return ((ISingleResult<SP_OBTENER_HISTORIAL_POR_USUARIOResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_OBTENER_PARADA_POR_GUID")]
+		public ISingleResult<SP_OBTENER_PARADA_POR_GUIDResult> SP_OBTENER_PARADA_POR_GUID([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_PARADA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_PARADA)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_PARADA);
+			return ((ISingleResult<SP_OBTENER_PARADA_POR_GUIDResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_OBTENER_PARADAS_POR_RUTA")]
+		public ISingleResult<SP_OBTENER_PARADAS_POR_RUTAResult> SP_OBTENER_PARADAS_POR_RUTA([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA);
+			return ((ISingleResult<SP_OBTENER_PARADAS_POR_RUTAResult>)(result.ReturnValue));
 		}
 	}
 	
@@ -263,6 +295,536 @@ namespace AccesoDatos
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TB_HISTORIAL_VIAJE")]
+	public partial class TB_HISTORIAL_VIAJE1 : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID_HISTORIAL;
+		
+		private System.Guid _GUID_HISTORIAL;
+		
+		private long _ID_USUARIO;
+		
+		private int _ID_RUTA;
+		
+		private System.Nullable<int> _ID_TARIFA;
+		
+		private System.DateTime _FECHA_CONSULTA;
+		
+    #region Definiciones de métodos de extensibilidad
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnID_HISTORIALChanging(int value);
+    partial void OnID_HISTORIALChanged();
+    partial void OnGUID_HISTORIALChanging(System.Guid value);
+    partial void OnGUID_HISTORIALChanged();
+    partial void OnID_USUARIOChanging(long value);
+    partial void OnID_USUARIOChanged();
+    partial void OnID_RUTAChanging(int value);
+    partial void OnID_RUTAChanged();
+    partial void OnID_TARIFAChanging(System.Nullable<int> value);
+    partial void OnID_TARIFAChanged();
+    partial void OnFECHA_CONSULTAChanging(System.DateTime value);
+    partial void OnFECHA_CONSULTAChanged();
+    #endregion
+		
+		public TB_HISTORIAL_VIAJE1()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID_HISTORIAL", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID_HISTORIAL
+		{
+			get
+			{
+				return this._ID_HISTORIAL;
+			}
+			set
+			{
+				if ((this._ID_HISTORIAL != value))
+				{
+					this.OnID_HISTORIALChanging(value);
+					this.SendPropertyChanging();
+					this._ID_HISTORIAL = value;
+					this.SendPropertyChanged("ID_HISTORIAL");
+					this.OnID_HISTORIALChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_HISTORIAL", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_HISTORIAL
+		{
+			get
+			{
+				return this._GUID_HISTORIAL;
+			}
+			set
+			{
+				if ((this._GUID_HISTORIAL != value))
+				{
+					this.OnGUID_HISTORIALChanging(value);
+					this.SendPropertyChanging();
+					this._GUID_HISTORIAL = value;
+					this.SendPropertyChanged("GUID_HISTORIAL");
+					this.OnGUID_HISTORIALChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID_USUARIO", DbType="BigInt NOT NULL")]
+		public long ID_USUARIO
+		{
+			get
+			{
+				return this._ID_USUARIO;
+			}
+			set
+			{
+				if ((this._ID_USUARIO != value))
+				{
+					this.OnID_USUARIOChanging(value);
+					this.SendPropertyChanging();
+					this._ID_USUARIO = value;
+					this.SendPropertyChanged("ID_USUARIO");
+					this.OnID_USUARIOChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID_RUTA", DbType="Int NOT NULL")]
+		public int ID_RUTA
+		{
+			get
+			{
+				return this._ID_RUTA;
+			}
+			set
+			{
+				if ((this._ID_RUTA != value))
+				{
+					this.OnID_RUTAChanging(value);
+					this.SendPropertyChanging();
+					this._ID_RUTA = value;
+					this.SendPropertyChanged("ID_RUTA");
+					this.OnID_RUTAChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID_TARIFA", DbType="Int")]
+		public System.Nullable<int> ID_TARIFA
+		{
+			get
+			{
+				return this._ID_TARIFA;
+			}
+			set
+			{
+				if ((this._ID_TARIFA != value))
+				{
+					this.OnID_TARIFAChanging(value);
+					this.SendPropertyChanging();
+					this._ID_TARIFA = value;
+					this.SendPropertyChanged("ID_TARIFA");
+					this.OnID_TARIFAChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FECHA_CONSULTA", DbType="DateTime NOT NULL")]
+		public System.DateTime FECHA_CONSULTA
+		{
+			get
+			{
+				return this._FECHA_CONSULTA;
+			}
+			set
+			{
+				if ((this._FECHA_CONSULTA != value))
+				{
+					this.OnFECHA_CONSULTAChanging(value);
+					this.SendPropertyChanging();
+					this._FECHA_CONSULTA = value;
+					this.SendPropertyChanged("FECHA_CONSULTA");
+					this.OnFECHA_CONSULTAChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	public partial class SP_OBTENER_HISTORIAL_POR_USUARIOResult
+	{
+		
+		private System.Guid _GUID_HISTORIAL;
+		
+		private System.Guid _GUID_RUTA;
+		
+		private string _NOMBRE_RUTA;
+		
+		private System.Nullable<decimal> _TARIFA_CONSULTADA;
+		
+		private System.DateTime _FECHA_CONSULTA;
+		
+		public SP_OBTENER_HISTORIAL_POR_USUARIOResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_HISTORIAL", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_HISTORIAL
+		{
+			get
+			{
+				return this._GUID_HISTORIAL;
+			}
+			set
+			{
+				if ((this._GUID_HISTORIAL != value))
+				{
+					this._GUID_HISTORIAL = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_RUTA", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_RUTA
+		{
+			get
+			{
+				return this._GUID_RUTA;
+			}
+			set
+			{
+				if ((this._GUID_RUTA != value))
+				{
+					this._GUID_RUTA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NOMBRE_RUTA", DbType="NVarChar(200) NOT NULL", CanBeNull=false)]
+		public string NOMBRE_RUTA
+		{
+			get
+			{
+				return this._NOMBRE_RUTA;
+			}
+			set
+			{
+				if ((this._NOMBRE_RUTA != value))
+				{
+					this._NOMBRE_RUTA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TARIFA_CONSULTADA", DbType="Decimal(10,2)")]
+		public System.Nullable<decimal> TARIFA_CONSULTADA
+		{
+			get
+			{
+				return this._TARIFA_CONSULTADA;
+			}
+			set
+			{
+				if ((this._TARIFA_CONSULTADA != value))
+				{
+					this._TARIFA_CONSULTADA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FECHA_CONSULTA", DbType="DateTime NOT NULL")]
+		public System.DateTime FECHA_CONSULTA
+		{
+			get
+			{
+				return this._FECHA_CONSULTA;
+			}
+			set
+			{
+				if ((this._FECHA_CONSULTA != value))
+				{
+					this._FECHA_CONSULTA = value;
+				}
+			}
+		}
+	}
+	
+	public partial class SP_OBTENER_PARADA_POR_GUIDResult
+	{
+		
+		private System.Guid _GUID_PARADA;
+		
+		private string _NOMBRE;
+		
+		private string _DESCRIPCION;
+		
+		private System.Nullable<decimal> _LATITUD;
+		
+		private System.Nullable<decimal> _LONGITUD;
+		
+		private bool _ESTADO;
+		
+		private System.DateTime _FECHA_REGISTRO;
+		
+		public SP_OBTENER_PARADA_POR_GUIDResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_PARADA", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_PARADA
+		{
+			get
+			{
+				return this._GUID_PARADA;
+			}
+			set
+			{
+				if ((this._GUID_PARADA != value))
+				{
+					this._GUID_PARADA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NOMBRE", DbType="NVarChar(200) NOT NULL", CanBeNull=false)]
+		public string NOMBRE
+		{
+			get
+			{
+				return this._NOMBRE;
+			}
+			set
+			{
+				if ((this._NOMBRE != value))
+				{
+					this._NOMBRE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DESCRIPCION", DbType="NVarChar(MAX)")]
+		public string DESCRIPCION
+		{
+			get
+			{
+				return this._DESCRIPCION;
+			}
+			set
+			{
+				if ((this._DESCRIPCION != value))
+				{
+					this._DESCRIPCION = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATITUD", DbType="Decimal(10,7)")]
+		public System.Nullable<decimal> LATITUD
+		{
+			get
+			{
+				return this._LATITUD;
+			}
+			set
+			{
+				if ((this._LATITUD != value))
+				{
+					this._LATITUD = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LONGITUD", DbType="Decimal(10,7)")]
+		public System.Nullable<decimal> LONGITUD
+		{
+			get
+			{
+				return this._LONGITUD;
+			}
+			set
+			{
+				if ((this._LONGITUD != value))
+				{
+					this._LONGITUD = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ESTADO", DbType="Bit NOT NULL")]
+		public bool ESTADO
+		{
+			get
+			{
+				return this._ESTADO;
+			}
+			set
+			{
+				if ((this._ESTADO != value))
+				{
+					this._ESTADO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FECHA_REGISTRO", DbType="DateTime NOT NULL")]
+		public System.DateTime FECHA_REGISTRO
+		{
+			get
+			{
+				return this._FECHA_REGISTRO;
+			}
+			set
+			{
+				if ((this._FECHA_REGISTRO != value))
+				{
+					this._FECHA_REGISTRO = value;
+				}
+			}
+		}
+	}
+	
+	public partial class SP_OBTENER_PARADAS_POR_RUTAResult
+	{
+		
+		private System.Guid _GUID_PARADA;
+		
+		private string _NOMBRE;
+		
+		private string _DESCRIPCION;
+		
+		private System.Nullable<decimal> _LATITUD;
+		
+		private System.Nullable<decimal> _LONGITUD;
+		
+		private int _ORDEN;
+		
+		public SP_OBTENER_PARADAS_POR_RUTAResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_PARADA", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_PARADA
+		{
+			get
+			{
+				return this._GUID_PARADA;
+			}
+			set
+			{
+				if ((this._GUID_PARADA != value))
+				{
+					this._GUID_PARADA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NOMBRE", DbType="NVarChar(200) NOT NULL", CanBeNull=false)]
+		public string NOMBRE
+		{
+			get
+			{
+				return this._NOMBRE;
+			}
+			set
+			{
+				if ((this._NOMBRE != value))
+				{
+					this._NOMBRE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DESCRIPCION", DbType="NVarChar(MAX)")]
+		public string DESCRIPCION
+		{
+			get
+			{
+				return this._DESCRIPCION;
+			}
+			set
+			{
+				if ((this._DESCRIPCION != value))
+				{
+					this._DESCRIPCION = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATITUD", DbType="Decimal(10,7)")]
+		public System.Nullable<decimal> LATITUD
+		{
+			get
+			{
+				return this._LATITUD;
+			}
+			set
+			{
+				if ((this._LATITUD != value))
+				{
+					this._LATITUD = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LONGITUD", DbType="Decimal(10,7)")]
+		public System.Nullable<decimal> LONGITUD
+		{
+			get
+			{
+				return this._LONGITUD;
+			}
+			set
+			{
+				if ((this._LONGITUD != value))
+				{
+					this._LONGITUD = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ORDEN", DbType="Int NOT NULL")]
+		public int ORDEN
+		{
+			get
+			{
+				return this._ORDEN;
+			}
+			set
+			{
+				if ((this._ORDEN != value))
+				{
+					this._ORDEN = value;
+				}
 			}
 		}
 	}
