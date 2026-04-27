@@ -43,5 +43,27 @@ namespace API.Controllers
         {
             return new LogParada().Listar();
         }
+        // -------- EDITAR --------
+        [HttpPut]
+        [Route("editar/{guid}")]
+        public ResCrearParada Editar(string guid, [FromBody] DTOParada dto)
+        {
+            ReqCrearParada req = new ReqCrearParada();
+
+            req.Nombre = dto.Nombre;
+            req.Descripcion = dto.Descripcion;
+            req.Latitud = dto.Latitud;
+            req.Longitud = dto.Longitud;
+
+            return new LogParada().Editar(new System.Guid(guid), req);
+        }
+        // -------- ELIMINAR --------
+        [HttpDelete]
+        [Route("eliminar/{guid}")]
+        public ResBase Eliminar(string guid)
+        {
+            return new LogParada().Eliminar(new System.Guid(guid));
+        }
+
     }
 }

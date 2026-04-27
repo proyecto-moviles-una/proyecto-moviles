@@ -43,7 +43,7 @@ namespace AccesoDatos
         // Nota: El campo PUNTO_GEOGRAFICO (geography) NO está incluido aquí
         // porque LINQ to SQL no lo soporta. Se maneja mediante trigger en SQL Server.
         private int _ID_PARADA;
-        private string _GUID_PARADA;
+        private System.Guid _GUID_PARADA;
         private string _NOMBRE;
         private string _DESCRIPCION;
         private decimal _LATITUD;    // Cambiado a decimal para coincidir con SQL Server
@@ -57,7 +57,7 @@ namespace AccesoDatos
         partial void OnCreated();
         partial void OnID_PARADAChanging(int value);
         partial void OnID_PARADAChanged();
-        partial void OnGUID_PARADAChanging(string value);
+        partial void OnGUID_PARADAChanging(System.Guid value);
         partial void OnGUID_PARADAChanged();
         partial void OnNOMBREChanging(string value);
         partial void OnNOMBREChanged();
@@ -95,8 +95,8 @@ namespace AccesoDatos
             }
         }
 
-        [Column(Storage = "_GUID_PARADA", DbType = "VarChar(50) NOT NULL", CanBeNull = false)]
-        public string GUID_PARADA
+        [Column(Storage = "_GUID_PARADA", DbType = "UniqueIdentifier NOT NULL")]
+        public System.Guid GUID_PARADA
         {
             get { return this._GUID_PARADA; }
             set
