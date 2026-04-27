@@ -43,14 +43,20 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Entidades\Entities\Error.cs" />
+    <Compile Include="Entidades\Entities\HistorialViaje.cs" />
     <Compile Include="Entidades\Entities\Parada.cs" />
+    <Compile Include="Entidades\Enum\Historial\EnumErroresHistorial.cs" />
+    <Compile Include="Entidades\Request\ReqCrearHistorial.cs" />
     <Compile Include="Entidades\Request\ReqEditarParada.cs" />
     <Compile Include="Entidades\Request\ReqEliminarParada.cs" />
+    <Compile Include="Entidades\Request\ReqListarHistorial.cs" />
     <Compile Include="Entidades\Response\ResBase.cs" />
+    <Compile Include="Entidades\Response\ResCrearHistorial.cs" />
     <Compile Include="Entidades\Response\ResCrearParada.cs" />
     <Compile Include="Entidades\Enum\Parada\EnumErroresParada.cs" />
     <Compile Include="Entidades\Response\ResEditarParada.cs" />
     <Compile Include="Entidades\Response\ResEliminarParada.cs" />
+    <Compile Include="Entidades\Response\ResListarHistorial.cs" />
     <Compile Include="Entidades\Response\ResListarParadas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entidades\Request\ReqCrearParada.cs" />

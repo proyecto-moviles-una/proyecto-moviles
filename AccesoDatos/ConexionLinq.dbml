@@ -10,6 +10,16 @@
       <Column Name="FECHA_CONSULTA" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
+  <Table Name="dbo.TB_HISTORIAL_VIAJE" Member="TB_HISTORIAL_VIAJE1">
+    <Type Name="TB_HISTORIAL_VIAJE1">
+      <Column Name="ID_HISTORIAL" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="GUID_HISTORIAL" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="ID_USUARIO" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      <Column Name="ID_RUTA" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ID_TARIFA" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FECHA_CONSULTA" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
   <Function Name="dbo.SP_REGISTRAR_HISTORIAL" Method="SP_REGISTRAR_HISTORIAL">
     <Parameter Name="GUID_USUARIO" Parameter="gUID_USUARIO" Type="System.Guid" DbType="UniqueIdentifier" />
     <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
@@ -18,5 +28,38 @@
     <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
     <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
     <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_OBTENER_HISTORIAL_POR_USUARIO" Method="SP_OBTENER_HISTORIAL_POR_USUARIO">
+    <Parameter Name="GUID_USUARIO" Parameter="gUID_USUARIO" Type="System.Guid" DbType="UniqueIdentifier" />
+    <ElementType Name="SP_OBTENER_HISTORIAL_POR_USUARIOResult">
+      <Column Name="GUID_HISTORIAL" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="GUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="NOMBRE_RUTA" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="TARIFA_CONSULTADA" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="FECHA_CONSULTA" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_OBTENER_PARADA_POR_GUID" Method="SP_OBTENER_PARADA_POR_GUID">
+    <Parameter Name="GUID_PARADA" Parameter="gUID_PARADA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <ElementType Name="SP_OBTENER_PARADA_POR_GUIDResult">
+      <Column Name="GUID_PARADA" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="NOMBRE" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="DESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="LATITUD" Type="System.Decimal" DbType="Decimal(10,7)" CanBeNull="true" />
+      <Column Name="LONGITUD" Type="System.Decimal" DbType="Decimal(10,7)" CanBeNull="true" />
+      <Column Name="ESTADO" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FECHA_REGISTRO" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_OBTENER_PARADAS_POR_RUTA" Method="SP_OBTENER_PARADAS_POR_RUTA">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <ElementType Name="SP_OBTENER_PARADAS_POR_RUTAResult">
+      <Column Name="GUID_PARADA" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="NOMBRE" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="DESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="LATITUD" Type="System.Decimal" DbType="Decimal(10,7)" CanBeNull="true" />
+      <Column Name="LONGITUD" Type="System.Decimal" DbType="Decimal(10,7)" CanBeNull="true" />
+      <Column Name="ORDEN" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
   </Function>
 </Database>
