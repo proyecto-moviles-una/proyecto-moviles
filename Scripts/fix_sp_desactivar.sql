@@ -1,0 +1,48 @@
+-- SP_DESACTIVAR_USUARIO: cierra TODAS las sesiones activas del usuario automaticamente
+ALTER PROCEDURE dbo.SP_DESACTIVAR_USUARIO
+(
+    @GUID_USUARIO     UNIQUEIDENTIFIER,
+    @IDRETURN         INT OUTPUT,
+    @ERRORID          INT OUTPUT,
+    @ERRORDESCRIPCION NVARCHAR(MAX) OUTPUT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        DECLARE @ID_USUARIO BIGINT;
+        SELECT @ID_USUARIO = ID_USUARIO FROM dbo.TB_USUARIO WHERE GUID_USUARIO = @GUID_USUARIO;
+
+        IF @ID_USUARIO IS NULL
+        BEGIN
+            SET @IDRETURN        = -1;
+            SET @ERRORID         = 2;
+            SET @ERRORDESCRIPCION = N'USUARIO NO REGISTRADO';
+            RETURN;
+        END
+
+        -- Desactivar usuario
+        UPDATE dbo.TB_USUARIO
+        SET ESTADO = 2
+        WHERE ID_USUARIO = @ID_USUARIO;
+
+        -- Cerrar TODAS sus sesiones activas automaticamente
+        UPDATE dbo.TB_SESION
+        SET ESTADO              = 0,
+            FECHA_FINAL         = GETUTCDATE(),
+            FECHA_ACTUALIZACION = GETUTCDATE()
+        WHERE ID_USUARIO = @ID_USUARIO
+          AND ESTADO      = 1;
+
+        SET @IDRETURN        = @ID_USUARIO;
+        SET @ERRORID         = 0;
+        SET @ERRORDESCRIPCION = N'';
+    END TRY
+    BEGIN CATCH
+        SET @IDRETURN        = -1;
+        SET @ERRORID         = ERROR_NUMBER();
+        SET @ERRORDESCRIPCION = ERROR_MESSAGE();
+        INSERT INTO dbo.TB_ERROR_EN_BASE_DATOS(SEVERIDAD, STORED_PROCEDURE, NUMERO, DESCRIPCION, LINEA)
+        SELECT ERROR_SEVERITY(), ERROR_PROCEDURE(), ERROR_NUMBER(), ERROR_MESSAGE(), ERROR_LINE();
+    END CATCH
+END

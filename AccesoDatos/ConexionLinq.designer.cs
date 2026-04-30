@@ -22,6 +22,7 @@ namespace AccesoDatos
 	using System;
 	
 	
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="bdMiBus")]
 	public partial class ConexionLinqDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -30,6 +31,12 @@ namespace AccesoDatos
     #region Definiciones de métodos de extensibilidad
     partial void OnCreated();
     #endregion
+		
+		public ConexionLinqDataContext() : 
+				base(global::AccesoDatos.Properties.Settings.Default.bdMiBusConnectionString, mappingSource)
+		{
+			OnCreated();
+		}
 		
 		public ConexionLinqDataContext(string connection) : 
 				base(connection, mappingSource)
@@ -53,6 +60,745 @@ namespace AccesoDatos
 				base(connection, mappingSource)
 		{
 			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_INGRESAR_USUARIO")]
+		public int SP_INGRESAR_USUARIO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="NOMBRE", DbType="NVarChar(50)")] string nOMBRE, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="APELLIDOS", DbType="NVarChar(50)")] string aPELLIDOS, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="CORREO_ELECTRONICO", DbType="NVarChar(100)")] string cORREO_ELECTRONICO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="PASSWORD", DbType="NVarChar(MAX)")] string pASSWORD, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NUMERO_VERIFICACION", DbType="NVarChar(MAX)")] string nUMERO_VERIFICACION, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> gUID_USUARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), nOMBRE, aPELLIDOS, cORREO_ELECTRONICO, pASSWORD, nUMERO_VERIFICACION, gUID_USUARIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			gUID_USUARIO = ((System.Nullable<System.Guid>)(result.GetParameterValue(5)));
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(6)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(7)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(8)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_OBTENER_USUARIO")]
+		public ISingleResult<SP_OBTENER_USUARIOResult> SP_OBTENER_USUARIO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO);
+			return ((ISingleResult<SP_OBTENER_USUARIOResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_VALIDAR_SESION")]
+		public ISingleResult<SP_VALIDAR_SESIONResult> SP_VALIDAR_SESION([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_SESION", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_SESION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_SESION);
+			return ((ISingleResult<SP_VALIDAR_SESIONResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_REGISTRAR_HISTORIAL")]
+		public int SP_REGISTRAR_HISTORIAL([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_HISTORIAL", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> gUID_HISTORIAL, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO, gUID_RUTA, gUID_HISTORIAL, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			gUID_HISTORIAL = ((System.Nullable<System.Guid>)(result.GetParameterValue(2)));
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(3)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(5)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_OBTENER_LISTAUSUARIOS")]
+		public ISingleResult<SP_OBTENER_LISTAUSUARIOSResult> SP_OBTENER_LISTAUSUARIOS()
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())));
+			return ((ISingleResult<SP_OBTENER_LISTAUSUARIOSResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_OBTENER_HISTORIAL_POR_USUARIO")]
+		public ISingleResult<SP_OBTENER_HISTORIAL_POR_USUARIOResult> SP_OBTENER_HISTORIAL_POR_USUARIO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO);
+			return ((ISingleResult<SP_OBTENER_HISTORIAL_POR_USUARIOResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_OBTENER_FAVORITOS_POR_USUARIO")]
+		public ISingleResult<SP_OBTENER_FAVORITOS_POR_USUARIOResult> SP_OBTENER_FAVORITOS_POR_USUARIO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO);
+			return ((ISingleResult<SP_OBTENER_FAVORITOS_POR_USUARIOResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_LOGIN")]
+		public ISingleResult<SP_LOGINResult> SP_LOGIN([global::System.Data.Linq.Mapping.ParameterAttribute(Name="CORREO_ELECTRONICO", DbType="NVarChar(100)")] string cORREO_ELECTRONICO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="PASSWORD", DbType="NVarChar(MAX)")] string pASSWORD)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), cORREO_ELECTRONICO, pASSWORD);
+			return ((ISingleResult<SP_LOGINResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ELIMINAR_FAVORITO")]
+		public int SP_ELIMINAR_FAVORITO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_FAVORITO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_FAVORITO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_FAVORITO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(1)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(2)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(3)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_CERRAR_SESION")]
+		public int SP_CERRAR_SESION([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_SESION", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_SESION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_SESION);
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_AGREGAR_FAVORITO")]
+		public int SP_AGREGAR_FAVORITO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_FAVORITO", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> gUID_FAVORITO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO, gUID_RUTA, gUID_FAVORITO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			gUID_FAVORITO = ((System.Nullable<System.Guid>)(result.GetParameterValue(2)));
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(3)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(5)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ABRIR_SESION")]
+		public int SP_ABRIR_SESION([global::System.Data.Linq.Mapping.ParameterAttribute(Name="SESION", DbType="NVarChar(MAX)")] string sESION, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ORIGEN", DbType="NVarChar(MAX)")] string oRIGEN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_SESION", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> gUID_SESION, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), sESION, gUID_USUARIO, oRIGEN, gUID_SESION, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			gUID_SESION = ((System.Nullable<System.Guid>)(result.GetParameterValue(3)));
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(5)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(6)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ACTIVAR_USUARIO")]
+		public int SP_ACTIVAR_USUARIO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="CORREO_ELECTRONICO", DbType="NVarChar(100)")] string cORREO_ELECTRONICO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NUMERO_VERIFICACION", DbType="NVarChar(MAX)")] string nUMERO_VERIFICACION, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="FILASACTUALIZADAS", DbType="Int")] ref System.Nullable<int> fILASACTUALIZADAS, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), cORREO_ELECTRONICO, nUMERO_VERIFICACION, fILASACTUALIZADAS, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			fILASACTUALIZADAS = ((System.Nullable<int>)(result.GetParameterValue(2)));
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(3)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(5)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_INSERTAR_BITACORA")]
+		public int SP_INSERTAR_BITACORA([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="CLASE", DbType="NVarChar(100)")] string cLASE, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="METODO", DbType="NVarChar(100)")] string mETODO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="TIPO", DbType="SmallInt")] System.Nullable<short> tIPO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="CODIGO_ERROR", DbType="Int")] System.Nullable<int> cODIGO_ERROR, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="DESCRIPCION", DbType="NVarChar(MAX)")] string dESCRIPCION, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="REQUEST", DbType="NVarChar(MAX)")] string rEQUEST, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="RESPONSE", DbType="NVarChar(MAX)")] string rESPONSE)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO, cLASE, mETODO, tIPO, cODIGO_ERROR, dESCRIPCION, rEQUEST, rESPONSE);
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ELIMINAR_USUARIO")]
+		public int SP_ELIMINAR_USUARIO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(1)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(2)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(3)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_DESACTIVAR_USUARIO")]
+		public int SP_DESACTIVAR_USUARIO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(1)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(2)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(3)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ACTUALIZAR_USUARIO")]
+		public int SP_ACTUALIZAR_USUARIO([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_USUARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NOMBRE", DbType="NVarChar(50)")] string nOMBRE, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="APELLIDOS", DbType="NVarChar(50)")] string aPELLIDOS, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_USUARIO, nOMBRE, aPELLIDOS, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(3)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(5)));
+			return ((int)(result.ReturnValue));
+		}
+	}
+	
+	public partial class SP_OBTENER_USUARIOResult
+	{
+		
+		private System.Guid _GUID_USUARIO;
+		
+		private string _NOMBRE;
+		
+		private string _APELLIDOS;
+		
+		private string _CORREO_ELECTRONICO;
+		
+		private System.DateTime _FECHA_REGISTRO;
+		
+		private System.Nullable<int> _ESTADO;
+		
+		public SP_OBTENER_USUARIOResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_USUARIO", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_USUARIO
+		{
+			get
+			{
+				return this._GUID_USUARIO;
+			}
+			set
+			{
+				if ((this._GUID_USUARIO != value))
+				{
+					this._GUID_USUARIO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NOMBRE", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string NOMBRE
+		{
+			get
+			{
+				return this._NOMBRE;
+			}
+			set
+			{
+				if ((this._NOMBRE != value))
+				{
+					this._NOMBRE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_APELLIDOS", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string APELLIDOS
+		{
+			get
+			{
+				return this._APELLIDOS;
+			}
+			set
+			{
+				if ((this._APELLIDOS != value))
+				{
+					this._APELLIDOS = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CORREO_ELECTRONICO", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		public string CORREO_ELECTRONICO
+		{
+			get
+			{
+				return this._CORREO_ELECTRONICO;
+			}
+			set
+			{
+				if ((this._CORREO_ELECTRONICO != value))
+				{
+					this._CORREO_ELECTRONICO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FECHA_REGISTRO", DbType="DateTime NOT NULL")]
+		public System.DateTime FECHA_REGISTRO
+		{
+			get
+			{
+				return this._FECHA_REGISTRO;
+			}
+			set
+			{
+				if ((this._FECHA_REGISTRO != value))
+				{
+					this._FECHA_REGISTRO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ESTADO", DbType="Int")]
+		public System.Nullable<int> ESTADO
+		{
+			get
+			{
+				return this._ESTADO;
+			}
+			set
+			{
+				if ((this._ESTADO != value))
+				{
+					this._ESTADO = value;
+				}
+			}
+		}
+	}
+	
+	public partial class SP_VALIDAR_SESIONResult
+	{
+		
+		private System.Guid _GUID_SESION;
+		
+		private System.Guid _GUID_USUARIO;
+		
+		private string _NOMBRE;
+		
+		private string _APELLIDOS;
+		
+		private bool _ESTADO;
+		
+		public SP_VALIDAR_SESIONResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_SESION", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_SESION
+		{
+			get
+			{
+				return this._GUID_SESION;
+			}
+			set
+			{
+				if ((this._GUID_SESION != value))
+				{
+					this._GUID_SESION = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_USUARIO", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_USUARIO
+		{
+			get
+			{
+				return this._GUID_USUARIO;
+			}
+			set
+			{
+				if ((this._GUID_USUARIO != value))
+				{
+					this._GUID_USUARIO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NOMBRE", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string NOMBRE
+		{
+			get
+			{
+				return this._NOMBRE;
+			}
+			set
+			{
+				if ((this._NOMBRE != value))
+				{
+					this._NOMBRE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_APELLIDOS", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string APELLIDOS
+		{
+			get
+			{
+				return this._APELLIDOS;
+			}
+			set
+			{
+				if ((this._APELLIDOS != value))
+				{
+					this._APELLIDOS = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ESTADO", DbType="Bit NOT NULL")]
+		public bool ESTADO
+		{
+			get
+			{
+				return this._ESTADO;
+			}
+			set
+			{
+				if ((this._ESTADO != value))
+				{
+					this._ESTADO = value;
+				}
+			}
+		}
+	}
+	
+	public partial class SP_OBTENER_LISTAUSUARIOSResult
+	{
+		
+		private System.Guid _GUID_USUARIO;
+		
+		private string _NOMBRE;
+		
+		private string _APELLIDOS;
+		
+		private string _CORREO_ELECTRONICO;
+		
+		private System.DateTime _FECHA_REGISTRO;
+		
+		public SP_OBTENER_LISTAUSUARIOSResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_USUARIO", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_USUARIO
+		{
+			get
+			{
+				return this._GUID_USUARIO;
+			}
+			set
+			{
+				if ((this._GUID_USUARIO != value))
+				{
+					this._GUID_USUARIO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NOMBRE", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string NOMBRE
+		{
+			get
+			{
+				return this._NOMBRE;
+			}
+			set
+			{
+				if ((this._NOMBRE != value))
+				{
+					this._NOMBRE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_APELLIDOS", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string APELLIDOS
+		{
+			get
+			{
+				return this._APELLIDOS;
+			}
+			set
+			{
+				if ((this._APELLIDOS != value))
+				{
+					this._APELLIDOS = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CORREO_ELECTRONICO", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		public string CORREO_ELECTRONICO
+		{
+			get
+			{
+				return this._CORREO_ELECTRONICO;
+			}
+			set
+			{
+				if ((this._CORREO_ELECTRONICO != value))
+				{
+					this._CORREO_ELECTRONICO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FECHA_REGISTRO", DbType="DateTime NOT NULL")]
+		public System.DateTime FECHA_REGISTRO
+		{
+			get
+			{
+				return this._FECHA_REGISTRO;
+			}
+			set
+			{
+				if ((this._FECHA_REGISTRO != value))
+				{
+					this._FECHA_REGISTRO = value;
+				}
+			}
+		}
+	}
+	
+	public partial class SP_OBTENER_HISTORIAL_POR_USUARIOResult
+	{
+		
+		private System.Guid _GUID_HISTORIAL;
+		
+		private System.Guid _GUID_RUTA;
+		
+		private string _NOMBRE_RUTA;
+		
+		private System.Nullable<decimal> _TARIFA_CONSULTADA;
+		
+		private System.DateTime _FECHA_CONSULTA;
+		
+		public SP_OBTENER_HISTORIAL_POR_USUARIOResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_HISTORIAL", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_HISTORIAL
+		{
+			get
+			{
+				return this._GUID_HISTORIAL;
+			}
+			set
+			{
+				if ((this._GUID_HISTORIAL != value))
+				{
+					this._GUID_HISTORIAL = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_RUTA", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_RUTA
+		{
+			get
+			{
+				return this._GUID_RUTA;
+			}
+			set
+			{
+				if ((this._GUID_RUTA != value))
+				{
+					this._GUID_RUTA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NOMBRE_RUTA", DbType="NVarChar(200) NOT NULL", CanBeNull=false)]
+		public string NOMBRE_RUTA
+		{
+			get
+			{
+				return this._NOMBRE_RUTA;
+			}
+			set
+			{
+				if ((this._NOMBRE_RUTA != value))
+				{
+					this._NOMBRE_RUTA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TARIFA_CONSULTADA", DbType="Decimal(10,2)")]
+		public System.Nullable<decimal> TARIFA_CONSULTADA
+		{
+			get
+			{
+				return this._TARIFA_CONSULTADA;
+			}
+			set
+			{
+				if ((this._TARIFA_CONSULTADA != value))
+				{
+					this._TARIFA_CONSULTADA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FECHA_CONSULTA", DbType="DateTime NOT NULL")]
+		public System.DateTime FECHA_CONSULTA
+		{
+			get
+			{
+				return this._FECHA_CONSULTA;
+			}
+			set
+			{
+				if ((this._FECHA_CONSULTA != value))
+				{
+					this._FECHA_CONSULTA = value;
+				}
+			}
+		}
+	}
+	
+	public partial class SP_OBTENER_FAVORITOS_POR_USUARIOResult
+	{
+		
+		private System.Guid _GUID_FAVORITO;
+		
+		private System.Guid _GUID_RUTA;
+		
+		private string _NOMBRE_RUTA;
+		
+		private System.Nullable<decimal> _TARIFA_ACTUAL;
+		
+		private System.DateTime _FECHA_REGISTRO;
+		
+		public SP_OBTENER_FAVORITOS_POR_USUARIOResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_FAVORITO", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_FAVORITO
+		{
+			get
+			{
+				return this._GUID_FAVORITO;
+			}
+			set
+			{
+				if ((this._GUID_FAVORITO != value))
+				{
+					this._GUID_FAVORITO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_RUTA", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_RUTA
+		{
+			get
+			{
+				return this._GUID_RUTA;
+			}
+			set
+			{
+				if ((this._GUID_RUTA != value))
+				{
+					this._GUID_RUTA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NOMBRE_RUTA", DbType="NVarChar(200) NOT NULL", CanBeNull=false)]
+		public string NOMBRE_RUTA
+		{
+			get
+			{
+				return this._NOMBRE_RUTA;
+			}
+			set
+			{
+				if ((this._NOMBRE_RUTA != value))
+				{
+					this._NOMBRE_RUTA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TARIFA_ACTUAL", DbType="Decimal(10,2)")]
+		public System.Nullable<decimal> TARIFA_ACTUAL
+		{
+			get
+			{
+				return this._TARIFA_ACTUAL;
+			}
+			set
+			{
+				if ((this._TARIFA_ACTUAL != value))
+				{
+					this._TARIFA_ACTUAL = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FECHA_REGISTRO", DbType="DateTime NOT NULL")]
+		public System.DateTime FECHA_REGISTRO
+		{
+			get
+			{
+				return this._FECHA_REGISTRO;
+			}
+			set
+			{
+				if ((this._FECHA_REGISTRO != value))
+				{
+					this._FECHA_REGISTRO = value;
+				}
+			}
+		}
+	}
+	
+	public partial class SP_LOGINResult
+	{
+		
+		private System.Guid _GUID_USUARIO;
+		
+		private string _NOMBRE;
+		
+		private string _APELLIDOS;
+		
+		private System.Nullable<int> _ESTADO;
+		
+		public SP_LOGINResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_USUARIO", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid GUID_USUARIO
+		{
+			get
+			{
+				return this._GUID_USUARIO;
+			}
+			set
+			{
+				if ((this._GUID_USUARIO != value))
+				{
+					this._GUID_USUARIO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NOMBRE", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string NOMBRE
+		{
+			get
+			{
+				return this._NOMBRE;
+			}
+			set
+			{
+				if ((this._NOMBRE != value))
+				{
+					this._NOMBRE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_APELLIDOS", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string APELLIDOS
+		{
+			get
+			{
+				return this._APELLIDOS;
+			}
+			set
+			{
+				if ((this._APELLIDOS != value))
+				{
+					this._APELLIDOS = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ESTADO", DbType="Int")]
+		public System.Nullable<int> ESTADO
+		{
+			get
+			{
+				return this._ESTADO;
+			}
+			set
+			{
+				if ((this._ESTADO != value))
+				{
+					this._ESTADO = value;
+				}
+			}
 		}
 	}
 }

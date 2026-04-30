@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>b0bf121d-5be8-4f5a-a98a-e405c6fb437d</ProjectGuid>
+    <ProjectGuid>{B0BF121D-5BE8-4F5A-A98A-E405C6FB437D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Core</RootNamespace>
@@ -31,24 +31,54 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Entidades\Entities\Bitacora.cs" />
+    <Compile Include="Entidades\Entities\Error.cs" />
+    <Compile Include="Entidades\Entities\Favorito.cs" />
+    <Compile Include="Entidades\Entities\Usuario.cs" />
+    <Compile Include="Entidades\Request\ReqAbrirSesion.cs" />
+    <Compile Include="Entidades\Request\ReqActivarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqActualizarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqAgregarFavorito.cs" />
+    <Compile Include="Entidades\Request\ReqBitacorear.cs" />
+    <Compile Include="Entidades\Request\ReqCerrarSesion.cs" />
+    <Compile Include="Entidades\Request\ReqDesactivarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqEliminarFavorito.cs" />
+    <Compile Include="Entidades\Request\ReqEliminarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqInsertarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqLogin.cs" />
+    <Compile Include="Entidades\Request\ReqObtenerFavoritos.cs" />
+    <Compile Include="Entidades\Request\ReqObtenerListaUsuarios.cs" />
+    <Compile Include="Entidades\Request\ReqObtenerUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqValidarSesion.cs" />
+    <Compile Include="Entidades\Response\ResActivarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResActualizarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResAgregarFavorito.cs" />
+    <Compile Include="Entidades\Response\ResBase.cs" />
+    <Compile Include="Entidades\Response\ResBitacorear.cs" />
+    <Compile Include="Entidades\Response\ResCerrarSesion.cs" />
+    <Compile Include="Entidades\Response\ResDesactivarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResEliminarFavorito.cs" />
+    <Compile Include="Entidades\Response\ResEliminarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResInsertarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResLogin.cs" />
+    <Compile Include="Entidades\Response\ResObtenerFavoritos.cs" />
+    <Compile Include="Entidades\Response\ResObtenerListaUsuarios.cs" />
+    <Compile Include="Entidades\Response\ResObtenerUsuario.cs" />
+    <Compile Include="Entidades\Response\ResValidarSesion.cs" />
+    <Compile Include="Enum\enumBitacora.cs" />
+    <Compile Include="Enum\enumErrores.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>

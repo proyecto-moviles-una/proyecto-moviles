@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Core.Enum
+{
+    public enum enumErrores
+    {
+        // Generales
+        errorNoControlado       = -2,
+        errorBaseDatos          = -1,
+
+        // Usuario
+        nombreFaltante          = 1,
+        apellidosFaltante       = 2,
+        emailFaltante           = 3,
+        emailInvalido           = 4,
+        passwordVacio           = 5,
+        guidDeUsuarioFaltante   = 6,
+        errorActivandoUsuario   = 7,
+        loginIncorrecto         = 8,
+        usuarioInactivo         = 9,
+        correoYaRegistrado      = 10,
+        usuarioDesactivado      = 11,
+        codigoExpirado          = 12,
+
+        // Sesión
+        guidSesionFaltante      = 20,
+        sesionInvalida          = 21,
+        errorAbrirSesion        = 22,
+        sesionYaCerrada         = 23,
+        accesoNoAutorizado      = 24,
+
+        // Favoritos
+        guidRutaFaltante        = 30,
+        favoritoYaExiste        = 31,
+        favoritoNoExiste        = 32,
+        guidFavoritoFaltante    = 33,
+    }
+}
