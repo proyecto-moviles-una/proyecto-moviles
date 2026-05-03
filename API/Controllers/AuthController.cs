@@ -4,25 +4,38 @@ using Core.Entidades.Response;
 using API.Filters;
 using DTO.Usuario;
 using Logica.Usuario;
+using System;
 using System.Web.Http;
 
 namespace API.Controllers
 {
     public class AuthController : ApiController
     {
-        // POST api/auth/registro  — público
+        // POST api/auth/registro  ï¿½ pï¿½blico
         [HttpPost]
         [Route("api/auth/registro")]
-        public ResInsertarUsuario registro(DTOInsertarUsuario dtoUsuario)
+        public IHttpActionResult registro(DTOInsertarUsuario dtoUsuario)
         {
-            ReqInsertarUsuario req = new ReqInsertarUsuario();
-            req.usuario = new Usuario();
-            req.usuario.nombre    = dtoUsuario.nombre;
-            req.usuario.apellidos = dtoUsuario.apellidos;
-            req.usuario.email     = dtoUsuario.email;
-            req.usuario.password  = dtoUsuario.password;
+            try
+            {
+                ReqInsertarUsuario req = new ReqInsertarUsuario();
+                req.usuario = new Usuario();
+                req.usuario.nombre    = dtoUsuario.nombre;
+                req.usuario.apellidos = dtoUsuario.apellidos;
+                req.usuario.email     = dtoUsuario.email;
+                req.usuario.password  = dtoUsuario.password;
 
-            return new LogUsuario().registrar(req);
+                return Ok(new LogUsuario().registrar(req));
+            }
+            catch (Exception ex)
+            {
+                return Ok(new
+                {
+                    error = ex.Message,
+                    inner = ex.InnerException?.Message,
+                    inner2 = ex.InnerException?.InnerException?.Message
+                });
+            }
         }
 
         // POST api/auth/activar
@@ -49,7 +62,7 @@ namespace API.Controllers
             return new LogUsuario().login(req);
         }
 
-        // POST api/auth/logout  — requiere JWT
+        // POST api/auth/logout  ï¿½ requiere JWT
         [HttpPost]
         [JwtAuth]
         [Route("api/auth/logout")]

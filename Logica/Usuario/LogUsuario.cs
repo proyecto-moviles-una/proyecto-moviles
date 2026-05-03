@@ -77,7 +77,7 @@ namespace Logica.Usuario
                 System.Nullable<int>         errorIdBD   = null;
                 string                       errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_INGRESAR_USUARIO(
                         req.usuario.nombre,
@@ -108,28 +108,18 @@ namespace Logica.Usuario
                 bool correoEnviado = Utilitarios.Utilitarios.EnviarCorreoVerificacion(
                     req.usuario.nombre, req.usuario.apellidos, req.usuario.email, token);
 
-                if (correoEnviado)
-                {
-                    res.resultado    = true;
-                    res.guidUsuario  = guidReturn;
-                    res.error        = null;
-                    tipoBitacora     = enumBitacora.exitoso;
-                }
-                else
-                {
-                    // Usuario creado pero correo falló — retornamos token para activar manualmente
-                    res.resultado         = true;
-                    res.guidUsuario       = guidReturn;
-                    res.tokenVerificacion = token;   // úsalo en POST /api/auth/activar para pruebas
-                    res.error             = null;
-                    tipoBitacora          = enumBitacora.exitoso;
-                }
+                res.resultado         = true;
+                res.guidUsuario       = guidReturn;
+                res.tokenVerificacion = token;
+                res.error             = null;
+                tipoBitacora          = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
                 res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
                 errorId   = (int)enumErrores.errorNoControlado;
-                errorDesc = ex.Message;
+                errorDesc = ex.Message + " | " + ex.InnerException?.Message;
+                throw;
             }
             finally
             {
@@ -159,7 +149,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD  = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_ACTIVAR_USUARIO(
                         req.correo,
@@ -226,7 +216,7 @@ namespace Logica.Usuario
 
                 // ?? Buscar usuario por correo ??????????????????????????????
                 SP_LOGINResult spResult = null;
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     spResult = linq.SP_LOGIN(req.email).FirstOrDefault();
                 }
@@ -271,7 +261,7 @@ namespace Logica.Usuario
                 System.Nullable<int>         errorIdBD   = null;
                 string                       errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_ABRIR_SESION(
                         jwtTemp,
@@ -354,7 +344,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_CERRAR_SESION(req.guidSesion, ref filas, ref errorIdBD, ref errorDescBD);
                 }
@@ -407,7 +397,7 @@ namespace Logica.Usuario
                 }
 
                 SP_OBTENER_USUARIOResult spResult = null;
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     spResult = linq.SP_OBTENER_USUARIO(req.guid).FirstOrDefault();
                 }
@@ -472,7 +462,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_ACTUALIZAR_USUARIO(
                         req.guidUsuario,
@@ -535,7 +525,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_ELIMINAR_USUARIO(
                         req.guidUsuario,
@@ -604,7 +594,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_DESACTIVAR_USUARIO(
                         req.guidUsuario,
@@ -697,7 +687,7 @@ namespace Logica.Usuario
             try
             {
                 List<SP_OBTENER_LISTAUSUARIOSResult> listaResultado;
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     listaResultado = linq.SP_OBTENER_LISTAUSUARIOS().ToList();
                 }

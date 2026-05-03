@@ -42,7 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Empresa\DTOInsertarEmpresa.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ruta\DTOActualizarRuta.cs" />
+    <Compile Include="Ruta\DTOInsertarHorario.cs" />
+    <Compile Include="Ruta\DTOInsertarRuta.cs" />
+    <Compile Include="Zona\DTOInsertarZona.cs" />
     <Compile Include="Usuario\DTOActivarUsuario.cs" />
     <Compile Include="Usuario\DTOActualizarUsuario.cs" />
     <Compile Include="Usuario\DTOCerrarSesion.cs" />

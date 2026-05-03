@@ -26,7 +26,7 @@ namespace Core.Enum
         usuarioDesactivado      = 11,
         codigoExpirado          = 12,
 
-        // Sesión
+        // Sesiï¿½n
         guidSesionFaltante      = 20,
         sesionInvalida          = 21,
         errorAbrirSesion        = 22,
@@ -38,5 +38,25 @@ namespace Core.Enum
         favoritoYaExiste        = 31,
         favoritoNoExiste        = 32,
         guidFavoritoFaltante    = 33,
+
+        // Ruta
+        nombreRutaFaltante      = 40,
+        guidEmpresaFaltante     = 41,
+        errorInsertandoRuta     = 42,
+        errorActualizandoRuta   = 43,
+        errorDesactivandoRuta   = 44,
+
+        // Horario
+        horaSalidaFaltante      = 50,
+        diasServicioFaltante    = 51,
+        errorInsertandoHorario  = 52,
+
+        // Empresa
+        nombreEmpresaFaltante   = 60,
+        errorInsertandoEmpresa  = 61,
+
+        // Zona
+        nombreZonaFaltante      = 70,
+        errorInsertandoZona     = 71,
     }
 }
