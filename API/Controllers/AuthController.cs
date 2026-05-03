@@ -1,4 +1,5 @@
 using Core.Entidades;
+using System;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
 using API.Filters;
@@ -53,12 +54,50 @@ namespace API.Controllers
         [HttpPost]
         [JwtAuth]
         [Route("api/auth/logout")]
-        public ResCerrarSesion logout(DTOCerrarSesion dtoCerrar)
+        public ResCerrarSesion logout()
         {
+            Logica.Auth.TokenInfo tokenInfo = (Logica.Auth.TokenInfo)Request.Properties["tokenInfo"];
+
             ReqCerrarSesion req = new ReqCerrarSesion();
-            req.guidSesion = dtoCerrar.guidSesion;
+            req.guidSesion = Guid.Parse(tokenInfo.guidSesion);
 
             return new LogUsuario().logout(req);
+        }
+
+        // POST api/auth/reenviar-activacion  — público (el usuario aún no puede loguearse)
+        [HttpPost]
+        [Route("api/auth/reenviar-activacion")]
+        public ResReenviarActivacion reenviarActivacion(DTOReenviarActivacion dto)
+        {
+            ReqReenviarActivacion req = new ReqReenviarActivacion();
+            req.correo = dto.correo;
+
+            return new LogUsuario().reenviarActivacion(req);
+        }
+
+        // POST api/auth/solicitar-reactivacion  — público (la cuenta está desactivada, no puede hacer login)
+        // Genera un código y lo envía al correo del usuario desactivado
+        [HttpPost]
+        [Route("api/auth/solicitar-reactivacion")]
+        public ResSolicitarReactivacion solicitarReactivacion(DTOSolicitarReactivacion dto)
+        {
+            ReqSolicitarReactivacion req = new ReqSolicitarReactivacion();
+            req.correo = dto.email;
+
+            return new LogUsuario().solicitarReactivacion(req);
+        }
+
+        // POST api/auth/reactivar  — público
+        // Valida el código y reactiva la cuenta (ESTADO 2 ? 1)
+        [HttpPost]
+        [Route("api/auth/reactivar")]
+        public ResReactivarUsuario reactivar(DTOReactivarUsuario dto)
+        {
+            ReqReactivarUsuario req = new ReqReactivarUsuario();
+            req.correo = dto.email;
+            req.token  = dto.token;
+
+            return new LogUsuario().reactivar(req);
         }
     }
 }

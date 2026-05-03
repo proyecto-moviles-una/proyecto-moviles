@@ -91,6 +91,53 @@ namespace API.Controllers
             req.guidUsuario = guid;
             return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().desactivar(req));
         }
+
+        // PUT api/usuarios/perfil/{guid}/password  — solo el propio usuario
+        [HttpPut]
+        [Route("api/usuarios/perfil/{guid}/password")]
+        public HttpResponseMessage cambiarPassword(Guid guid, DTOCambiarPassword dto)
+        {
+            HttpResponseMessage bloqueo = validarOwnership(guid);
+            if (bloqueo != null) return bloqueo;
+
+            ReqCambiarPassword req = new ReqCambiarPassword();
+            req.guidUsuario        = guid;
+            req.passwordActual     = dto.passwordActual;
+            req.passwordNueva      = dto.passwordNueva;
+            req.confirmarPassword  = dto.confirmarPassword;
+            return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().cambiarPassword(req));
+        }
+
+        // POST api/usuarios/perfil/{guid}/correo/solicitar  — solo el propio usuario
+        // Paso 1: valida password actual, guarda correo pendiente, envía código al nuevo correo
+        [HttpPost]
+        [Route("api/usuarios/perfil/{guid}/correo/solicitar")]
+        public HttpResponseMessage solicitarCambioCorreo(Guid guid, DTOSolicitarCambioCorreo dto)
+        {
+            HttpResponseMessage bloqueo = validarOwnership(guid);
+            if (bloqueo != null) return bloqueo;
+
+            ReqSolicitarCambioCorreo req = new ReqSolicitarCambioCorreo();
+            req.guidUsuario    = guid;
+            req.passwordActual = dto.passwordActual;
+            req.correoNuevo    = dto.correoNuevo;
+            return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().solicitarCambioCorreo(req));
+        }
+
+        // POST api/usuarios/perfil/{guid}/correo/confirmar  — solo el propio usuario
+        // Paso 2: valida el código y actualiza el correo oficialmente
+        [HttpPost]
+        [Route("api/usuarios/perfil/{guid}/correo/confirmar")]
+        public HttpResponseMessage confirmarCambioCorreo(Guid guid, DTOConfirmarCambioCorreo dto)
+        {
+            HttpResponseMessage bloqueo = validarOwnership(guid);
+            if (bloqueo != null) return bloqueo;
+
+            ReqConfirmarCambioCorreo req = new ReqConfirmarCambioCorreo();
+            req.guidUsuario = guid;
+            req.codigo      = dto.codigo;
+            return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().confirmarCambioCorreo(req));
+        }
     }
 }
 

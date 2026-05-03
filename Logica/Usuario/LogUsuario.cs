@@ -350,26 +350,26 @@ namespace Logica.Usuario
                     return res;
                 }
 
-                System.Nullable<int> filas       = null;
-                System.Nullable<int> errorIdBD   = null;
-                string               errorDescBD = null;
+                int filasActualizadas;
 
                 using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
                 {
-                    linq.SP_CERRAR_SESION(req.guidSesion, ref filas, ref errorIdBD, ref errorDescBD);
+                    filasActualizadas = linq.SP_CERRAR_SESION(req.guidSesion);
                 }
 
-                if (filas == 0 || errorIdBD == 1)
+                if (filasActualizadas == 1)
+                {
+                    res.resultado = true;
+                    res.error     = null;
+                    tipoBitacora  = enumBitacora.exitoso;
+                }
+                else
                 {
                     res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.sesionYaCerrada));
                     errorId   = (int)enumErrores.sesionYaCerrada;
-                    errorDesc = errorDescBD ?? enumErrores.sesionYaCerrada.ToString();
-                    return res;
+                    errorDesc = enumErrores.sesionYaCerrada.ToString();
                 }
 
-                res.resultado = true;
-                res.error     = null;
-                tipoBitacora  = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
@@ -649,6 +649,431 @@ namespace Logica.Usuario
         }
 
         // ?????????????????????????????????????????????????????????????????????
+        // REENVIAR ACTIVACIÓN
+        // ?????????????????????????????????????????????????????????????????????
+        public ResReenviarActivacion reenviarActivacion(ReqReenviarActivacion req)
+        {
+            ResReenviarActivacion res = new ResReenviarActivacion();
+            res.resultado = false;
+            res.error     = new List<Error>();
+
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int          errorId      = 0;
+            string       errorDesc    = string.Empty;
+
+            try
+            {
+                if (string.IsNullOrEmpty(req.correo))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailFaltante));
+                    return res;
+                }
+
+                string token = Utilitarios.Utilitarios.crearToken();
+
+                System.Nullable<int> idReturn    = null;
+                System.Nullable<int> errorIdBD   = null;
+                string               errorDescBD = null;
+
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    linq.SP_REENVIAR_ACTIVACION(
+                        req.correo,
+                        token,
+                        ref idReturn,
+                        ref errorIdBD,
+                        ref errorDescBD);
+                }
+
+                if (idReturn == null || idReturn <= 0)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
+                    errorId   = (int)enumErrores.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    return res;
+                }
+
+                // Obtener nombre del usuario para el correo no es posible sin SP adicional,
+                // se envía solo con correo
+                bool correoEnviado = Utilitarios.Utilitarios.EnviarCorreoVerificacion(
+                    string.Empty, string.Empty, req.correo, token);
+
+                res.resultado = true;
+                res.error     = null;
+                tipoBitacora  = enumBitacora.exitoso;
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
+                errorId   = (int)enumErrores.errorNoControlado;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+            }
+
+            return res;
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
+        // SOLICITAR CAMBIO DE CORREO
+        // ?????????????????????????????????????????????????????????????????????
+        public ResSolicitarCambioCorreo solicitarCambioCorreo(ReqSolicitarCambioCorreo req)
+        {
+            ResSolicitarCambioCorreo res = new ResSolicitarCambioCorreo();
+            res.resultado = false;
+            res.error     = new List<Error>();
+
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int          errorId      = 0;
+            string       errorDesc    = string.Empty;
+
+            try
+            {
+                // Validaciones
+                if (string.IsNullOrEmpty(req.passwordActual))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordActualIncorrecto));
+                    return res;
+                }
+                if (string.IsNullOrEmpty(req.correoNuevo))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.correoNuevoFaltante));
+                    return res;
+                }
+                if (!Utilitarios.Utilitarios.EsEmailValido(req.correoNuevo))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailInvalido));
+                    return res;
+                }
+
+                // Verificar la contraseña actual del usuario
+                SP_LOGINResult usuarioBD = null;
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    usuarioBD = linq.SP_OBTENER_HASH_USUARIO(req.guidUsuario).FirstOrDefault();
+                }
+
+                if (usuarioBD == null)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
+                    errorId   = (int)enumErrores.guidDeUsuarioFaltante;
+                    errorDesc = enumErrores.guidDeUsuarioFaltante.ToString();
+                    return res;
+                }
+
+                if (!Utilitarios.Utilitarios.verificarPassword(req.passwordActual, usuarioBD.HASH_PASSWORD))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordActualIncorrecto));
+                    errorId   = (int)enumErrores.passwordActualIncorrecto;
+                    errorDesc = enumErrores.passwordActualIncorrecto.ToString();
+                    return res;
+                }
+
+                // Generar código y guardar correo pendiente en BD
+                string codigo = Utilitarios.Utilitarios.crearToken();
+
+                System.Nullable<int> idReturn    = null;
+                System.Nullable<int> errorIdBD   = null;
+                string               errorDescBD = null;
+
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    linq.SP_SOLICITAR_CAMBIO_CORREO(
+                        req.guidUsuario,
+                        req.correoNuevo,
+                        codigo,
+                        ref idReturn,
+                        ref errorIdBD,
+                        ref errorDescBD);
+                }
+
+                if (errorIdBD == 1)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.correoYaRegistrado));
+                    errorId   = (int)enumErrores.correoYaRegistrado;
+                    errorDesc = errorDescBD;
+                    return res;
+                }
+
+                if (idReturn == null || idReturn <= 0)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
+                    errorId   = (int)enumErrores.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    return res;
+                }
+
+                // Enviar código al nuevo correo
+                Utilitarios.Utilitarios.EnviarCodigoCambioCorreo(
+                    usuarioBD.NOMBRE, usuarioBD.APELLIDOS, req.correoNuevo, codigo);
+
+                res.resultado = true;
+                res.error     = null;
+                tipoBitacora  = enumBitacora.exitoso;
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
+                errorId   = (int)enumErrores.errorNoControlado;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+            }
+
+            return res;
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
+        // CONFIRMAR CAMBIO DE CORREO
+        // ?????????????????????????????????????????????????????????????????????
+        public ResConfirmarCambioCorreo confirmarCambioCorreo(ReqConfirmarCambioCorreo req)
+        {
+            ResConfirmarCambioCorreo res = new ResConfirmarCambioCorreo();
+            res.resultado = false;
+            res.error     = new List<Error>();
+
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int          errorId      = 0;
+            string       errorDesc    = string.Empty;
+
+            try
+            {
+                if (string.IsNullOrEmpty(req.codigo))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoVerificacionFaltante));
+                    return res;
+                }
+
+                System.Nullable<int> idReturn    = null;
+                System.Nullable<int> errorIdBD   = null;
+                string               errorDescBD = null;
+
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    linq.SP_CONFIRMAR_CAMBIO_CORREO(
+                        req.guidUsuario,
+                        req.codigo.ToUpper(),
+                        ref idReturn,
+                        ref errorIdBD,
+                        ref errorDescBD);
+                }
+
+                if (idReturn > 0)
+                {
+                    res.resultado = true;
+                    res.error     = null;
+                    tipoBitacora  = enumBitacora.exitoso;
+                }
+                else if (errorIdBD == 12)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoExpirado));
+                    errorId   = (int)enumErrores.codigoExpirado;
+                    errorDesc = errorDescBD;
+                }
+                else if (errorIdBD == 43)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoVerificacionInvalido));
+                    errorId   = (int)enumErrores.codigoVerificacionInvalido;
+                    errorDesc = errorDescBD;
+                }
+                else
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
+                    errorId   = (int)enumErrores.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
+                errorId   = (int)enumErrores.errorNoControlado;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+            }
+
+            return res;
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
+        // SOLICITAR REACTIVACIÓN
+        // ?????????????????????????????????????????????????????????????????????
+        public ResSolicitarReactivacion solicitarReactivacion(ReqSolicitarReactivacion req)
+        {
+            ResSolicitarReactivacion res = new ResSolicitarReactivacion();
+            res.resultado = false;
+            res.error     = new List<Error>();
+
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int          errorId      = 0;
+            string       errorDesc    = string.Empty;
+
+            try
+            {
+                if (string.IsNullOrEmpty(req.correo))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailFaltante));
+                    return res;
+                }
+
+                string codigo = Utilitarios.Utilitarios.crearToken();
+
+                System.Nullable<int> idReturn    = null;
+                System.Nullable<int> errorIdBD   = null;
+                string               errorDescBD = null;
+                string               nombre      = null;
+                string               apellidos   = null;
+
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    linq.SP_SOLICITAR_REACTIVACION(
+                        req.correo,
+                        codigo,
+                        ref idReturn,
+                        ref errorIdBD,
+                        ref errorDescBD,
+                        ref nombre,
+                        ref apellidos);
+                }
+
+                if (errorIdBD == 14)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.correoNoRegistrado));
+                    errorId   = (int)enumErrores.correoNoRegistrado;
+                    errorDesc = errorDescBD;
+                    return res;
+                }
+
+                if (errorIdBD == 47)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.usuarioNoDesactivado));
+                    errorId   = (int)enumErrores.usuarioNoDesactivado;
+                    errorDesc = errorDescBD;
+                    return res;
+                }
+
+                if (idReturn == null || idReturn <= 0)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
+                    errorId   = (int)enumErrores.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    return res;
+                }
+
+                // Enviar código al correo del usuario
+                Utilitarios.Utilitarios.EnviarCodigoReactivacion(
+                    nombre ?? string.Empty, apellidos ?? string.Empty, req.correo, codigo);
+
+                res.resultado = true;
+                res.error     = null;
+                tipoBitacora  = enumBitacora.exitoso;
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
+                errorId   = (int)enumErrores.errorNoControlado;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+            }
+
+            return res;
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
+        // CONFIRMAR REACTIVACIÓN
+        // ?????????????????????????????????????????????????????????????????????
+        public ResReactivarUsuario reactivar(ReqReactivarUsuario req)
+        {
+            ResReactivarUsuario res = new ResReactivarUsuario();
+            res.resultado = false;
+            res.error     = new List<Error>();
+
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int          errorId      = 0;
+            string       errorDesc    = string.Empty;
+
+            try
+            {
+                if (string.IsNullOrEmpty(req.correo))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailFaltante));
+                    return res;
+                }
+                if (string.IsNullOrEmpty(req.token))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoVerificacionFaltante));
+                    return res;
+                }
+
+                System.Nullable<int> idReturn    = null;
+                System.Nullable<int> errorIdBD   = null;
+                string               errorDescBD = null;
+
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    linq.SP_REACTIVAR_USUARIO(
+                        req.correo,
+                        req.token.ToUpper(),
+                        ref idReturn,
+                        ref errorIdBD,
+                        ref errorDescBD);
+                }
+
+                if (idReturn > 0)
+                {
+                    res.resultado = true;
+                    res.error     = null;
+                    tipoBitacora  = enumBitacora.exitoso;
+                }
+                else if (errorIdBD == 12)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoExpirado));
+                    errorId   = (int)enumErrores.codigoExpirado;
+                    errorDesc = errorDescBD;
+                }
+                else if (errorIdBD == 45)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoVerificacionInvalido));
+                    errorId   = (int)enumErrores.codigoVerificacionInvalido;
+                    errorDesc = errorDescBD;
+                }
+                else if (errorIdBD == 47)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.usuarioNoDesactivado));
+                    errorId   = (int)enumErrores.usuarioNoDesactivado;
+                    errorDesc = errorDescBD;
+                }
+                else
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
+                    errorId   = (int)enumErrores.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
+                errorId   = (int)enumErrores.errorNoControlado;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+            }
+
+            return res;
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
         // FACTORÍA
         // ?????????????????????????????????????????????????????????????????????
         private Core.Entidades.Usuario factoriaUsuario(SP_OBTENER_USUARIOResult sp)
@@ -744,6 +1169,103 @@ namespace Logica.Usuario
                 Utilitarios.Utilitarios.bitacorear(reqBit);
             }
             catch { }
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
+        // CAMBIAR CONTRASEÑA
+        // ?????????????????????????????????????????????????????????????????????
+        public ResCambiarPassword cambiarPassword(ReqCambiarPassword req)
+        {
+            ResCambiarPassword res = new ResCambiarPassword();
+            res.resultado = false;
+            res.error     = new List<Error>();
+
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int          errorId      = 0;
+            string       errorDesc    = string.Empty;
+
+            try
+            {
+                // Validaciones
+                if (string.IsNullOrEmpty(req.passwordActual))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordActualIncorrecto));
+                    return res;
+                }
+
+                if (string.IsNullOrEmpty(req.passwordNueva))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordNuevoVacio));
+                    return res;
+                }
+
+                if (req.passwordNueva != req.confirmarPassword)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordsNoCoinciden));
+                    return res;
+                }
+
+                // Obtener el hash actual del usuario por su GUID
+                SP_LOGINResult usuarioBD = null;
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    usuarioBD = linq.SP_OBTENER_HASH_USUARIO(req.guidUsuario).FirstOrDefault();
+                }
+
+                if (usuarioBD == null)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
+                    errorId   = (int)enumErrores.guidDeUsuarioFaltante;
+                    errorDesc = enumErrores.guidDeUsuarioFaltante.ToString();
+                    return res;
+                }
+
+                // Verificar que la contraseña actual coincide con el hash guardado
+                if (!Utilitarios.Utilitarios.verificarPassword(req.passwordActual, usuarioBD.HASH_PASSWORD))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordActualIncorrecto));
+                    errorId   = (int)enumErrores.passwordActualIncorrecto;
+                    errorDesc = enumErrores.passwordActualIncorrecto.ToString();
+                    return res;
+                }
+
+                // Hashear la nueva contraseña
+                string nuevoHash = Utilitarios.Utilitarios.hashPassword(req.passwordNueva);
+
+                System.Nullable<int> idReturn    = null;
+                System.Nullable<int> errorIdBD   = null;
+                string               errorDescBD = null;
+
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    linq.SP_CAMBIAR_PASSWORD(req.guidUsuario, nuevoHash, ref idReturn, ref errorIdBD, ref errorDescBD);
+                }
+
+                if (idReturn > 0)
+                {
+                    res.resultado = true;
+                    res.error     = null;
+                    tipoBitacora  = enumBitacora.exitoso;
+                }
+                else
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
+                    errorId   = (int)enumErrores.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
+                errorId   = (int)enumErrores.errorNoControlado;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+            }
+
+            return res;
         }
     }
 }

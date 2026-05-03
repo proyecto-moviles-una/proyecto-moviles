@@ -1,4 +1,4 @@
-using AccesoDatos;
+﻿using AccesoDatos;
 using BCrypt.Net;
 using Core.Entidades;
 using Core.Entidades.Request;
@@ -13,7 +13,7 @@ namespace Utilitarios
     public static class Utilitarios
     {
         // ?????????????????????????????????????????????????????????????????????
-        // CONFIGURACI�N
+        // CONFIGURACIÓN
         // ????????????????????????????????????????????????????????????????????? OJO SI EL PROFE PREGUNTA DE STO, LE COMENTO QUE LO MEJRO E SPASARLO A UN .ENV POR LA SEGURIRDAD
         private const string JWT_SECRET  = "MiBus@SecretKey2025!AlajuelaCR";
         private const int    JWT_MINUTOS = 120;   // 2 horas de vigencia
@@ -21,13 +21,13 @@ namespace Utilitarios
         private const string SMTP_HOST     = "smtp.gmail.com";
         private const int    SMTP_PORT     = 587;
         private const string SMTP_USUARIO  = "nayidelin.jiron.castellon@est.una.ac.cr";   // ? PON TU CORREO GMAIL REAL
-        private const string SMTP_PASSWORD = "iejk xvxq puzv ipjy";         // ? PON TU APP PASSWORD DE GMAIL (no la contrase�a normal)
+        private const string SMTP_PASSWORD = "iejk xvxq puzv ipjy";         // ? PON TU APP PASSWORD DE GMAIL (no la contraseña normal)
 
         // ?????????????????????????????????????????????????????????????????????
         // ERRORES
         // ?????????????????????????????????????????????????????????????????????
 
-        /// <summary>Crea un objeto Error con c�digo y mensaje legible.</summary>
+        /// <summary>Crea un objeto Error con código y mensaje legible.</summary>
         public static Error crearError(enumErrores codigo) // ste metodo recive un codigo de error
         {
             return new Error
@@ -43,32 +43,42 @@ namespace Utilitarios
             {
                 case enumErrores.nombreFaltante:       return "El nombre es obligatorio.";
                 case enumErrores.apellidosFaltante:    return "Los apellidos son obligatorios.";
-                case enumErrores.emailFaltante:        return "El correo electr�nico es obligatorio.";
-                case enumErrores.emailInvalido:        return "El formato del correo electr�nico no es v�lido.";
-                case enumErrores.passwordVacio:        return "La contrase�a es obligatoria.";
+                case enumErrores.emailFaltante:        return "El correo electrónico es obligatorio.";
+                case enumErrores.emailInvalido:        return "El formato del correo electrónico no es válido.";
+                case enumErrores.passwordVacio:        return "La contraseña es obligatoria.";
                 case enumErrores.guidDeUsuarioFaltante:return "El identificador de usuario es obligatorio.";
-                case enumErrores.errorActivandoUsuario:return "No se pudo activar el usuario. Verifique el enlace.";
-                case enumErrores.loginIncorrecto:      return "Correo o contrase�a incorrectos.";
+                case enumErrores.errorActivandoUsuario:return "Código incorrecto o expirado.Solicité´uno nuevo";
+                case enumErrores.loginIncorrecto:      return "Correo o contraseña incorrectos.";
                 case enumErrores.usuarioInactivo:       return "La cuenta no ha sido verificada. Revise su correo.";
                 case enumErrores.usuarioDesactivado:    return "Esta cuenta ha sido desactivada.";
-                case enumErrores.codigoExpirado:        return "El c�digo expir�. Solicite un nuevo registro.";
-                case enumErrores.correoYaRegistrado:    return "El correo ya est� registrado.";
-                case enumErrores.guidSesionFaltante:    return "El identificador de sesi�n es obligatorio.";
-                case enumErrores.sesionInvalida:        return "La sesi�n no es v�lida o ha expirado.";
-                case enumErrores.errorAbrirSesion:      return "No se pudo abrir la sesi�n.";
-                case enumErrores.sesionYaCerrada:       return "La sesi�n ya fue cerrada anteriormente.";
+                case enumErrores.codigoExpirado:        return "El código expiró. Pida que se le envíé el codigó nuevamente";
+                case enumErrores.cuentaYaActiva:        return "Esta cuenta ya está activa. Puede iniciar sesión.";
+                case enumErrores.correoNoRegistrado:    return "El correo no está registrado en el sistema.";
+                case enumErrores.correoYaRegistrado:    return "El correo ya está registrado.";
+                case enumErrores.guidSesionFaltante:    return "El identificador de sesión es obligatorio.";
+                case enumErrores.sesionInvalida:        return "La sesión no es válida o ha expirado.";
+                case enumErrores.errorAbrirSesion:      return "No se pudo abrir la sesión.";
+                case enumErrores.sesionYaCerrada:       return "La sesión ya fue cerrada anteriormente.";
                 case enumErrores.accesoNoAutorizado:    return "No tiene permiso para acceder a este recurso.";
                 case enumErrores.guidRutaFaltante:     return "El identificador de ruta es obligatorio.";
-                case enumErrores.favoritoYaExiste:     return "Esta ruta ya est� en sus favoritos.";
+                case enumErrores.favoritoYaExiste:     return "Esta ruta ya está en sus favoritos.";
                 case enumErrores.favoritoNoExiste:     return "El favorito indicado no existe.";
                 case enumErrores.guidFavoritoFaltante: return "El identificador de favorito es obligatorio.";
-                case enumErrores.errorBaseDatos:       return "Error en base de datos. Intente m�s tarde.";
+                case enumErrores.passwordActualIncorrecto: return "La contraseña actual es incorrecta.";
+                case enumErrores.passwordNuevoVacio:       return "La nueva contraseña es obligatoria.";
+                case enumErrores.passwordsNoCoinciden:     return "Las contraseñas no coinciden.";
+                case enumErrores.correoNuevoFaltante:      return "El nuevo correo es obligatorio.";
+                case enumErrores.codigoVerificacionFaltante: return "El código de verificación es obligatorio.";
+                case enumErrores.codigoVerificacionInvalido: return "El código de verificación es incorrecto.";
+                case enumErrores.sinSolicitudCambioCorreo: return "No hay solicitud de cambio de correo pendiente.";
+                case enumErrores.usuarioNoDesactivado:     return "La cuenta no está desactivada.";
+                case enumErrores.errorBaseDatos:       return "Error en base de datos. Intente más tarde.";
                 default:                               return "Ha ocurrido un error inesperado.";
             }
         }
 
         // ?????????????????????????????????????????????????????????????????????
-        // BIT�CORA
+        // BITÁCORA
         // ?????????????????????????????????????????????????????????????????????
 
         /// <summary>Inserta un registro en TB_BITACORA mediante SP_INSERTAR_BITACORA.</summary>
@@ -93,7 +103,7 @@ namespace Utilitarios
             }
             catch
             {
-                // La bit�cora no debe lanzar excepci�n hacia arriba
+                // La bitácora no debe lanzar excepción hacia arriba
             }
         }
 
@@ -101,7 +111,7 @@ namespace Utilitarios
         // TOKENS Y SEGURIDAD
         // ?????????????????????????????????????????????????????????????????????
 
-        /// <summary>Genera un c�digo de verificaci�n de 6 caracteres alfanum�ricos (igual que el profesor).</summary>
+        /// <summary>Genera un código de verificación de 6 caracteres alfanuméricos (igual que el profesor).</summary>
         public static string crearToken()
         {
             const string caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -113,8 +123,8 @@ namespace Utilitarios
         }
 
         /// <summary>
-        /// Genera hash BCrypt de la contrase�a.
-        /// BCrypt incluye su propio salt aleatorio � no necesitamos uno externo.
+        /// Genera hash BCrypt de la contraseña.
+        /// BCrypt incluye su propio salt aleatorio — no necesitamos uno externo.
         /// WorkFactor 12 = ~300ms por hash (balance seguridad/rendimiento).
         /// </summary>
         public static string hashPassword(string password)
@@ -122,7 +132,7 @@ namespace Utilitarios
             return BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
         }
 
-        /// <summary>Verifica que la contrase�a coincida con el hash BCrypt almacenado.</summary>
+        /// <summary>Verifica que la contraseña coincida con el hash BCrypt almacenado.</summary>
         public static bool verificarPassword(string password, string hashGuardado)
         {
             try
@@ -143,7 +153,7 @@ namespace Utilitarios
         /// Genera un JWT firmado con HMACSHA256.
         /// Payload: guidUsuario, guidSesion, nombre, rol, exp.
         /// </summary>
-        /// Este m�todo crea el token que el usuario recibe al hacer login.
+        /// Este método crea el token que el usuario recibe al hacer login.
         public static string generarJWT(Guid guidUsuario, Guid guidSesion, string nombre, string rol = "usuario")
         {
             string headerJson  = "{\"alg\":\"HS256\",\"typ\":\"JWT\"}";
@@ -160,7 +170,7 @@ namespace Utilitarios
         }
 
         /// <summary>
-        /// Valida el JWT y retorna el payload, o null si es inv�lido/expirado.
+        /// Valida el JWT y retorna el payload, o null si es inválido/expirado.
         /// </summary>
         public static JwtPayload validarJWT(string token) // DEVE CONTENER 3 PARTE  PARA QUE SEA VALIDO
             // VAIDAR LA FIRMA.  LEER EL PAYLOAD, PARSEAR, Y VALDAR LA EXPERACION SI TODO ESTA BIEN DEVUELVE EL PAYLOT 
@@ -190,7 +200,7 @@ namespace Utilitarios
 
         private static JwtPayload parsearPayload(string json)
         {
-            // Parser manual simple � evita dependencia de Newtonsoft en esta capa
+            // Parser manual simple — evita dependencia de Newtonsoft en esta capa
             JwtPayload p = new JwtPayload();
             p.guidUsuario = extraerValorJson(json, "guidUsuario");
             p.guidSesion  = extraerValorJson(json, "guidSesion");
@@ -257,40 +267,273 @@ namespace Utilitarios
         // CORREO
         // ?????????????????????????????????????????????????????????????????????
 
-        /// <summary>Env�a correo de verificaci�n con el c�digo de 6 caracteres.</summary>
+        /// <summary>Envía correo de verificación con el código de 6 caracteres.</summary>
         public static bool EnviarCorreoVerificacion(string nombre, string apellidos, string correo, string token)
         {
             try
             {
-                string cuerpo = $@"
+                // Si no hay nombre (reenvio), usar saludo generico
+                string saludo = string.IsNullOrEmpty(nombre)
+                    ? "Hola,"
+                    : string.Format("Hola <strong>{0} {1}</strong>,", nombre, apellidos);
+
+                string cuerpo = string.Format(@"
 <!DOCTYPE html>
 <html>
-<head><meta charset='UTF-8'></head>
-<body style='font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;'>
-    <div style='max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);'>
-        <h2 style='color: #333; text-align: center;'>�Bienvenido a MiBus!</h2>
-        <p style='color: #555; font-size: 16px;'>Hola <strong>{nombre} {apellidos}</strong>,</p>
-        <p style='color: #555; font-size: 16px;'>Gracias por registrarte. Para activar tu cuenta, usa el siguiente c�digo de verificaci�n:</p>
-        <div style='background: #007bff; color: white; padding: 15px; text-align: center; font-size: 32px; letter-spacing: 8px; border-radius: 5px; margin: 20px 0; font-weight: bold;'>
-            {token}
-        </div>
-        <p style='color: #888; font-size: 14px; text-align: center;'>Este c�digo expira en 24 horas.</p>
-        <hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;'>
-        <p style='color: #aaa; font-size: 12px; text-align: center;'>Si no solicitaste esta verificaci�n, ignora este correo.</p>
-    </div>
+<head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'></head>
+<body style='margin:0;padding:0;background-color:#f0f4f8;font-family:""Segoe UI"",Arial,sans-serif;'>
+  <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f0f4f8;padding:40px 20px;'>
+    <tr><td align='center'>
+      <table width='520' cellpadding='0' cellspacing='0' style='background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);'>
+
+        <!-- Header -->
+        <tr>
+          <td style='background:linear-gradient(135deg,#1a73e8 0%,#0d47a1 100%);padding:36px 40px;text-align:center;'>
+            <div style='display:inline-block;background:rgba(255,255,255,0.15);border-radius:50%;width:56px;height:56px;line-height:56px;font-size:28px;margin-bottom:12px;'>🚌</div>
+            <h1 style='margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.5px;'>MiBus App</h1>
+            <p style='margin:6px 0 0;color:rgba(255,255,255,0.8);font-size:13px;'>Transporte público, Alajuela</p>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style='padding:40px 40px 32px;'>
+            <h2 style='margin:0 0 8px;color:#1a1a2e;font-size:20px;font-weight:600;'>Verifica tu cuenta</h2>
+            <p style='margin:0 0 24px;color:#6b7280;font-size:15px;line-height:1.6;'>{0} ingresa el siguiente código para activar tu cuenta en MiBus:</p>
+
+            <!-- Codigo -->
+            <table width='100%' cellpadding='0' cellspacing='0'>
+              <tr>
+                <td align='center' style='padding:8px 0 28px;'>
+                  <table cellpadding='0' cellspacing='0'>
+                    <tr>", saludo);
+
+                // Generar celdas individuales para cada caracter del codigo
+                System.Text.StringBuilder celdas = new System.Text.StringBuilder();
+                foreach (char c in token)
+                {
+                    celdas.AppendFormat(
+                        "<td style='width:48px;height:56px;background:#f8faff;border:2px solid #dbe4ff;" +
+                        "border-radius:10px;text-align:center;vertical-align:middle;" +
+                        "font-size:26px;font-weight:700;color:#1a73e8;margin:0 4px;" +
+                        "font-family:monospace;' align='center'>{0}</td>" +
+                        "<td width='8'></td>", c);
+                }
+
+                string cuerpo2 = string.Format(@"
+                      {0}
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Tiempo de expiracion -->
+            <table width='100%' cellpadding='0' cellspacing='0' style='margin-bottom:28px;'>
+              <tr>
+                <td style='background:#fff8e1;border-left:4px solid #f59e0b;border-radius:0 8px 8px 0;padding:12px 16px;'>
+                  <p style='margin:0;color:#92400e;font-size:13px;'>
+                    ⏱ <strong>Este código expira en 10 minutos.</strong>
+                    Si ya expiró, solicita uno nuevo en la opción <em>Reenviar código</em>.
+                  </p>
+                </td>
+              </tr>
+            </table>
+
+            <p style='margin:0;color:#9ca3af;font-size:13px;line-height:1.6;'>
+              Si no solicitaste esta verificación, puedes ignorar este mensaje con seguridad.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style='background:#f8fafc;padding:20px 40px;border-top:1px solid #e5e7eb;text-align:center;'>
+            <p style='margin:0;color:#9ca3af;font-size:12px;'>
+              © 2025 MiBus — Alajuela, Costa Rica<br>
+              Este es un mensaje automático, no respondas a este correo.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
 </body>
-</html>";
+</html>", celdas.ToString());
+
+                string cuerpoCompleto = cuerpo + cuerpo2;
 
                 using (SmtpClient smtp = new SmtpClient(SMTP_HOST, SMTP_PORT))
                 {
-                    smtp.EnableSsl             = true;
-                    smtp.Credentials           = new System.Net.NetworkCredential(SMTP_USUARIO, SMTP_PASSWORD);
-                    smtp.DeliveryMethod        = SmtpDeliveryMethod.Network;
+                    smtp.EnableSsl      = true;
+                    smtp.Credentials    = new System.Net.NetworkCredential(SMTP_USUARIO, SMTP_PASSWORD);
+                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
 
                     MailMessage mensaje = new MailMessage();
                     mensaje.From       = new MailAddress(SMTP_USUARIO, "MiBus App");
-                    mensaje.To.Add(new MailAddress(correo, $"{nombre} {apellidos}"));
-                    mensaje.Subject    = "Confirma tu cuenta en MiBus";
+                    mensaje.To.Add(new MailAddress(correo));
+                    mensaje.Subject    = "🔐 Tu código de verificación — MiBus";
+                    mensaje.Body       = cuerpoCompleto;
+                    mensaje.IsBodyHtml = true;
+
+                    smtp.Send(mensaje);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
+        // VALIDACIONES COMUNES
+        // ?????????????????????????????????????????????????????????????????????
+
+        /// <summary>Envía el código de verificación al nuevo correo para confirmar el cambio.</summary>
+        public static bool EnviarCodigoCambioCorreo(string nombre, string apellidos, string correoNuevo, string codigo)
+        {
+            try
+            {
+                string saludo = string.IsNullOrEmpty(nombre)
+                    ? "Hola,"
+                    : string.Format("Hola <strong>{0} {1}</strong>,", nombre, apellidos);
+
+                string cuerpo = string.Format(@"
+<!DOCTYPE html>
+<html>
+<head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'></head>
+<body style='margin:0;padding:0;background-color:#f0f4f8;font-family:""Segoe UI"",Arial,sans-serif;'>
+  <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f0f4f8;padding:40px 20px;'>
+    <tr><td align='center'>
+      <table width='520' cellpadding='0' cellspacing='0' style='background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);'>
+        <tr>
+          <td style='background:linear-gradient(135deg,#1a73e8 0%,#0d47a1 100%);padding:36px 40px;text-align:center;'>
+            <h1 style='margin:0;color:#ffffff;font-size:24px;font-weight:700;'>🚌 MiBus App</h1>
+            <p style='margin:6px 0 0;color:rgba(255,255,255,0.8);font-size:13px;'>Transporte público, Alajuela</p>
+          </td>
+        </tr>
+        <tr>
+          <td style='padding:40px 40px 32px;'>
+            <h2 style='margin:0 0 8px;color:#1a1a2e;font-size:20px;font-weight:600;'>Confirma tu nuevo correo</h2>
+            <p style='margin:0 0 24px;color:#6b7280;font-size:15px;line-height:1.6;'>{0} usa este código para confirmar el cambio de correo electrónico en MiBus. Expira en <strong>30 minutos</strong>.</p>
+            <table width='100%' cellpadding='0' cellspacing='0'>
+              <tr>
+                <td align='center' style='padding:8px 0 28px;'>
+                  <div style='display:inline-block;background:#f0f4ff;border:2px solid #1a73e8;border-radius:12px;padding:18px 40px;'>
+                    <span style='font-size:36px;font-weight:800;color:#1a73e8;letter-spacing:10px;font-family:monospace;'>{1}</span>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <p style='margin:0;color:#9ca3af;font-size:13px;line-height:1.6;'>
+              Si no solicitaste este cambio, ignora este mensaje y tu correo no será modificado.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style='background:#f8fafc;padding:20px 40px;border-top:1px solid #e5e7eb;text-align:center;'>
+            <p style='margin:0;color:#9ca3af;font-size:12px;'>
+              © 2025 MiBus — Alajuela, Costa Rica<br>
+              Este es un mensaje automático, no respondas a este correo.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>", saludo, codigo);
+
+                using (SmtpClient smtp = new SmtpClient(SMTP_HOST, SMTP_PORT))
+                {
+                    smtp.EnableSsl      = true;
+                    smtp.Credentials    = new System.Net.NetworkCredential(SMTP_USUARIO, SMTP_PASSWORD);
+                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+                    MailMessage mensaje = new MailMessage();
+                    mensaje.From       = new MailAddress(SMTP_USUARIO, "MiBus App");
+                    mensaje.To.Add(new MailAddress(correoNuevo));
+                    mensaje.Subject    = "📧 Confirma tu nuevo correo — MiBus";
+                    mensaje.Body       = cuerpo;
+                    mensaje.IsBodyHtml = true;
+
+                    smtp.Send(mensaje);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>Envía el código de reactivación al correo del usuario desactivado.</summary>
+        public static bool EnviarCodigoReactivacion(string nombre, string apellidos, string correo, string codigo)
+        {
+            try
+            {
+                string saludo = string.IsNullOrEmpty(nombre)
+                    ? "Hola,"
+                    : string.Format("Hola <strong>{0} {1}</strong>,", nombre, apellidos);
+
+                string cuerpo = string.Format(@"
+<!DOCTYPE html>
+<html>
+<head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'></head>
+<body style='margin:0;padding:0;background-color:#f0f4f8;font-family:""Segoe UI"",Arial,sans-serif;'>
+  <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f0f4f8;padding:40px 20px;'>
+    <tr><td align='center'>
+      <table width='520' cellpadding='0' cellspacing='0' style='background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);'>
+        <tr>
+          <td style='background:linear-gradient(135deg,#1a73e8 0%,#0d47a1 100%);padding:36px 40px;text-align:center;'>
+            <h1 style='margin:0;color:#ffffff;font-size:24px;font-weight:700;'>🚌 MiBus App</h1>
+            <p style='margin:6px 0 0;color:rgba(255,255,255,0.8);font-size:13px;'>Transporte público, Alajuela</p>
+          </td>
+        </tr>
+        <tr>
+          <td style='padding:40px 40px 32px;'>
+            <h2 style='margin:0 0 8px;color:#1a1a2e;font-size:20px;font-weight:600;'>Reactivación de cuenta</h2>
+            <p style='margin:0 0 24px;color:#6b7280;font-size:15px;line-height:1.6;'>{0} usa este código para reactivar tu cuenta en MiBus. Expira en <strong>30 minutos</strong>.</p>
+            <table width='100%' cellpadding='0' cellspacing='0'>
+              <tr>
+                <td align='center' style='padding:8px 0 28px;'>
+                  <div style='display:inline-block;background:#f0f4ff;border:2px solid #1a73e8;border-radius:12px;padding:18px 40px;'>
+                    <span style='font-size:36px;font-weight:800;color:#1a73e8;letter-spacing:10px;font-family:monospace;'>{1}</span>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <p style='margin:0;color:#9ca3af;font-size:13px;line-height:1.6;'>
+              Si no solicitaste esto, ignora este mensaje.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style='background:#f8fafc;padding:20px 40px;border-top:1px solid #e5e7eb;text-align:center;'>
+            <p style='margin:0;color:#9ca3af;font-size:12px;'>
+              © 2025 MiBus — Alajuela, Costa Rica<br>
+              Este es un mensaje automático, no respondas a este correo.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>", saludo, codigo);
+
+                using (SmtpClient smtp = new SmtpClient(SMTP_HOST, SMTP_PORT))
+                {
+                    smtp.EnableSsl      = true;
+                    smtp.Credentials    = new System.Net.NetworkCredential(SMTP_USUARIO, SMTP_PASSWORD);
+                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+                    MailMessage mensaje = new MailMessage();
+                    mensaje.From       = new MailAddress(SMTP_USUARIO, "MiBus App");
+                    mensaje.To.Add(new MailAddress(correo));
+                    mensaje.Subject    = "🔓 Reactiva tu cuenta — MiBus";
                     mensaje.Body       = cuerpo;
                     mensaje.IsBodyHtml = true;
 
@@ -308,7 +551,7 @@ namespace Utilitarios
         // VALIDACIONES COMUNES
         // ?????????????????????????????????????????????????????????????????????
 
-        /// <summary>Valida formato b�sico de correo electr�nico.</summary>
+        /// <summary>Valida formato básico de correo electrónico.</summary>
         public static bool EsEmailValido(string email)
         {
             if (string.IsNullOrWhiteSpace(email)) return false;
