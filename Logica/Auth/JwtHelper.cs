@@ -1,6 +1,7 @@
 using AccesoDatos;
 using System;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Logica.Auth
 {
@@ -38,7 +39,7 @@ namespace Logica.Auth
             try
             {
                 Guid sesion = Guid.Parse(guidSesion);
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     SP_VALIDAR_SESIONResult sesionBD = linq.SP_VALIDAR_SESION(sesion).FirstOrDefault();
                     return sesionBD != null
@@ -46,8 +47,9 @@ namespace Logica.Auth
                         && sesionBD.GUID_USUARIO.ToString().Equals(guidUsuario, StringComparison.OrdinalIgnoreCase);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("[JwtHelper] validarSesionEnBD error: " + ex.Message + " | " + ex.InnerException?.Message);
                 return false;
             }
         }

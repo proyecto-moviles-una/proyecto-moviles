@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http.Controllers;
@@ -5,9 +6,9 @@ using System.Web.Http.Filters;
 
 namespace API.Filters
 {
-    /// Es un filtro de seguridad que se ejecuta ANTES del controller,Bloquear cualquier request que no tenga un JWT válido<summary>
+    /// Es un filtro de seguridad que se ejecuta ANTES del controller,Bloquear cualquier request que no tenga un JWT vï¿½lido<summary>
     /// Filtro que valida el JWT en el header Authorization: Bearer {token}
-    /// Úsalo con [JwtAuth] en cualquier controller o acción que requiera sesión activa.
+    /// ï¿½salo con [JwtAuth] en cualquier controller o acciï¿½n que requiera sesiï¿½n activa.
     /// </summary>
     /// 
     //AQUI REVISA QUE VENGA EL TOKEN SI NO VIEN ERROR 401
@@ -21,27 +22,30 @@ namespace API.Filters
             {
                 actionContext.Response = actionContext.Request.CreateErrorResponse(
                     HttpStatusCode.Unauthorized,
-                    "Token de autorización requerido. Usa: Authorization: Bearer {tu_token}");
+                    "Token de autorizaciï¿½n requerido. Usa: Authorization: Bearer {tu_token}");
                 return;
             }
 
             Logica.Auth.TokenInfo info = Logica.Auth.JwtHelper.validarToken(authHeader.Parameter);
-            // Verifica firma del token, expiracion y formato
+            Debug.WriteLine("[JwtAuth] Token recibido. VÃ¡lido=" + info.valido + " guidSesion=" + info.guidSesion);
+
             if (!info.valido)
             {
+                Debug.WriteLine("[JwtAuth] Token invÃ¡lido o expirado.");
                 actionContext.Response = actionContext.Request.CreateErrorResponse(
                     HttpStatusCode.Unauthorized,
-                    "Token inválido o expirado. Inicia sesión nuevamente.");
+                    "Token invï¿½lido o expirado. Inicia sesiï¿½n nuevamente.");
                 return;
             }
 
-            // Verifica que la sesion siga activa en BD y pertenezca al usuario del token
-            // Esto invalida tokens de sesiones cerradas o usuarios desactivados
-            if (!Logica.Auth.JwtHelper.validarSesionEnBD(info.guidSesion, info.guidUsuario))
+            bool sesionActiva = Logica.Auth.JwtHelper.validarSesionEnBD(info.guidSesion, info.guidUsuario);
+            Debug.WriteLine("[JwtAuth] SesiÃ³n activa en BD=" + sesionActiva);
+
+            if (!sesionActiva)
             {
                 actionContext.Response = actionContext.Request.CreateErrorResponse(
                     HttpStatusCode.Unauthorized,
-                    "La sesión no está activa. Inicia sesión nuevamente.");
+                    "La sesiï¿½n no estï¿½ activa. Inicia sesiï¿½n nuevamente.");
                 return;
             }
 

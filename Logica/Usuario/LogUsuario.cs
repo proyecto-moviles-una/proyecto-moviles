@@ -665,7 +665,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_REENVIAR_ACTIVACION(
                         req.correo,
@@ -740,7 +740,7 @@ namespace Logica.Usuario
 
                 // Verificar la contraseña actual del usuario
                 SP_LOGINResult usuarioBD = null;
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     usuarioBD = linq.SP_OBTENER_HASH_USUARIO(req.guidUsuario).FirstOrDefault();
                 }
@@ -768,7 +768,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_SOLICITAR_CAMBIO_CORREO(
                         req.guidUsuario,
@@ -842,7 +842,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_CONFIRMAR_CAMBIO_CORREO(
                         req.guidUsuario,
@@ -920,7 +920,7 @@ namespace Logica.Usuario
                 string               nombre      = null;
                 string               apellidos   = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_SOLICITAR_REACTIVACION(
                         req.correo,
@@ -1008,7 +1008,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_REACTIVAR_USUARIO(
                         req.correo,
@@ -1197,7 +1197,7 @@ namespace Logica.Usuario
 
                 // Obtener el hash actual del usuario por su GUID
                 SP_LOGINResult usuarioBD = null;
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     usuarioBD = linq.SP_OBTENER_HASH_USUARIO(req.guidUsuario).FirstOrDefault();
                 }
@@ -1226,7 +1226,7 @@ namespace Logica.Usuario
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
 
-                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                using (ConexionLinqDataContext linq = DataContextFactory.Create())
                 {
                     linq.SP_CAMBIAR_PASSWORD(req.guidUsuario, nuevoHash, ref idReturn, ref errorIdBD, ref errorDescBD);
                 }
