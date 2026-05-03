@@ -137,9 +137,16 @@ namespace AccesoDatos
 		}
 		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_CERRAR_SESION")]
-		public int SP_CERRAR_SESION([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_SESION", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_SESION)
+		public int SP_CERRAR_SESION(
+			[global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_SESION",       DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_SESION,
+			[global::System.Data.Linq.Mapping.ParameterAttribute(Name="FILASACTUALIZADAS", DbType="Int")]           ref System.Nullable<int> fILASACTUALIZADAS,
+			[global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID",           DbType="Int")]           ref System.Nullable<int> eRRORID,
+			[global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION",  DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
 		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_SESION);
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_SESION, fILASACTUALIZADAS, eRRORID, eRRORDESCRIPCION);
+			fILASACTUALIZADAS = ((System.Nullable<int>)(result.GetParameterValue(1)));
+			eRRORID           = ((System.Nullable<int>)(result.GetParameterValue(2)));
+			eRRORDESCRIPCION  = ((string)(result.GetParameterValue(3)));
 			return ((int)(result.ReturnValue));
 		}
 		

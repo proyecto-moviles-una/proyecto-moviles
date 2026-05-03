@@ -26,7 +26,7 @@ namespace API.Filters
             }
 
             Logica.Auth.TokenInfo info = Logica.Auth.JwtHelper.validarToken(authHeader.Parameter);
-            // YA MA A VALIDAR TOKEN DO DE SE VEIRIFICA LA FIRMA DEL TOKEN , EXPERACION Y FORMAT
+            // Verifica firma del token, expiracion y formato
             if (!info.valido)
             {
                 actionContext.Response = actionContext.Request.CreateErrorResponse(
@@ -35,11 +35,22 @@ namespace API.Filters
                 return;
             }
 
-            // Disponible en el controller con: Request.Properties["tokenInfo"]
-            actionContext.Request.Properties["tokenInfo"] = info; // GUARDA LOS DATOS DEL TOKEN OSEA LOS GUID DE SESION Y USUARIO, NOMBRE
+            // Verifica que la sesion siga activa en BD y pertenezca al usuario del token
+            // Esto invalida tokens de sesiones cerradas o usuarios desactivados
+            if (!Logica.Auth.JwtHelper.validarSesionEnBD(info.guidSesion, info.guidUsuario))
+            {
+                actionContext.Response = actionContext.Request.CreateErrorResponse(
+                    HttpStatusCode.Unauthorized,
+                    "La sesión no está activa. Inicia sesión nuevamente.");
+                return;
+            }
+
+            // Guarda los datos del token para usarlos en los controllers
+            actionContext.Request.Properties["tokenInfo"] = info;
 
             base.OnActionExecuting(actionContext);
         }
     }
 }
+
 

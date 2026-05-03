@@ -1,0 +1,42 @@
+-- SP_CAMBIAR_PASSWORD: actualiza la contraseña de un usuario autenticado
+-- Recibe el GUID del usuario y el nuevo hash (la validacion de la clave actual se hace en C#)
+CREATE OR ALTER PROCEDURE dbo.SP_CAMBIAR_PASSWORD
+(
+    @GUID_USUARIO     UNIQUEIDENTIFIER,
+    @NUEVO_PASSWORD   NVARCHAR(MAX),
+    @IDRETURN         INT OUTPUT,
+    @ERRORID          INT OUTPUT,
+    @ERRORDESCRIPCION NVARCHAR(MAX) OUTPUT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        DECLARE @ID_USUARIO BIGINT;
+        SELECT @ID_USUARIO = ID_USUARIO FROM dbo.TB_USUARIO
+        WHERE GUID_USUARIO = @GUID_USUARIO AND ESTADO = 1;
+
+        IF @ID_USUARIO IS NULL
+        BEGIN
+            SET @IDRETURN        = -1;
+            SET @ERRORID         = 6;
+            SET @ERRORDESCRIPCION = N'USUARIO NO ENCONTRADO O INACTIVO';
+            RETURN;
+        END
+
+        UPDATE dbo.TB_USUARIO
+        SET [PASSWORD] = @NUEVO_PASSWORD
+        WHERE ID_USUARIO = @ID_USUARIO;
+
+        SET @IDRETURN        = @@ROWCOUNT;
+        SET @ERRORID         = 0;
+        SET @ERRORDESCRIPCION = N'';
+    END TRY
+    BEGIN CATCH
+        SET @IDRETURN        = -1;
+        SET @ERRORID         = ERROR_NUMBER();
+        SET @ERRORDESCRIPCION = ERROR_MESSAGE();
+        INSERT INTO dbo.TB_ERROR_EN_BASE_DATOS(SEVERIDAD, STORED_PROCEDURE, NUMERO, DESCRIPCION, LINEA)
+        SELECT ERROR_SEVERITY(), ERROR_PROCEDURE(), ERROR_NUMBER(), ERROR_MESSAGE(), ERROR_LINE();
+    END CATCH
+END
