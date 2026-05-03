@@ -1,9 +1,9 @@
+using AccesoDatos;
+using System;
+using System.Linq;
+
 namespace Logica.Auth
 {
-    /// <summary>
-    /// Resultado simplificado de la validacion del JWT.
-    /// Se expone aqui para que API no necesite referenciar directamente Utilitarios.
-    /// </summary>
     public class TokenInfo
     {
         public bool   valido       { get; set; }
@@ -13,18 +13,11 @@ namespace Logica.Auth
         public string rol          { get; set; }
     }
 
-    /// <summary>
-    /// Wrapper de validacion JWT accesible desde el proyecto API.
-    /// </summary>
     public static class JwtHelper
     {
-        /// <summary>
-        /// Valida el token JWT y retorna la info del usuario, o valido=false si es invalido/expirado.
-        /// </summary>
         public static TokenInfo validarToken(string token)
         {
             Utilitarios.JwtPayload payload = Utilitarios.Utilitarios.validarJWT(token);
-
             if (payload == null)
                 return new TokenInfo { valido = false };
 
@@ -37,5 +30,28 @@ namespace Logica.Auth
                 rol         = payload.rol
             };
         }
+
+        /// Valida que la sesion del JWT este activa en BD y pertenezca al usuario.
+        /// Usa SP_VALIDAR_SESION (ya en DBML) que retorna GUID_USUARIO y ESTADO (bool).
+        public static bool validarSesionEnBD(string guidSesion, string guidUsuario)
+        {
+            try
+            {
+                Guid sesion = Guid.Parse(guidSesion);
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    SP_VALIDAR_SESIONResult sesionBD = linq.SP_VALIDAR_SESION(sesion).FirstOrDefault();
+                    return sesionBD != null
+                        && sesionBD.ESTADO == true
+                        && sesionBD.GUID_USUARIO.ToString().Equals(guidUsuario, StringComparison.OrdinalIgnoreCase);
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
+
+

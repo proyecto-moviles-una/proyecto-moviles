@@ -25,6 +25,8 @@ namespace Core.Enum
         correoYaRegistrado      = 10,
         usuarioDesactivado      = 11,
         codigoExpirado          = 12,
+        cuentaYaActiva          = 13,
+        correoNoRegistrado      = 14,
 
         // Sesión
         guidSesionFaltante      = 20,
@@ -38,5 +40,19 @@ namespace Core.Enum
         favoritoYaExiste        = 31,
         favoritoNoExiste        = 32,
         guidFavoritoFaltante    = 33,
+
+        // Password
+        passwordActualIncorrecto = 40,
+        passwordNuevoVacio       = 41,
+        passwordsNoCoinciden     = 42,
+
+        // Cambio de correo
+        correoNuevoFaltante      = 43,
+        codigoVerificacionFaltante = 44,
+        codigoVerificacionInvalido = 45,
+        sinSolicitudCambioCorreo = 46,
+
+        // Reactivar usuario
+        usuarioNoDesactivado     = 47,
     }
 }
