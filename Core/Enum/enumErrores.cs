@@ -28,7 +28,7 @@ namespace Core.Enum
         cuentaYaActiva          = 13,
         correoNoRegistrado      = 14,
 
-        // Sesión
+        // Sesiï¿½n
         guidSesionFaltante      = 20,
         sesionInvalida          = 21,
         errorAbrirSesion        = 22,
@@ -54,5 +54,24 @@ namespace Core.Enum
 
         // Reactivar usuario
         usuarioNoDesactivado     = 47,
+        // Ruta
+        nombreRutaFaltante      = 40,
+        guidEmpresaFaltante     = 41,
+        errorInsertandoRuta     = 42,
+        errorActualizandoRuta   = 43,
+        errorDesactivandoRuta   = 44,
+
+        // Horario
+        horaSalidaFaltante      = 50,
+        diasServicioFaltante    = 51,
+        errorInsertandoHorario  = 52,
+
+        // Empresa
+        nombreEmpresaFaltante   = 60,
+        errorInsertandoEmpresa  = 61,
+
+        // Zona
+        nombreZonaFaltante      = 70,
+        errorInsertandoZona     = 71,
     }
 }
