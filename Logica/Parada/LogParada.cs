@@ -64,10 +64,24 @@ namespace Logica.Parada
                 {
                     return res;
                 }
+
                 // Inserta la nueva parada en la base de datos y mapea el resultado a la entidad Core
                 // Inserción en base de datos
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
+
+                    // Validar duplicado
+                    if (db.TB_PARADAs.Any(x => x.NOMBRE == req.Nombre && x.ESTADO == true))
+                    {
+                        res.error.Add(new Error
+                        {
+                            Codigo = (int)EnumErroresParada.paradaDuplicada,
+                            Mensaje = "Ya existe una parada con ese nombre"
+                        });
+
+                        return res;
+                    }
+
                     // Genera un identificador único (GUID) para la nueva parada
                     Guid guid = Guid.NewGuid();
 
