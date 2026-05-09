@@ -1,13 +1,15 @@
-ï»¿using AccesoDatos;
+using AccesoDatos;
 using Core.Entidades;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
 using Core.Enum;
+using Core.Enum.Autenticacion;
+using Core.Enum.Generales;
+using Core.Enum.Perfil;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Logica.Usuario
 {
@@ -31,44 +33,44 @@ namespace Logica.Usuario
                 // ?? Validaciones ??????????????????????????????????????????
                 if (string.IsNullOrEmpty(req.usuario.nombre))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.nombreFaltante));
-                    errorId   = (int)enumErrores.nombreFaltante;
-                    errorDesc = enumErrores.nombreFaltante.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.nombreFaltante));
+                    errorId   = (int)enumErroresAutenticacion.nombreFaltante;
+                    errorDesc = enumErroresAutenticacion.nombreFaltante.ToString();
                 }
 
                 if (string.IsNullOrEmpty(req.usuario.apellidos))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.apellidosFaltante));
-                    errorId   = (int)enumErrores.apellidosFaltante;
-                    errorDesc = enumErrores.apellidosFaltante.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.apellidosFaltante));
+                    errorId   = (int)enumErroresAutenticacion.apellidosFaltante;
+                    errorDesc = enumErroresAutenticacion.apellidosFaltante.ToString();
                 }
 
                 if (string.IsNullOrEmpty(req.usuario.email))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailFaltante));
-                    errorId   = (int)enumErrores.emailFaltante;
-                    errorDesc = enumErrores.emailFaltante.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.emailFaltante));
+                    errorId   = (int)enumErroresAutenticacion.emailFaltante;
+                    errorDesc = enumErroresAutenticacion.emailFaltante.ToString();
                 }
                 else if (!Utilitarios.Utilitarios.EsEmailValido(req.usuario.email))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailInvalido));
-                    errorId   = (int)enumErrores.emailInvalido;
-                    errorDesc = enumErrores.emailInvalido.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.emailInvalido));
+                    errorId   = (int)enumErroresAutenticacion.emailInvalido;
+                    errorDesc = enumErroresAutenticacion.emailInvalido.ToString();
                 }
 
                 if (string.IsNullOrEmpty(req.usuario.password))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordVacio));
-                    errorId   = (int)enumErrores.passwordVacio;
-                    errorDesc = enumErrores.passwordVacio.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.passwordVacio));
+                    errorId   = (int)enumErroresAutenticacion.passwordVacio;
+                    errorDesc = enumErroresAutenticacion.passwordVacio.ToString();
                 }
 
                 if (res.error.Any()) return res; // si ay errores no sigo devuelvo la respues con los errores
 
-                // ?? Hashear contraseÃ±a con BCrypt ??????????????????????????
+                // ?? Hashear contraseña con BCrypt ??????????????????????????
                 string hashPassword = Utilitarios.Utilitarios.hashPassword(req.usuario.password);
 
-                // ?? Token de verificaciÃ³n de correo ????????????????????????
+                // ?? Token de verificación de correo ????????????????????????
                 string token = Utilitarios.Utilitarios.crearToken();
 
                 // ?? Llamar SP ??????????????????????????????????????????????
@@ -93,18 +95,21 @@ namespace Logica.Usuario
 
                 if (guidReturn == null || guidReturn == Guid.Empty) // si el sp no devuleve el guide significa que fallo
                 {
-                    // Si el SP devolviÃ³ errorId=1 es correo duplicado, si no es error genÃ©rico
-                    enumErrores codError = (errorIdBD == 1)
-                        ? enumErrores.correoYaRegistrado
-                        : enumErrores.errorBaseDatos;
+                    // Si el SP devolvió errorId=1 es correo duplicado, si no es error genérico
+                    int codError = (errorIdBD == 1)
+                        ? (int)enumErroresAutenticacion.correoYaRegistrado
+                        : (int)enumErroresGenerales.errorBaseDatos;
+                    string codErrorDesc = (errorIdBD == 1)
+                        ? enumErroresAutenticacion.correoYaRegistrado.ToString()
+                        : enumErroresGenerales.errorBaseDatos.ToString();
 
                     res.error.Add(Utilitarios.Utilitarios.crearError(codError));
-                    errorId   = (int)codError;
-                    errorDesc = errorDescBD ?? codError.ToString();
+                    errorId   = codError;
+                    errorDesc = errorDescBD ?? codErrorDesc;
                     return res;
                 }
 
-                // ?? Enviar correo de verificaciÃ³n ??????????????????????????
+                // ?? Enviar correo de verificación ??????????????????????????
                 bool correoEnviado = Utilitarios.Utilitarios.EnviarCorreoVerificacion(
                     req.usuario.nombre, req.usuario.apellidos, req.usuario.email, token);
 
@@ -117,23 +122,23 @@ namespace Logica.Usuario
                 }
                 else
                 {
-                    // Usuario creado pero correo fallÃ³ â€” retornamos token para activar manualmente
+                    // Usuario creado pero correo falló — retornamos token para activar manualmente
                     res.resultado         = true;
                     res.guidUsuario       = guidReturn;
-                    res.tokenVerificacion = token;   // Ãºsalo en POST /api/auth/activar para pruebas
+                    res.tokenVerificacion = token;   // úsalo en POST /api/auth/activar para pruebas
                     res.error             = null;
                     tipoBitacora          = enumBitacora.exitoso;
                 }
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -178,20 +183,20 @@ namespace Logica.Usuario
                 }
                 else
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorActivandoUsuario));
-                    errorId   = (int)enumErrores.errorActivandoUsuario;
-                    errorDesc = enumErrores.errorActivandoUsuario.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.errorActivandoUsuario));
+                    errorId   = (int)enumErroresAutenticacion.errorActivandoUsuario;
+                    errorDesc = enumErroresAutenticacion.errorActivandoUsuario.ToString();
                 }
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -215,12 +220,12 @@ namespace Logica.Usuario
                 // ?? Validaciones ??????????????????????????????????????????
                 if (string.IsNullOrEmpty(req.email))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.emailFaltante));
                     return res;
                 }
                 if (string.IsNullOrEmpty(req.password))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordVacio));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.passwordVacio));
                     return res;
                 }
 
@@ -233,38 +238,38 @@ namespace Logica.Usuario
 
                 if (spResult == null)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.loginIncorrecto));
-                    errorId   = (int)enumErrores.loginIncorrecto;
-                    errorDesc = enumErrores.loginIncorrecto.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.loginIncorrecto));
+                    errorId   = (int)enumErroresAutenticacion.loginIncorrecto;
+                    errorDesc = enumErroresAutenticacion.loginIncorrecto.ToString();
                     return res;
                 }
 
-                // ?? Verificar contraseÃ±a con BCrypt ????????????????????????
+                // ?? Verificar contraseña con BCrypt ????????????????????????
                 if (!Utilitarios.Utilitarios.verificarPassword(req.password, spResult.HASH_PASSWORD))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.loginIncorrecto));
-                    errorId   = (int)enumErrores.loginIncorrecto;
-                    errorDesc = enumErrores.loginIncorrecto.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.loginIncorrecto));
+                    errorId   = (int)enumErroresAutenticacion.loginIncorrecto;
+                    errorDesc = enumErroresAutenticacion.loginIncorrecto.ToString();
                     return res;
                 }
 
-                // ?? Verificar que la cuenta estÃ© activa ????????????????????
+                // ?? Verificar que la cuenta esté activa ????????????????????
                 if (spResult.ESTADO == 0)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.usuarioInactivo));
-                    errorId   = (int)enumErrores.usuarioInactivo;
-                    errorDesc = enumErrores.usuarioInactivo.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.usuarioInactivo));
+                    errorId   = (int)enumErroresAutenticacion.usuarioInactivo;
+                    errorDesc = enumErroresAutenticacion.usuarioInactivo.ToString();
                     return res;
                 }
                 if (spResult.ESTADO != 1)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.usuarioDesactivado));
-                    errorId   = (int)enumErrores.usuarioDesactivado;
-                    errorDesc = enumErrores.usuarioDesactivado.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.usuarioDesactivado));
+                    errorId   = (int)enumErroresAutenticacion.usuarioDesactivado;
+                    errorDesc = enumErroresAutenticacion.usuarioDesactivado.ToString();
                     return res;
                 }
 
-                // ?? Abrir sesiÃ³n en BD ?????????????????????????????????????
+                // ?? Abrir sesión en BD ?????????????????????????????????????
                 string                       jwtTemp     = Utilitarios.Utilitarios.crearToken();
                 System.Nullable<System.Guid> guidSesion  = null;
                 System.Nullable<int>         idReturn    = null;
@@ -285,9 +290,9 @@ namespace Logica.Usuario
 
                 if (guidSesion == null || guidSesion == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorAbrirSesion));
-                    errorId   = (int)enumErrores.errorAbrirSesion;
-                    errorDesc = enumErrores.errorAbrirSesion.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.errorAbrirSesion));
+                    errorId   = (int)enumErroresAutenticacion.errorAbrirSesion;
+                    errorDesc = enumErroresAutenticacion.errorAbrirSesion.ToString();
                     return res; // si el guid n se genero viene vacion entonces nodeja 
                 }
                 /// s ya se creo el gid  entonces se inserta el guid en el JWt
@@ -311,20 +316,20 @@ namespace Logica.Usuario
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
         }
 
         // ?????????????????????????????????????????????????????????????????????
-        // CERRAR SESIÃ“N (LOGOUT)
+        // CERRAR SESIÓN (LOGOUT)
         // ?????????????????????????????????????????????????????????????????????
         public ResCerrarSesion logout(ReqCerrarSesion req)
         {
@@ -336,17 +341,17 @@ namespace Logica.Usuario
             int          errorId      = 0;
             string       errorDesc    = string.Empty;
             //Recibe guidSesion
-            //â†’ valida que venga
-            //â†’ llama SP_CERRAR_SESION
-             //â†’ si cerrÃ³ 1 sesiÃ³n, Ã©xito
-            //â†’ si no, error
-             //â†’ guarda bitÃ¡cora
+            //? valida que venga
+            //? llama SP_CERRAR_SESION
+             //? si cerró 1 sesión, éxito
+            //? si no, error
+             //? guarda bitácora
 
             try
             {
                 if (req.guidSesion == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidSesionFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidSesionFaltante));
                     return res;
                 }
 
@@ -365,21 +370,21 @@ namespace Logica.Usuario
                 }
                 else
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.sesionYaCerrada));
-                    errorId   = (int)enumErrores.sesionYaCerrada;
-                    errorDesc = enumErrores.sesionYaCerrada.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.sesionYaCerrada));
+                    errorId   = (int)enumErroresAutenticacion.sesionYaCerrada;
+                    errorDesc = enumErroresAutenticacion.sesionYaCerrada.ToString();
                 }
 
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -402,7 +407,7 @@ namespace Logica.Usuario
             {
                 if (req.guid == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
                     return res;
                 }
 
@@ -414,7 +419,7 @@ namespace Logica.Usuario
 
                 if (spResult == null)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
                     return res;
                 }
 
@@ -425,13 +430,13 @@ namespace Logica.Usuario
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(req.guid, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -454,17 +459,17 @@ namespace Logica.Usuario
             {
                 if (req.guidUsuario == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
                     return res;
                 }
                 if (string.IsNullOrEmpty(req.nombre))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.nombreFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.nombreFaltante));
                     return res;
                 }
                 if (string.IsNullOrEmpty(req.apellidos))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.apellidosFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.apellidosFaltante));
                     return res;
                 }
 
@@ -491,20 +496,20 @@ namespace Logica.Usuario
                 }
                 else
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
-                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
                 }
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -527,7 +532,7 @@ namespace Logica.Usuario
             {
                 if (req.guidUsuario == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
                     return res;
                 }
 
@@ -544,7 +549,7 @@ namespace Logica.Usuario
                         ref errorDescBD);
                 }
 
-                // El SP retorna @ID_USUARIO (> 0) en Ã©xito, -1 si no existe o error en BD
+                // El SP retorna @ID_USUARIO (> 0) en éxito, -1 si no existe o error en BD
                 if (idReturn > 0)
                 {
                     res.resultado = true;
@@ -554,26 +559,26 @@ namespace Logica.Usuario
                 else if (errorIdBD == 2)
                 {
                     // Usuario no encontrado en BD
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
-                    errorId   = (int)enumErrores.guidDeUsuarioFaltante;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
+                    errorId   = (int)enumErroresAutenticacion.guidDeUsuarioFaltante;
                     errorDesc = errorDescBD;
                 }
                 else
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
                     errorDesc = errorDescBD;
                 }
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -596,7 +601,7 @@ namespace Logica.Usuario
             {
                 if (req.guidUsuario == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
                     return res;
                 }
 
@@ -613,8 +618,8 @@ namespace Logica.Usuario
                         ref errorDescBD);
                 }
 
-                // El SP retorna @ID_USUARIO (> 0) en Ã©xito, -1 si no existe o error en BD
-                // ESTADO = 2 en BD significa cuenta desactivada (tambiÃ©n cierra sesiones activas)
+                // El SP retorna @ID_USUARIO (> 0) en éxito, -1 si no existe o error en BD
+                // ESTADO = 2 en BD significa cuenta desactivada (también cierra sesiones activas)
                 if (idReturn > 0)
                 {
                     res.resultado = true;
@@ -623,33 +628,33 @@ namespace Logica.Usuario
                 }
                 else if (errorIdBD == 2)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
-                    errorId   = (int)enumErrores.guidDeUsuarioFaltante;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
+                    errorId   = (int)enumErroresAutenticacion.guidDeUsuarioFaltante;
                     errorDesc = errorDescBD;
                 }
                 else
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
                     errorDesc = errorDescBD;
                 }
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
         }
 
         // ?????????????????????????????????????????????????????????????????????
-        // REENVIAR ACTIVACIÃ“N
+        // REENVIAR ACTIVACIÓN
         // ?????????????????????????????????????????????????????????????????????
         public ResReenviarActivacion reenviarActivacion(ReqReenviarActivacion req)
         {
@@ -665,7 +670,7 @@ namespace Logica.Usuario
             {
                 if (string.IsNullOrEmpty(req.correo))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.emailFaltante));
                     return res;
                 }
 
@@ -687,14 +692,14 @@ namespace Logica.Usuario
 
                 if (idReturn == null || idReturn <= 0)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
-                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
                     return res;
                 }
 
                 // Obtener nombre del usuario para el correo no es posible sin SP adicional,
-                // se envÃ­a solo con correo
+                // se envía solo con correo
                 bool correoEnviado = Utilitarios.Utilitarios.EnviarCorreoVerificacion(
                     string.Empty, string.Empty, req.correo, token);
 
@@ -704,13 +709,13 @@ namespace Logica.Usuario
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -734,21 +739,21 @@ namespace Logica.Usuario
                 // Validaciones
                 if (string.IsNullOrEmpty(req.passwordActual))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordActualIncorrecto));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.passwordActualIncorrecto));
                     return res;
                 }
                 if (string.IsNullOrEmpty(req.correoNuevo))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.correoNuevoFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.correoNuevoFaltante));
                     return res;
                 }
                 if (!Utilitarios.Utilitarios.EsEmailValido(req.correoNuevo))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailInvalido));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.emailInvalido));
                     return res;
                 }
 
-                // Verificar la contraseÃ±a actual del usuario
+                // Verificar la contraseña actual del usuario
                 SP_LOGINResult usuarioBD = null;
                 using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
                 {
@@ -757,21 +762,21 @@ namespace Logica.Usuario
 
                 if (usuarioBD == null)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
-                    errorId   = (int)enumErrores.guidDeUsuarioFaltante;
-                    errorDesc = enumErrores.guidDeUsuarioFaltante.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
+                    errorId   = (int)enumErroresAutenticacion.guidDeUsuarioFaltante;
+                    errorDesc = enumErroresAutenticacion.guidDeUsuarioFaltante.ToString();
                     return res;
                 }
 
                 if (!Utilitarios.Utilitarios.verificarPassword(req.passwordActual, usuarioBD.HASH_PASSWORD))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordActualIncorrecto));
-                    errorId   = (int)enumErrores.passwordActualIncorrecto;
-                    errorDesc = enumErrores.passwordActualIncorrecto.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.passwordActualIncorrecto));
+                    errorId   = (int)enumErroresPerfil.passwordActualIncorrecto;
+                    errorDesc = enumErroresPerfil.passwordActualIncorrecto.ToString();
                     return res;
                 }
 
-                // Generar cÃ³digo y guardar correo pendiente en BD
+                // Generar código y guardar correo pendiente en BD
                 string codigo = Utilitarios.Utilitarios.crearToken();
 
                 System.Nullable<int> idReturn    = null;
@@ -791,21 +796,21 @@ namespace Logica.Usuario
 
                 if (errorIdBD == 1)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.correoYaRegistrado));
-                    errorId   = (int)enumErrores.correoYaRegistrado;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.correoYaRegistrado));
+                    errorId   = (int)enumErroresAutenticacion.correoYaRegistrado;
                     errorDesc = errorDescBD;
                     return res;
                 }
 
                 if (idReturn == null || idReturn <= 0)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
-                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
                     return res;
                 }
 
-                // Enviar cÃ³digo al nuevo correo
+                // Enviar código al nuevo correo
                 Utilitarios.Utilitarios.EnviarCodigoCambioCorreo(
                     usuarioBD.NOMBRE, usuarioBD.APELLIDOS, req.correoNuevo, codigo);
 
@@ -815,13 +820,13 @@ namespace Logica.Usuario
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -844,7 +849,7 @@ namespace Logica.Usuario
             {
                 if (string.IsNullOrEmpty(req.codigo))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoVerificacionFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.codigoVerificacionFaltante));
                     return res;
                 }
 
@@ -870,39 +875,40 @@ namespace Logica.Usuario
                 }
                 else if (errorIdBD == 12)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoExpirado));
-                    errorId   = (int)enumErrores.codigoExpirado;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.codigoExpirado));
+                    errorId   = (int)enumErroresAutenticacion.codigoExpirado;
                     errorDesc = errorDescBD;
                 }
                 else if (errorIdBD == 43)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoVerificacionInvalido));
-                    errorId   = (int)enumErrores.codigoVerificacionInvalido;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.codigoVerificacionInvalido));
+                    errorId   = (int)enumErroresPerfil.codigoVerificacionInvalido;
                     errorDesc = errorDescBD;
                 }
                 else
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
-                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
                 }
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
+
 
             return res;
         }
 
         // ?????????????????????????????????????????????????????????????????????
-        // SOLICITAR REACTIVACIÃ“N
+        // SOLICITAR REACTIVACIÓN
         // ?????????????????????????????????????????????????????????????????????
         public ResSolicitarReactivacion solicitarReactivacion(ReqSolicitarReactivacion req)
         {
@@ -918,7 +924,7 @@ namespace Logica.Usuario
             {
                 if (string.IsNullOrEmpty(req.correo))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.emailFaltante));
                     return res;
                 }
 
@@ -944,29 +950,29 @@ namespace Logica.Usuario
 
                 if (errorIdBD == 14)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.correoNoRegistrado));
-                    errorId   = (int)enumErrores.correoNoRegistrado;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.correoNoRegistrado));
+                    errorId   = (int)enumErroresAutenticacion.correoNoRegistrado;
                     errorDesc = errorDescBD;
                     return res;
                 }
 
                 if (errorIdBD == 47)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.usuarioNoDesactivado));
-                    errorId   = (int)enumErrores.usuarioNoDesactivado;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.usuarioNoDesactivado));
+                    errorId   = (int)enumErroresAutenticacion.usuarioNoDesactivado;
                     errorDesc = errorDescBD;
                     return res;
                 }
 
                 if (idReturn == null || idReturn <= 0)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
-                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
                     return res;
                 }
 
-                // Enviar cÃ³digo al correo del usuario
+                // Enviar código al correo del usuario
                 Utilitarios.Utilitarios.EnviarCodigoReactivacion(
                     nombre ?? string.Empty, apellidos ?? string.Empty, req.correo, codigo);
 
@@ -976,20 +982,20 @@ namespace Logica.Usuario
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
         }
 
         // ?????????????????????????????????????????????????????????????????????
-        // CONFIRMAR REACTIVACIÃ“N
+        // CONFIRMAR REACTIVACIÓN
         // ?????????????????????????????????????????????????????????????????????
         public ResReactivarUsuario reactivar(ReqReactivarUsuario req)
         {
@@ -1005,12 +1011,12 @@ namespace Logica.Usuario
             {
                 if (string.IsNullOrEmpty(req.correo))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.emailFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.emailFaltante));
                     return res;
                 }
                 if (string.IsNullOrEmpty(req.token))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoVerificacionFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.codigoVerificacionFaltante));
                     return res;
                 }
 
@@ -1036,45 +1042,45 @@ namespace Logica.Usuario
                 }
                 else if (errorIdBD == 12)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoExpirado));
-                    errorId   = (int)enumErrores.codigoExpirado;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.codigoExpirado));
+                    errorId   = (int)enumErroresAutenticacion.codigoExpirado;
                     errorDesc = errorDescBD;
                 }
                 else if (errorIdBD == 45)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.codigoVerificacionInvalido));
-                    errorId   = (int)enumErrores.codigoVerificacionInvalido;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.codigoVerificacionInvalido));
+                    errorId   = (int)enumErroresPerfil.codigoVerificacionInvalido;
                     errorDesc = errorDescBD;
                 }
                 else if (errorIdBD == 47)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.usuarioNoDesactivado));
-                    errorId   = (int)enumErrores.usuarioNoDesactivado;
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.usuarioNoDesactivado));
+                    errorId   = (int)enumErroresAutenticacion.usuarioNoDesactivado;
                     errorDesc = errorDescBD;
                 }
                 else
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
-                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
                 }
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
         }
 
         // ?????????????????????????????????????????????????????????????????????
-        // FACTORÃA
+        // FACTORÍA
         // ?????????????????????????????????????????????????????????????????????
         private Core.Entidades.Usuario factoriaUsuario(SP_OBTENER_USUARIOResult sp)
         {
@@ -1134,32 +1140,37 @@ namespace Logica.Usuario
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
         }
 
+
+
         // ?????????????????????????????????????????????????????????????????????
-        // BITÃCORA (privado â€” igual que el profe en Finally)
+        // BITÁCORA (privado — igual que el profe en Finally)
         // ?????????????????????????????????????????????????????????????????????
-        private void bitacorear(Guid? guidUsuario, enumBitacora tipo, int errorId,
-                                string errorDesc, object req, object res)
+        private void bitacorear(enumBitacora tipo, int errorId,
+                                string errorDesc, object req, object res,
+                                [System.Runtime.CompilerServices.CallerMemberName] string metodo = "")
         {
             try
             {
+                string dispositivo = System.Web.HttpContext.Current?.Request?.UserAgent ?? "desconocido";
+
                 ReqBitacorear reqBit = new ReqBitacorear();
                 reqBit.bitacora = new Bitacora
                 {
-                    guidUsuario = guidUsuario,
+                    dispositivo = dispositivo,
                     clase       = GetType().Name,
-                    metodo      = new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name,
+                    metodo      = metodo,
                     tipo        = tipo,
                     errorId     = errorId,
                     descripcion = errorDesc,
@@ -1172,7 +1183,7 @@ namespace Logica.Usuario
         }
 
         // ?????????????????????????????????????????????????????????????????????
-        // CAMBIAR CONTRASEÃ‘A
+        // CAMBIAR CONTRASEÑA
         // ?????????????????????????????????????????????????????????????????????
         public ResCambiarPassword cambiarPassword(ReqCambiarPassword req)
         {
@@ -1189,19 +1200,19 @@ namespace Logica.Usuario
                 // Validaciones
                 if (string.IsNullOrEmpty(req.passwordActual))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordActualIncorrecto));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.passwordActualIncorrecto));
                     return res;
                 }
 
                 if (string.IsNullOrEmpty(req.passwordNueva))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordNuevoVacio));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.passwordNuevoVacio));
                     return res;
                 }
 
                 if (req.passwordNueva != req.confirmarPassword)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordsNoCoinciden));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.passwordsNoCoinciden));
                     return res;
                 }
 
@@ -1214,22 +1225,22 @@ namespace Logica.Usuario
 
                 if (usuarioBD == null)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
-                    errorId   = (int)enumErrores.guidDeUsuarioFaltante;
-                    errorDesc = enumErrores.guidDeUsuarioFaltante.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
+                    errorId   = (int)enumErroresAutenticacion.guidDeUsuarioFaltante;
+                    errorDesc = enumErroresAutenticacion.guidDeUsuarioFaltante.ToString();
                     return res;
                 }
 
-                // Verificar que la contraseÃ±a actual coincide con el hash guardado
+                // Verificar que la contraseña actual coincide con el hash guardado
                 if (!Utilitarios.Utilitarios.verificarPassword(req.passwordActual, usuarioBD.HASH_PASSWORD))
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.passwordActualIncorrecto));
-                    errorId   = (int)enumErrores.passwordActualIncorrecto;
-                    errorDesc = enumErrores.passwordActualIncorrecto.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresPerfil.passwordActualIncorrecto));
+                    errorId   = (int)enumErroresPerfil.passwordActualIncorrecto;
+                    errorDesc = enumErroresPerfil.passwordActualIncorrecto.ToString();
                     return res;
                 }
 
-                // Hashear la nueva contraseÃ±a
+                // Hashear la nueva contraseña
                 string nuevoHash = Utilitarios.Utilitarios.hashPassword(req.passwordNueva);
 
                 System.Nullable<int> idReturn    = null;
@@ -1249,20 +1260,20 @@ namespace Logica.Usuario
                 }
                 else
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
-                    errorDesc = errorDescBD ?? enumErrores.errorBaseDatos.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
+                    errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
                 }
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;

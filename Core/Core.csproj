@@ -88,9 +88,15 @@
     <Compile Include="Entidades\Response\ResSolicitarCambioCorreo.cs" />
     <Compile Include="Entidades\Response\ResSolicitarReactivacion.cs" />
     <Compile Include="Entidades\Response\ResValidarSesion.cs" />
+    <Compile Include="Enum\Autenticacion\enumErroresAutenticacion.cs" />
     <Compile Include="Enum\enumBitacora.cs" />
-    <Compile Include="Enum\enumErrores.cs" />
+    <Compile Include="Enum\Favoritos\enumErroresFavoritos.cs" />
+    <Compile Include="Enum\Generales\enumErroresGenerales.cs" />
+    <Compile Include="Enum\Perfil\enumErroresPerfil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Enum\Sesion\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

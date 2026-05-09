@@ -156,4 +156,25 @@ namespace AccesoDatos
             set { _ESTADO = value; }
         }
     }
+
+    // Agrega ORIGEN y DESTINO al resultado de SP_OBTENER_FAVORITOS_POR_USUARIO
+    // (columnas nuevas no presentes cuando se generó el DBML)
+    public partial class SP_OBTENER_FAVORITOS_POR_USUARIOResult
+    {
+        private string _ORIGEN;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ORIGEN", DbType = "NVarChar(200)", CanBeNull = true)]
+        public string ORIGEN
+        {
+            get { return _ORIGEN; }
+            set { _ORIGEN = value; }
+        }
+
+        private string _DESTINO;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_DESTINO", DbType = "NVarChar(200)", CanBeNull = true)]
+        public string DESTINO
+        {
+            get { return _DESTINO; }
+            set { _DESTINO = value; }
+        }
+    }
 }

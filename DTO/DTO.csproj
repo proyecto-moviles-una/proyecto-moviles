@@ -45,6 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuario\DTOActivarUsuario.cs" />
     <Compile Include="Usuario\DTOActualizarUsuario.cs" />
+    <Compile Include="Usuario\DTOAgregarFavorito.cs" />
     <Compile Include="Usuario\DTOCambiarPassword.cs" />
     <Compile Include="Usuario\DTOCerrarSesion.cs" />
     <Compile Include="Usuario\DTOConfirmarCambioCorreo.cs" />

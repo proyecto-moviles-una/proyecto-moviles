@@ -9,7 +9,7 @@ namespace Core.Entidades
 {
     public class Bitacora
     {
-        public Guid?        guidUsuario { get; set; }
+        public string       dispositivo { get; set; }
         public string       clase       { get; set; }
         public string       metodo      { get; set; }
         public enumBitacora tipo        { get; set; }

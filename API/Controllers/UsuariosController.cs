@@ -24,7 +24,8 @@ namespace API.Controllers
         // Valida que el guid de la URL sea el mismo del token (el usuario solo accede a sus datos)
         private HttpResponseMessage validarOwnership(Guid guid)
         {
-            if (tokenActual == null || tokenActual.guidUsuario != guid.ToString())
+            if (tokenActual == null ||
+                !string.Equals(tokenActual.guidUsuario, guid.ToString(), StringComparison.OrdinalIgnoreCase))
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden,
                     "No tiene permiso para acceder a este recurso.");
             return null;

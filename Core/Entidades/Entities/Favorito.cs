@@ -11,6 +11,8 @@ namespace Core.Entidades
         public Guid?    guidFavorito  { get; set; }
         public Guid?    guidRuta      { get; set; }
         public string   nombreRuta    { get; set; }
+        public string   origen        { get; set; }
+        public string   destino       { get; set; }
         public decimal? tarifaActual  { get; set; }
         public DateTime fechaRegistro { get; set; }
     }

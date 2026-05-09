@@ -1,8 +1,12 @@
 using AccesoDatos;
+using AccesoDatos;
 using Core.Entidades;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
 using Core.Enum;
+using Core.Enum.Autenticacion;
+using Core.Enum.Favoritos;
+using Core.Enum.Generales;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -29,12 +33,12 @@ namespace Logica.Usuario
             {
                 if (req.guidUsuario == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
                     return res;
                 }
                 if (req.guidRuta == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidRutaFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresFavoritos.guidRutaFaltante));
                     return res;
                 }
 
@@ -56,9 +60,9 @@ namespace Logica.Usuario
 
                 if (guidFavorito == null || guidFavorito == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorBaseDatos));
-                    errorId   = (int)enumErrores.errorBaseDatos;
-                    errorDesc = enumErrores.errorBaseDatos.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
+                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
+                    errorDesc = enumErroresGenerales.errorBaseDatos.ToString();
                     return res;
                 }
 
@@ -69,13 +73,13 @@ namespace Logica.Usuario
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -98,7 +102,7 @@ namespace Logica.Usuario
             {
                 if (req.guidFavorito == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidFavoritoFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresFavoritos.guidFavoritoFaltante));
                     return res;
                 }
 
@@ -123,20 +127,20 @@ namespace Logica.Usuario
                 }
                 else
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.favoritoNoExiste));
-                    errorId   = (int)enumErrores.favoritoNoExiste;
-                    errorDesc = enumErrores.favoritoNoExiste.ToString();
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresFavoritos.favoritoNoExiste));
+                    errorId   = (int)enumErroresFavoritos.favoritoNoExiste;
+                    errorDesc = enumErroresFavoritos.favoritoNoExiste.ToString();
                 }
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(null, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -160,7 +164,7 @@ namespace Logica.Usuario
             {
                 if (req.guidUsuario == Guid.Empty)
                 {
-                    res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.guidDeUsuarioFaltante));
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
                     return res;
                 }
 
@@ -177,13 +181,13 @@ namespace Logica.Usuario
             }
             catch (Exception ex)
             {
-                res.error.Add(Utilitarios.Utilitarios.crearError(enumErrores.errorNoControlado));
-                errorId   = (int)enumErrores.errorNoControlado;
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }
             finally
             {
-                bitacorear(req.guidUsuario, tipoBitacora, errorId, errorDesc, req, res);
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -202,6 +206,8 @@ namespace Logica.Usuario
                     guidFavorito  = sp.GUID_FAVORITO,
                     guidRuta      = sp.GUID_RUTA,
                     nombreRuta    = sp.NOMBRE_RUTA,
+                    origen        = sp.ORIGEN,
+                    destino       = sp.DESTINO,
                     tarifaActual  = sp.TARIFA_ACTUAL,
                     fechaRegistro = sp.FECHA_REGISTRO
                 });
@@ -212,15 +218,17 @@ namespace Logica.Usuario
         // ?????????????????????????????????????????????????????????????????????
         // BITÁCORA
         // ?????????????????????????????????????????????????????????????????????
-        private void bitacorear(Guid? guidUsuario, enumBitacora tipo, int errorId,
+        private void bitacorear(enumBitacora tipo, int errorId,
                                 string errorDesc, object req, object res)
         {
             try
             {
+                string dispositivo = System.Web.HttpContext.Current?.Request?.UserAgent ?? "desconocido";
+
                 ReqBitacorear reqBit = new ReqBitacorear();
                 reqBit.bitacora = new Bitacora
                 {
-                    guidUsuario = guidUsuario,
+                    dispositivo = dispositivo,
                     clase       = GetType().Name,
                     metodo      = new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name,
                     tipo        = tipo,
