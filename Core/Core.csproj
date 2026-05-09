@@ -42,6 +42,57 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+
+    <Compile Include="Entidades\Entities\Bitacora.cs" />
+    
+    <Compile Include="Entidades\Entities\Favorito.cs" />
+    <Compile Include="Entidades\Entities\Usuario.cs" />
+    <Compile Include="Entidades\Request\ReqAbrirSesion.cs" />
+    <Compile Include="Entidades\Request\ReqActivarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqActualizarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqAgregarFavorito.cs" />
+    <Compile Include="Entidades\Request\ReqBitacorear.cs" />
+    <Compile Include="Entidades\Request\ReqCambiarPassword.cs" />
+    <Compile Include="Entidades\Request\ReqCerrarSesion.cs" />
+    <Compile Include="Entidades\Request\ReqConfirmarCambioCorreo.cs" />
+    <Compile Include="Entidades\Request\ReqDesactivarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqEliminarFavorito.cs" />
+    <Compile Include="Entidades\Request\ReqEliminarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqInsertarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqLogin.cs" />
+    <Compile Include="Entidades\Request\ReqObtenerFavoritos.cs" />
+    <Compile Include="Entidades\Request\ReqObtenerListaUsuarios.cs" />
+    <Compile Include="Entidades\Request\ReqObtenerUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqReactivarUsuario.cs" />
+    <Compile Include="Entidades\Request\ReqReenviarActivacion.cs" />
+    <Compile Include="Entidades\Request\ReqSolicitarCambioCorreo.cs" />
+    <Compile Include="Entidades\Request\ReqSolicitarReactivacion.cs" />
+    <Compile Include="Entidades\Request\ReqValidarSesion.cs" />
+    <Compile Include="Entidades\Response\ResActivarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResActualizarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResAgregarFavorito.cs" />
+    <Compile Include="Entidades\Response\ResBitacorear.cs" />
+    <Compile Include="Entidades\Response\ResCambiarPassword.cs" />
+    <Compile Include="Entidades\Response\ResCerrarSesion.cs" />
+    <Compile Include="Entidades\Response\ResConfirmarCambioCorreo.cs" />
+    <Compile Include="Entidades\Response\ResDesactivarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResEliminarFavorito.cs" />
+    <Compile Include="Entidades\Response\ResEliminarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResInsertarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResLogin.cs" />
+    <Compile Include="Entidades\Response\ResObtenerFavoritos.cs" />
+    <Compile Include="Entidades\Response\ResObtenerListaUsuarios.cs" />
+    <Compile Include="Entidades\Response\ResObtenerUsuario.cs" />
+    <Compile Include="Entidades\Response\ResReactivarUsuario.cs" />
+    <Compile Include="Entidades\Response\ResReenviarActivacion.cs" />
+    <Compile Include="Entidades\Response\ResSolicitarCambioCorreo.cs" />
+    <Compile Include="Entidades\Response\ResSolicitarReactivacion.cs" />
+    <Compile Include="Entidades\Response\ResValidarSesion.cs" />
+    <Compile Include="Enum\Autenticacion\enumErroresAutenticacion.cs" />
+    <Compile Include="Enum\enumBitacora.cs" />
+    <Compile Include="Enum\Favoritos\enumErroresFavoritos.cs" />
+    <Compile Include="Enum\Generales\enumErroresGenerales.cs" />
+    <Compile Include="Enum\Perfil\enumErroresPerfil.cs" />
     <Compile Include="Entidades\Entities\Error.cs" />
     <Compile Include="Entidades\Entities\HistorialViaje.cs" />
     <Compile Include="Entidades\Entities\Parada.cs" />
@@ -58,9 +109,14 @@
     <Compile Include="Entidades\Response\ResEliminarParada.cs" />
     <Compile Include="Entidades\Response\ResListarHistorial.cs" />
     <Compile Include="Entidades\Response\ResListarParadas.cs" />
+
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entidades\Request\ReqCrearParada.cs" />
   </ItemGroup>
-  <ItemGroup />
+
+  <ItemGroup>
+    <Folder Include="Enum\Sesion\" />
+  </ItemGroup>
+
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

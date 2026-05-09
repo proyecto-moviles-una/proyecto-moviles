@@ -1,0 +1,55 @@
+-- SP_ACTIVAR_USUARIO: verifica expiracion de 10 min y borra el codigo al activar
+ALTER PROCEDURE dbo.SP_ACTIVAR_USUARIO
+(
+    @CORREO_ELECTRONICO  NVARCHAR(100),
+    @NUMERO_VERIFICACION NVARCHAR(MAX),
+    @FILASACTUALIZADAS   INT OUTPUT,
+    @IDRETURN            INT OUTPUT,
+    @ERRORID             INT OUTPUT,
+    @ERRORDESCRIPCION    NVARCHAR(MAX) OUTPUT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        -- Verificar que el codigo existe, no ha expirado (10 min) y el usuario esta inactivo
+        IF NOT EXISTS (
+            SELECT 1 FROM dbo.TB_USUARIO
+            WHERE CORREO_ELECTRONICO    = @CORREO_ELECTRONICO
+              AND NUMERO_VERIFICACION   = @NUMERO_VERIFICACION
+              AND ESTADO                = 0
+              AND FECHA_CODIGO_VERIFICACION IS NOT NULL
+              AND DATEDIFF(MINUTE, FECHA_CODIGO_VERIFICACION, GETUTCDATE()) <= 10
+        )
+        BEGIN
+            SET @FILASACTUALIZADAS = 0;
+            SET @IDRETURN         = -1;
+            SET @ERRORID          = 3;
+            SET @ERRORDESCRIPCION = N'CODIGO INVALIDO O EXPIRADO';
+            RETURN;
+        END
+
+        UPDATE dbo.TB_USUARIO
+        SET
+            ESTADO                    = 1,
+            NUMERO_VERIFICACION       = NULL,
+            FECHA_CODIGO_VERIFICACION = NULL
+        WHERE
+            CORREO_ELECTRONICO  = @CORREO_ELECTRONICO
+            AND NUMERO_VERIFICACION = @NUMERO_VERIFICACION
+            AND ESTADO          = 0;
+
+        SET @FILASACTUALIZADAS = @@ROWCOUNT;
+        SET @IDRETURN          = @FILASACTUALIZADAS;
+        SET @ERRORID           = 0;
+        SET @ERRORDESCRIPCION  = N'';
+    END TRY
+    BEGIN CATCH
+        SET @FILASACTUALIZADAS = 0;
+        SET @IDRETURN          = -1;
+        SET @ERRORID           = ERROR_NUMBER();
+        SET @ERRORDESCRIPCION  = ERROR_MESSAGE();
+        INSERT INTO dbo.TB_ERROR_EN_BASE_DATOS(SEVERIDAD, STORED_PROCEDURE, NUMERO, DESCRIPCION, LINEA)
+        SELECT ERROR_SEVERITY(), ERROR_PROCEDURE(), ERROR_NUMBER(), ERROR_MESSAGE(), ERROR_LINE();
+    END CATCH
+END

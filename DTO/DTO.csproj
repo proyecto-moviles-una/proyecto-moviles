@@ -45,6 +45,20 @@
     <Compile Include="Historial\DTOHistorial.cs" />
     <Compile Include="Parada\DTOParada.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Usuario\DTOActivarUsuario.cs" />
+    <Compile Include="Usuario\DTOActualizarUsuario.cs" />
+    <Compile Include="Usuario\DTOAgregarFavorito.cs" />
+    <Compile Include="Usuario\DTOCambiarPassword.cs" />
+    <Compile Include="Usuario\DTOCerrarSesion.cs" />
+    <Compile Include="Usuario\DTOConfirmarCambioCorreo.cs" />
+    <Compile Include="Usuario\DTODesactivarUsuario.cs" />
+    <Compile Include="Usuario\DTOEliminarUsuario.cs" />
+    <Compile Include="Usuario\DTOInsertarUsuario.cs" />
+    <Compile Include="Usuario\DTOLogin.cs" />
+    <Compile Include="Usuario\DTOReactivarUsuario.cs" />
+    <Compile Include="Usuario\DTOReenviarActivacion.cs" />
+    <Compile Include="Usuario\DTOSolicitarCambioCorreo.cs" />
+    <Compile Include="Usuario\DTOSolicitarReactivacion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
