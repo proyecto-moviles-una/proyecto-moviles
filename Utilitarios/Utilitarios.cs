@@ -2,7 +2,11 @@
 using BCrypt.Net;
 using Core.Entidades;
 using Core.Entidades.Request;
-using Core.Enum;
+using Core.Enum.Autenticacion;
+using Core.Enum.Favoritos;
+using Core.Enum.Generales;
+using Core.Enum.Perfil;
+
 using System;
 using System.Net.Mail;
 using System.Security.Cryptography;
@@ -28,7 +32,7 @@ namespace Utilitarios
         // ?????????????????????????????????????????????????????????????????????
 
         /// <summary>Crea un objeto Error con código y mensaje legible.</summary>
-        public static Error crearError(enumErrores codigo) // ste metodo recive un codigo de error
+        public static Error crearError(int codigo) // ste metodo recive un codigo de error
         {
             return new Error
             {
@@ -37,42 +41,43 @@ namespace Utilitarios
             };
         }
 
-        private static string obtenerMensajeError(enumErrores codigo)
+        private static string obtenerMensajeError(int codigo)
         {
             switch (codigo)
             {
-                case enumErrores.nombreFaltante:       return "El nombre es obligatorio.";
-                case enumErrores.apellidosFaltante:    return "Los apellidos son obligatorios.";
-                case enumErrores.emailFaltante:        return "El correo electrónico es obligatorio.";
-                case enumErrores.emailInvalido:        return "El formato del correo electrónico no es válido.";
-                case enumErrores.passwordVacio:        return "La contraseña es obligatoria.";
-                case enumErrores.guidDeUsuarioFaltante:return "El identificador de usuario es obligatorio.";
-                case enumErrores.errorActivandoUsuario:return "Código incorrecto o expirado.Solicité´uno nuevo";
-                case enumErrores.loginIncorrecto:      return "Correo o contraseña incorrectos.";
-                case enumErrores.usuarioInactivo:       return "La cuenta no ha sido verificada. Revise su correo.";
-                case enumErrores.usuarioDesactivado:    return "Esta cuenta ha sido desactivada.";
-                case enumErrores.codigoExpirado:        return "El código expiró. Pida que se le envíé el codigó nuevamente";
-                case enumErrores.cuentaYaActiva:        return "Esta cuenta ya está activa. Puede iniciar sesión.";
-                case enumErrores.correoNoRegistrado:    return "El correo no está registrado en el sistema.";
-                case enumErrores.correoYaRegistrado:    return "El correo ya está registrado.";
-                case enumErrores.guidSesionFaltante:    return "El identificador de sesión es obligatorio.";
-                case enumErrores.sesionInvalida:        return "La sesión no es válida o ha expirado.";
-                case enumErrores.errorAbrirSesion:      return "No se pudo abrir la sesión.";
-                case enumErrores.sesionYaCerrada:       return "La sesión ya fue cerrada anteriormente.";
-                case enumErrores.accesoNoAutorizado:    return "No tiene permiso para acceder a este recurso.";
-                case enumErrores.guidRutaFaltante:     return "El identificador de ruta es obligatorio.";
-                case enumErrores.favoritoYaExiste:     return "Esta ruta ya está en sus favoritos.";
-                case enumErrores.favoritoNoExiste:     return "El favorito indicado no existe.";
-                case enumErrores.guidFavoritoFaltante: return "El identificador de favorito es obligatorio.";
-                case enumErrores.passwordActualIncorrecto: return "La contraseña actual es incorrecta.";
-                case enumErrores.passwordNuevoVacio:       return "La nueva contraseña es obligatoria.";
-                case enumErrores.passwordsNoCoinciden:     return "Las contraseñas no coinciden.";
-                case enumErrores.correoNuevoFaltante:      return "El nuevo correo es obligatorio.";
-                case enumErrores.codigoVerificacionFaltante: return "El código de verificación es obligatorio.";
-                case enumErrores.codigoVerificacionInvalido: return "El código de verificación es incorrecto.";
-                case enumErrores.sinSolicitudCambioCorreo: return "No hay solicitud de cambio de correo pendiente.";
-                case enumErrores.usuarioNoDesactivado:     return "La cuenta no está desactivada.";
-                case enumErrores.errorBaseDatos:       return "Error en base de datos. Intente más tarde.";
+                case (int)enumErroresAutenticacion.nombreFaltante:              return "El nombre es obligatorio.";
+                case (int)enumErroresAutenticacion.apellidosFaltante:           return "Los apellidos son obligatorios.";
+                case (int)enumErroresAutenticacion.emailFaltante:               return "El correo electrónico es obligatorio.";
+                case (int)enumErroresAutenticacion.emailInvalido:               return "El formato del correo electrónico no es válido.";
+                case (int)enumErroresAutenticacion.passwordVacio:               return "La contraseña es obligatoria.";
+                case (int)enumErroresAutenticacion.guidDeUsuarioFaltante:       return "El identificador de usuario es obligatorio.";
+                case (int)enumErroresAutenticacion.errorActivandoUsuario:       return "Código incorrecto o expirado. Solicite uno nuevo.";
+                case (int)enumErroresAutenticacion.loginIncorrecto:             return "Correo o contraseña incorrectos.";
+                case (int)enumErroresAutenticacion.usuarioInactivo:             return "La cuenta no ha sido verificada. Revise su correo.";
+                case (int)enumErroresAutenticacion.usuarioDesactivado:          return "Esta cuenta ha sido desactivada.";
+                case (int)enumErroresAutenticacion.codigoExpirado:              return "El código expiró. Solicite uno nuevo.";
+                case (int)enumErroresAutenticacion.cuentaYaActiva:              return "Esta cuenta ya está activa. Puede iniciar sesión.";
+                case (int)enumErroresAutenticacion.correoNoRegistrado:          return "El correo no está registrado en el sistema.";
+                case (int)enumErroresAutenticacion.correoYaRegistrado:          return "El correo ya está registrado.";
+                case (int)enumErroresAutenticacion.guidSesionFaltante:         return "El identificador de sesión es obligatorio.";
+                case (int)enumErroresAutenticacion.sesionInvalida:               return "La sesión no es válida o ha expirado.";
+                case (int)enumErroresAutenticacion.errorAbrirSesion:             return "No se pudo abrir la sesión.";
+                case (int)enumErroresAutenticacion.sesionYaCerrada:              return "La sesión ya fue cerrada anteriormente.";
+                case (int)enumErroresAutenticacion.accesoNoAutorizado:           return "No tiene permiso para acceder a este recurso.";
+                case (int)enumErroresFavoritos.guidRutaFaltante:                return "El identificador de ruta es obligatorio.";
+                case (int)enumErroresFavoritos.favoritoYaExiste:                return "Esta ruta ya está en sus favoritos.";
+                case (int)enumErroresFavoritos.favoritoNoExiste:                return "El favorito indicado no existe.";
+                case (int)enumErroresFavoritos.guidFavoritoFaltante:            return "El identificador de favorito es obligatorio.";
+                case (int)enumErroresPerfil.passwordActualIncorrecto:           return "La contraseña actual es incorrecta.";
+                case (int)enumErroresPerfil.passwordNuevoVacio:                 return "La nueva contraseña es obligatoria.";
+                case (int)enumErroresPerfil.passwordsNoCoinciden:               return "Las contraseñas no coinciden.";
+                case (int)enumErroresPerfil.correoNuevoFaltante:                return "El nuevo correo es obligatorio.";
+                case (int)enumErroresPerfil.codigoVerificacionFaltante:         return "El código de verificación es obligatorio.";
+                case (int)enumErroresPerfil.codigoVerificacionInvalido:         return "El código de verificación es incorrecto.";
+                case (int)enumErroresPerfil.sinSolicitudCambioCorreo:           return "No hay solicitud de cambio de correo pendiente.";
+                case (int)enumErroresAutenticacion.usuarioNoDesactivado:        return "La cuenta no está desactivada.";
+                case (int)enumErroresGenerales.errorBaseDatos:                  return "Error en base de datos. Intente más tarde.";
+                case (int)enumErroresGenerales.errorNoControlado:               return "Ha ocurrido un error inesperado. Contacte al administrador.";
                 default:                               return "Ha ocurrido un error inesperado.";
             }
         }
@@ -88,9 +93,8 @@ namespace Utilitarios
             {
                 using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
                 {
-                    System.Nullable<System.Guid> guidUsr = req.bitacora.guidUsuario;
                     linq.SP_INSERTAR_BITACORA(
-                        guidUsr,
+                        req.bitacora.dispositivo,
                         req.bitacora.clase,
                         req.bitacora.metodo,
                         (short)req.bitacora.tipo,

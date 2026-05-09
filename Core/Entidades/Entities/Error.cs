@@ -1,4 +1,3 @@
-using Core.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ namespace Core.Entidades
 {
     public class Error
     {
-        public enumErrores codigo  { get; set; }
-        public string      mensaje { get; set; }
+        public int    codigo  { get; set; }
+        public string mensaje { get; set; }
     }
 }

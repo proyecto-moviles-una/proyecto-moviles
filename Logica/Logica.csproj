@@ -40,6 +40,7 @@
     <Reference Include="OpenAI_API, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenAI_Newtonsoft.json_13.0.1.1.2.1\lib\netstandard2.0\OpenAI_API.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
