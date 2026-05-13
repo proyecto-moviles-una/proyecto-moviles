@@ -26,13 +26,22 @@ namespace AccesoDatos.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=localhost;Initial Catalog=bdMiBus;Integrated Security=True;TrustServe" +
             "rCertificate=True")]
-
         public string bdMiBusConnectionString {
             get {
                 return ((string)(this["bdMiBusConnectionString"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=KHRIZ;Initial Catalog=bdMiBus;Integrated Security=True;Connect Timeou" +
+            "t=30;Encrypt=True;TrustServerCertificate=True")]
+        public string bdMiBusConnectionString1 {
+            get {
+                return ((string)(this["bdMiBusConnectionString1"]));
             }
         }
     }

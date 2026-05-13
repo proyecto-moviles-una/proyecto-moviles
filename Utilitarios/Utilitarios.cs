@@ -36,8 +36,8 @@ namespace Utilitarios
         {
             return new Error
             {
-                codigo  = codigo,
-                mensaje = obtenerMensajeError(codigo) // y devuelve un objeto con error
+                Codigo  = codigo,
+                Mensaje = obtenerMensajeError(codigo) // y devuelve un objeto con error
             };
         }
 
@@ -94,7 +94,7 @@ namespace Utilitarios
                 using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
                 {
                     linq.SP_INSERTAR_BITACORA(
-                        req.bitacora.dispositivo,
+                        req.bitacora.guidUsuario,
                         req.bitacora.clase,
                         req.bitacora.metodo,
                         (short)req.bitacora.tipo,
