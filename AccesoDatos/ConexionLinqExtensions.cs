@@ -8,15 +8,6 @@ namespace AccesoDatos
 {
     public partial class ConexionLinqDataContext
     {
-        // Versión simplificada de SP_CERRAR_SESION (solo GUID_SESION, retorna @@ROWCOUNT)
-        [global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.SP_CERRAR_SESION")]
-        public int SP_CERRAR_SESION(
-            [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "GUID_SESION", DbType = "UniqueIdentifier")] System.Nullable<System.Guid> gUID_SESION)
-        {
-            IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_SESION);
-            return ((int)(result.ReturnValue));
-        }
-
         [global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.SP_LOGIN")]
         public ISingleResult<SP_LOGINResult> SP_LOGIN(
             [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "CORREO_ELECTRONICO", DbType = "NVarChar(100)")] string cORREO_ELECTRONICO)

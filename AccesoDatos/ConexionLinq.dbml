@@ -1,6 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="bdMiBus" Class="ConexionLinqDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-
-  <Connection Mode="AppSettings" ConnectionString="Data Source=localhost;Initial Catalog=bdMiBus;Integrated Security=True;Trust Server Certificate=True" SettingsObjectName="AccesoDatos.Properties.Settings" SettingsPropertyName="bdMiBusConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=KHRIZ;Initial Catalog=bdMiBus;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True" SettingsObjectName="AccesoDatos.Properties.Settings" SettingsPropertyName="bdMiBusConnectionString1" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.TB_HISTORIAL_VIAJE" Member="TB_HISTORIAL_VIAJE">
+    <Type Name="TB_HISTORIAL_VIAJE">
+      <Column Name="ID_HISTORIAL" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="GUID_HISTORIAL" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="ID_USUARIO" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      <Column Name="ID_RUTA" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ID_TARIFA" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FECHA_CONSULTA" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
   <Function Name="dbo.SP_INGRESAR_USUARIO" Method="SP_INGRESAR_USUARIO">
     <Parameter Name="NOMBRE" Parameter="nOMBRE" Type="System.String" DbType="NVarChar(50)" />
     <Parameter Name="APELLIDOS" Parameter="aPELLIDOS" Type="System.String" DbType="NVarChar(50)" />
@@ -34,18 +43,6 @@
       <Column Name="ESTADO" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
     </ElementType>
   </Function>
-
-  <Table Name="dbo.TB_HISTORIAL_VIAJE" Member="TB_HISTORIAL_VIAJE">
-    <Type Name="TB_HISTORIAL_VIAJE">
-      <Column Name="ID_HISTORIAL" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="GUID_HISTORIAL" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Column Name="ID_USUARIO" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
-      <Column Name="ID_RUTA" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="ID_TARIFA" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="FECHA_CONSULTA" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
-
   <Function Name="dbo.SP_REGISTRAR_HISTORIAL" Method="SP_REGISTRAR_HISTORIAL">
     <Parameter Name="GUID_USUARIO" Parameter="gUID_USUARIO" Type="System.Guid" DbType="UniqueIdentifier" />
     <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
@@ -55,7 +52,6 @@
     <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
     <Return Type="System.Int32" />
   </Function>
-
   <Function Name="dbo.SP_OBTENER_LISTAUSUARIOS" Method="SP_OBTENER_LISTAUSUARIOS">
     <ElementType Name="SP_OBTENER_LISTAUSUARIOSResult">
       <Column Name="GUID_USUARIO" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
@@ -65,7 +61,6 @@
       <Column Name="FECHA_REGISTRO" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
     </ElementType>
   </Function>
-
   <Function Name="dbo.SP_OBTENER_HISTORIAL_POR_USUARIO" Method="SP_OBTENER_HISTORIAL_POR_USUARIO">
     <Parameter Name="GUID_USUARIO" Parameter="gUID_USUARIO" Type="System.Guid" DbType="UniqueIdentifier" />
     <ElementType Name="SP_OBTENER_HISTORIAL_POR_USUARIOResult">
@@ -76,7 +71,6 @@
       <Column Name="FECHA_CONSULTA" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
     </ElementType>
   </Function>
-
   <Function Name="dbo.SP_OBTENER_FAVORITOS_POR_USUARIO" Method="SP_OBTENER_FAVORITOS_POR_USUARIO">
     <Parameter Name="GUID_USUARIO" Parameter="gUID_USUARIO" Type="System.Guid" DbType="UniqueIdentifier" />
     <ElementType Name="SP_OBTENER_FAVORITOS_POR_USUARIOResult">
@@ -169,7 +163,7 @@
     <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
     <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
     <Return Type="System.Int32" />
-
+  </Function>
   <Function Name="dbo.SP_OBTENER_PARADA_POR_GUID" Method="SP_OBTENER_PARADA_POR_GUID">
     <Parameter Name="GUID_PARADA" Parameter="gUID_PARADA" Type="System.Guid" DbType="UniqueIdentifier" />
     <ElementType Name="SP_OBTENER_PARADA_POR_GUIDResult">
@@ -192,6 +186,5 @@
       <Column Name="LONGITUD" Type="System.Decimal" DbType="Decimal(10,7)" CanBeNull="true" />
       <Column Name="ORDEN" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
     </ElementType>
-
   </Function>
 </Database>
