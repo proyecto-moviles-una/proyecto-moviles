@@ -46,19 +46,29 @@ namespace API.Controllers
         }
 
         // -------- OBTENER --------
-        [HttpGet]
-        [Route("obtener/{guid}")]
-        public ResCrearParada Obtener(string guid)
+        [HttpPost]
+        [Route("obtener")]
+        public ResObtenerParada Obtener([FromBody] DTOObtenerParada dto)
         {
-            return new LogParada().ObtenerPorGuid(guid);
+            dto = dto ?? new DTOObtenerParada();
+
+            ReqObtenerParada req = new ReqObtenerParada();
+            req.Guid = dto.Guid;
+
+            return new LogParada().Obtener(req);
         }
 
         // -------- LISTAR POR RUTA --------
-        [HttpGet]
-        [Route("ruta/{guidRuta}")]
-        public ResListarParadas ListarPorRuta(string guidRuta)
+        [HttpPost]
+        [Route("ruta")]
+        public ResListarParadas ListarPorRuta([FromBody] DTOListarParadasPorRuta dto)
         {
-            return new LogParada().ListarPorRuta(guidRuta);
+            dto = dto ?? new DTOListarParadasPorRuta();
+
+            ReqListarParadasPorRuta req = new ReqListarParadasPorRuta();
+            req.GuidRuta = dto.GuidRuta;
+
+            return new LogParada().ListarPorRuta(req);
         }
 
         // -------- EDITAR --------
