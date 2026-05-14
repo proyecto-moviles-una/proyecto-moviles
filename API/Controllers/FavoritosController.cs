@@ -42,13 +42,13 @@ namespace API.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new LogFavorito().agregar(req));
         }
 
-        // DELETE api/favoritos/{guidFavorito}  — elimina un favorito del usuario autenticado
+        // DELETE api/favoritos  — elimina un favorito del usuario autenticado (guidFavorito viene en el body)
         [HttpDelete]
-        [Route("api/favoritos/{guidFavorito}")]
-        public HttpResponseMessage eliminar(Guid guidFavorito)
+        [Route("api/favoritos")]
+        public HttpResponseMessage eliminar(DTOEliminarFavorito dto)
         {
             ReqEliminarFavorito req = new ReqEliminarFavorito();
-            req.guidFavorito = guidFavorito;
+            req.guidFavorito = dto.guidFavorito;
             return Request.CreateResponse(HttpStatusCode.OK, new LogFavorito().eliminar(req));
         }
     }
