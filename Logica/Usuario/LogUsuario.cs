@@ -317,6 +317,13 @@ namespace Logica.Usuario
             catch (Exception ex)
             {
                 res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+#if DEBUG
+                res.error.Add(new Error
+                {
+                    Codigo = -999,
+                    Mensaje = ex.GetType().Name + ": " + ex.Message
+                });
+#endif
                 errorId   = (int)enumErroresGenerales.errorNoControlado;
                 errorDesc = ex.Message;
             }

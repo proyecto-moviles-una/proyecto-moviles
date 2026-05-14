@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Entidades\Entities\Bitacora.cs" />
     <Compile Include="Entidades\Entities\Empresa.cs" />
     <Compile Include="Entidades\Entities\Favorito.cs" />
@@ -113,11 +112,11 @@
     <Compile Include="Entidades\Response\ResSolicitarCambioCorreo.cs" />
     <Compile Include="Entidades\Response\ResSolicitarReactivacion.cs" />
     <Compile Include="Entidades\Response\ResValidarSesion.cs" />
-    <Compile Include="Enum\Autenticacion\enumErroresAutenticacion.cs" />
-    <Compile Include="Enum\enumBitacora.cs" />
-    <Compile Include="Enum\Favoritos\enumErroresFavoritos.cs" />
-    <Compile Include="Enum\Generales\enumErroresGenerales.cs" />
-    <Compile Include="Enum\Perfil\enumErroresPerfil.cs" />
+    <Compile Include="Entidades\Enum\Autenticacion\enumErroresAutenticacion.cs" />
+    <Compile Include="Entidades\Enum\enumBitacora.cs" />
+    <Compile Include="Entidades\Enum\Favoritos\enumErroresFavoritos.cs" />
+    <Compile Include="Entidades\Enum\Generales\enumErroresGenerales.cs" />
+    <Compile Include="Entidades\Enum\Perfil\enumErroresPerfil.cs" />
     <Compile Include="Entidades\Entities\Error.cs" />
     <Compile Include="Entidades\Entities\HistorialViaje.cs" />
     <Compile Include="Entidades\Entities\Parada.cs" />
@@ -137,8 +136,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entidades\Request\ReqCrearParada.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Enum\Sesion\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
