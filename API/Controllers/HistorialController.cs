@@ -31,16 +31,6 @@ namespace API.Controllers
                    Guid.TryParse(tokenActual.guidUsuario, out guidUsuario);
         }
 
-        private HttpResponseMessage validarOwnership(Guid guidUsuario)
-        {
-            if (tokenActual == null ||
-                !string.Equals(tokenActual.guidUsuario, guidUsuario.ToString(), StringComparison.OrdinalIgnoreCase))
-                return Request.CreateErrorResponse(HttpStatusCode.Forbidden,
-                    "No tiene permiso para acceder a este recurso.");
-
-            return null;
-        }
-
         /// <summary>
         /// Registrar consulta en historial para el usuario autenticado
         /// </summary>
@@ -67,8 +57,8 @@ namespace API.Controllers
         /// Obtener historial del usuario autenticado
         /// </summary>
         [HttpGet]
-        [Route("mio")]
-        public HttpResponseMessage ListarMio()
+        [Route("usuario")]
+        public HttpResponseMessage ListarPorUsuario()
         {
             Guid guidUsuario;
             if (!TryObtenerUsuarioToken(out guidUsuario))
@@ -78,19 +68,6 @@ namespace API.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new LogHistorial().ListarPorUsuario(guidUsuario));
-        }
-
-        /// <summary>
-        /// Obtener historial de un usuario validando que sea el dueño del token
-        /// </summary>
-        [HttpGet]
-        [Route("usuario/{guid}")]
-        public HttpResponseMessage ListarPorUsuario(Guid guid)
-        {
-            HttpResponseMessage bloqueo = validarOwnership(guid);
-            if (bloqueo != null) return bloqueo;
-
-            return Request.CreateResponse(HttpStatusCode.OK, new LogHistorial().ListarPorUsuario(guid));
         }
     }
 }

@@ -182,11 +182,6 @@ namespace Logica.Parada
             return ListarPorRuta(guid);
         }
 
-        public ResListarParadas ListarPorRuta(ReqListarParadasPorRuta req)
-        {
-            return ListarPorRuta(req != null ? req.GuidRuta : null);
-        }
-
         public ResCrearParada ObtenerPorGuid(Guid guid)
         {
             ResCrearParada res = new ResCrearParada();
@@ -256,27 +251,6 @@ namespace Logica.Parada
             }
 
             return ObtenerPorGuid(guidParada);
-        }
-
-        public ResObtenerParada Obtener(ReqObtenerParada req)
-        {
-            ResObtenerParada res = new ResObtenerParada();
-            res.resultado = false;
-            res.error = new List<Error>();
-
-            Guid guidParada;
-            if (req == null || !Guid.TryParse(req.Guid, out guidParada))
-            {
-                res.error.Add(CrearError(EnumErroresParada.paradaNoEncontrada, "Guid de parada invalido"));
-                return res;
-            }
-
-            ResCrearParada resCrear = ObtenerPorGuid(guidParada);
-            res.resultado = resCrear.resultado;
-            res.error = resCrear.error;
-            res.parada = resCrear.parada;
-
-            return res;
         }
 
         public ResCrearParada Editar(Guid guid, ReqCrearParada req)
@@ -501,10 +475,19 @@ namespace Logica.Parada
         {
             string nombreNormalizado = nombre.Trim();
 
+            if (guidExcluir.HasValue)
+            {
+                Guid guid = guidExcluir.Value;
+
+                return db.TB_PARADAs.Any(x =>
+                    x.NOMBRE == nombreNormalizado &&
+                    x.ESTADO == true &&
+                    x.GUID_PARADA != guid);
+            }
+
             return db.TB_PARADAs.Any(x =>
                 x.NOMBRE == nombreNormalizado &&
-                x.ESTADO == true &&
-                (!guidExcluir.HasValue || x.GUID_PARADA != guidExcluir.Value));
+                x.ESTADO == true);
         }
 
         private Core.Entidades.Parada MapearParada(TB_PARADA parada)
