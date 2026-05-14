@@ -1,4 +1,4 @@
-﻿using AccesoDatos;
+using AccesoDatos;
 using Core.Entidades;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
@@ -19,59 +19,15 @@ namespace Logica.Parada
 
             try
             {
-                //Validiciones 
-                // Valida que el nombre no venga vacío
-                // o nulo antes de procesar la creación
-                if (string.IsNullOrEmpty(req.Nombre))
-                {
-                    res.error.Add(new Error
-                    {
-                        Codigo = (int)EnumErroresParada.nombreFaltante,
-                        Mensaje = "El nombre es obligatorio"
-                    });
-                }
-                // Verifica que la descripción haya sido ingresada correctamente
-
-                if (string.IsNullOrEmpty(req.Descripcion))
-                {
-                    res.error.Add(new Error
-                    {
-                        Codigo = (int)EnumErroresParada.descripcionFaltante,
-                        Mensaje = "La descripción es obligatoria"
-                    });
-                }
-                // Se realizan validaciones de los datos antes de
-                // proceder con la inserción en base de datos
-                if (req.Latitud < -90 || req.Latitud > 90)
-                {
-                    res.error.Add(new Error
-                    {
-                        Codigo = (int)EnumErroresParada.latitudInvalida,
-                        Mensaje = "Latitud inválida"
-                    });
-                }
-
-                if (req.Longitud < -180 || req.Longitud > 180)
-                {
-                    res.error.Add(new Error
-                    {
-                        Codigo = (int)EnumErroresParada.longitudInvalida,
-                        Mensaje = "Longitud inválida"
-                    });
-                }
-                //// Si existen errores de validación, se detiene el proceso y se retorna la respuesta
+                ValidarDatosParada(req, res.error);
                 if (res.error.Any())
                 {
                     return res;
                 }
 
-                // Inserta la nueva parada en la base de datos y mapea el resultado a la entidad Core
-                // Inserción en base de datos
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
-
-                    // Validar duplicado
-                    if (db.TB_PARADAs.Any(x => x.NOMBRE == req.Nombre && x.ESTADO == true))
+                    if (ExisteDuplicado(db, req.Nombre, null))
                     {
                         res.error.Add(new Error
                         {
@@ -82,15 +38,13 @@ namespace Logica.Parada
                         return res;
                     }
 
-                    // Genera un identificador único (GUID) para la nueva parada
                     Guid guid = Guid.NewGuid();
 
                     TB_PARADA nueva = new TB_PARADA
                     {
-                        // Asigna el GUID generado a la entidad de base de datos
                         GUID_PARADA = guid,
-                        NOMBRE = req.Nombre,
-                        DESCRIPCION = req.Descripcion,
+                        NOMBRE = req.Nombre.Trim(),
+                        DESCRIPCION = req.Descripcion.Trim(),
                         LATITUD = req.Latitud,
                         LONGITUD = req.Longitud,
                         ESTADO = true,
@@ -100,21 +54,10 @@ namespace Logica.Parada
                     db.TB_PARADAs.InsertOnSubmit(nueva);
                     db.SubmitChanges();
 
-                    // Mapea los datos de la entidad de base de datos a la
-                    // entidad del Core para la respuesta
-                    res.parada = new Core.Entidades.Parada
-                    {
-                        guid = nueva.GUID_PARADA,
-                        Nombre = nueva.NOMBRE,
-                        Descripcion = nueva.DESCRIPCION,
-                        Latitud = nueva.LATITUD,
-                        Longitud = nueva.LONGITUD
-                    };
-
+                    res.parada = MapearParada(nueva);
                     res.resultado = true;
                     res.error = null;
                 }
-
             }
             catch (Exception ex)
             {
@@ -124,11 +67,10 @@ namespace Logica.Parada
                     Codigo = (int)EnumErroresParada.errorCreandoParada,
                     Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
                 });
-
             }
             finally
             {
-                // bitácora
+                // bitácora pendiente de integración
             }
 
             return res;
@@ -144,20 +86,63 @@ namespace Logica.Parada
             {
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
-                    // Obtiene únicamente las paradas activas
                     var lista = db.TB_PARADAs
                                   .Where(p => p.ESTADO == true)
                                   .ToList();
 
-                    // Mapeo de BD a Core
-                    res.paradas = lista.Select(p => new Core.Entidades.Parada
+                    res.paradas = lista.Select(MapearParada).ToList();
+                    res.resultado = true;
+                    res.error = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.resultado = false;
+                res.error.Add(new Error
+                {
+                    Codigo = (int)EnumErroresParada.paradaNoEncontrada,
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
+                });
+            }
+            finally
+            {
+                // bitácora pendiente de integración
+            }
+
+            return res;
+        }
+
+        public ResListarParadas ListarPorRuta(Guid guidRuta)
+        {
+            ResListarParadas res = new ResListarParadas();
+            res.resultado = false;
+            res.error = new List<Error>();
+
+            try
+            {
+                if (guidRuta == Guid.Empty)
+                {
+                    res.error.Add(new Error
                     {
-                        guid = p.GUID_PARADA,
-                        Nombre = p.NOMBRE,
-                        Descripcion = p.DESCRIPCION,
-                        Latitud = p.LATITUD,
-                        Longitud = p.LONGITUD
-                    }).ToList();
+                        Codigo = (int)EnumErroresParada.paradaNoEncontrada,
+                        Mensaje = "La ruta es obligatoria"
+                    });
+                    return res;
+                }
+
+                using (ConexionLinqDataContext db = new ConexionLinqDataContext())
+                {
+                    res.paradas = db.SP_OBTENER_PARADAS_POR_RUTA(guidRuta)
+                                    .Select(p => new Core.Entidades.Parada
+                                    {
+                                        guid = p.GUID_PARADA,
+                                        Nombre = p.NOMBRE,
+                                        Descripcion = p.DESCRIPCION,
+                                        Latitud = p.LATITUD ?? 0,
+                                        Longitud = p.LONGITUD ?? 0,
+                                        Orden = p.ORDEN
+                                    })
+                                    .ToList();
 
                     res.resultado = true;
                     res.error = null;
@@ -180,7 +165,23 @@ namespace Logica.Parada
             return res;
         }
 
-        // Método para obtener una parada por su GUID
+        public ResListarParadas ListarPorRuta(string guidRuta)
+        {
+            Guid guid;
+            if (!Guid.TryParse(guidRuta, out guid))
+            {
+                ResListarParadas res = new ResListarParadas();
+                res.resultado = false;
+                res.error = new List<Error>
+                {
+                    CrearError(EnumErroresParada.paradaNoEncontrada, "Guid de ruta invalido")
+                };
+                return res;
+            }
+
+            return ListarPorRuta(guid);
+        }
+
         public ResCrearParada ObtenerPorGuid(Guid guid)
         {
             ResCrearParada res = new ResCrearParada();
@@ -189,10 +190,20 @@ namespace Logica.Parada
 
             try
             {
+                if (guid == Guid.Empty)
+                {
+                    res.error.Add(new Error
+                    {
+                        Codigo = (int)EnumErroresParada.paradaNoEncontrada,
+                        Mensaje = "Parada no encontrada"
+                    });
+                    return res;
+                }
+
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
                     var p = db.TB_PARADAs
-                              .FirstOrDefault(x => x.GUID_PARADA == guid);
+                              .FirstOrDefault(x => x.GUID_PARADA == guid && x.ESTADO == true);
 
                     if (p == null)
                     {
@@ -204,15 +215,7 @@ namespace Logica.Parada
                         return res;
                     }
 
-                    res.parada = new Core.Entidades.Parada
-                    {
-                        guid = p.GUID_PARADA,
-                        Nombre = p.NOMBRE,
-                        Descripcion = p.DESCRIPCION,
-                        Latitud = p.LATITUD,
-                        Longitud = p.LONGITUD
-                    };
-
+                    res.parada = MapearParada(p);
                     res.resultado = true;
                     res.error = null;
                 }
@@ -232,7 +235,24 @@ namespace Logica.Parada
 
             return res;
         }
-        // Método para editar una parada existente utilizando su GUID
+
+        public ResCrearParada ObtenerPorGuid(string guid)
+        {
+            Guid guidParada;
+            if (!Guid.TryParse(guid, out guidParada))
+            {
+                ResCrearParada res = new ResCrearParada();
+                res.resultado = false;
+                res.error = new List<Error>
+                {
+                    CrearError(EnumErroresParada.paradaNoEncontrada, "Guid de parada invalido")
+                };
+                return res;
+            }
+
+            return ObtenerPorGuid(guidParada);
+        }
+
         public ResCrearParada Editar(Guid guid, ReqCrearParada req)
         {
             ResCrearParada res = new ResCrearParada();
@@ -241,10 +261,16 @@ namespace Logica.Parada
 
             try
             {
+                ValidarDatosParada(req, res.error);
+                if (res.error.Any())
+                {
+                    return res;
+                }
+
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
                     var p = db.TB_PARADAs
-                              .FirstOrDefault(x => x.GUID_PARADA == guid);
+                              .FirstOrDefault(x => x.GUID_PARADA == guid && x.ESTADO == true);
 
                     if (p == null)
                     {
@@ -256,22 +282,24 @@ namespace Logica.Parada
                         return res;
                     }
 
-                    p.NOMBRE = req.Nombre;
-                    p.DESCRIPCION = req.Descripcion;
+                    if (ExisteDuplicado(db, req.Nombre, guid))
+                    {
+                        res.error.Add(new Error
+                        {
+                            Codigo = (int)EnumErroresParada.paradaDuplicada,
+                            Mensaje = "Ya existe una parada con ese nombre"
+                        });
+                        return res;
+                    }
+
+                    p.NOMBRE = req.Nombre.Trim();
+                    p.DESCRIPCION = req.Descripcion.Trim();
                     p.LATITUD = req.Latitud;
                     p.LONGITUD = req.Longitud;
 
                     db.SubmitChanges();
 
-                    res.parada = new Core.Entidades.Parada
-                    {
-                        guid = guid,
-                        Nombre = p.NOMBRE,
-                        Descripcion = p.DESCRIPCION,
-                        Latitud = p.LATITUD,
-                        Longitud = p.LONGITUD
-                    };
-
+                    res.parada = MapearParada(p);
                     res.resultado = true;
                     res.error = null;
                 }
@@ -292,7 +320,32 @@ namespace Logica.Parada
             return res;
         }
 
-        // Método para eliminar una parada utilizando su GUID
+        public ResEditarParada Editar(ReqEditarParada req)
+        {
+            ResEditarParada res = new ResEditarParada();
+            res.resultado = false;
+            res.error = new List<Error>();
+
+            Guid guid;
+            if (req == null || !Guid.TryParse(req.Guid, out guid))
+            {
+                res.error.Add(CrearError(EnumErroresParada.paradaNoEncontrada, "Guid de parada invalido"));
+                return res;
+            }
+
+            ReqCrearParada reqCrear = new ReqCrearParada();
+            reqCrear.Nombre = req.Nombre;
+            reqCrear.Descripcion = req.Descripcion;
+            reqCrear.Latitud = req.Latitud;
+            reqCrear.Longitud = req.Longitud;
+
+            ResCrearParada resCrear = Editar(guid, reqCrear);
+            res.resultado = resCrear.resultado;
+            res.error = resCrear.error;
+            res.parada = resCrear.parada;
+
+            return res;
+        }
 
         public ResBase Eliminar(Guid guid)
         {
@@ -305,7 +358,7 @@ namespace Logica.Parada
                 using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
                     var p = db.TB_PARADAs
-                              .FirstOrDefault(x => x.GUID_PARADA == guid);
+                              .FirstOrDefault(x => x.GUID_PARADA == guid && x.ESTADO == true);
 
                     if (p == null)
                     {
@@ -338,6 +391,106 @@ namespace Logica.Parada
             }
 
             return res;
+        }
+
+        public ResEliminarParada Eliminar(ReqEliminarParada req)
+        {
+            ResEliminarParada res = new ResEliminarParada();
+            res.resultado = false;
+            res.error = new List<Error>();
+
+            Guid guid;
+            if (req == null || !Guid.TryParse(req.Guid, out guid))
+            {
+                res.error.Add(CrearError(EnumErroresParada.paradaNoEncontrada, "Guid de parada invalido"));
+                return res;
+            }
+
+            ResBase resBase = Eliminar(guid);
+            res.resultado = resBase.resultado;
+            res.error = resBase.error;
+
+            return res;
+        }
+
+        private Error CrearError(EnumErroresParada codigo, string mensaje)
+        {
+            return new Error
+            {
+                Codigo = (int)codigo,
+                Mensaje = mensaje
+            };
+        }
+
+        private void ValidarDatosParada(ReqCrearParada req, List<Error> errores)
+        {
+            if (req == null)
+            {
+                errores.Add(new Error
+                {
+                    Codigo = (int)EnumErroresParada.nombreFaltante,
+                    Mensaje = "Los datos de la parada son obligatorios"
+                });
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(req.Nombre))
+            {
+                errores.Add(new Error
+                {
+                    Codigo = (int)EnumErroresParada.nombreFaltante,
+                    Mensaje = "El nombre es obligatorio"
+                });
+            }
+
+            if (string.IsNullOrWhiteSpace(req.Descripcion))
+            {
+                errores.Add(new Error
+                {
+                    Codigo = (int)EnumErroresParada.descripcionFaltante,
+                    Mensaje = "La descripción es obligatoria"
+                });
+            }
+
+            if (req.Latitud < -90 || req.Latitud > 90)
+            {
+                errores.Add(new Error
+                {
+                    Codigo = (int)EnumErroresParada.latitudInvalida,
+                    Mensaje = "Latitud inválida"
+                });
+            }
+
+            if (req.Longitud < -180 || req.Longitud > 180)
+            {
+                errores.Add(new Error
+                {
+                    Codigo = (int)EnumErroresParada.longitudInvalida,
+                    Mensaje = "Longitud inválida"
+                });
+            }
+        }
+
+        private bool ExisteDuplicado(ConexionLinqDataContext db, string nombre, Guid? guidExcluir)
+        {
+            string nombreNormalizado = nombre.Trim();
+
+            return db.TB_PARADAs.Any(x =>
+                x.NOMBRE == nombreNormalizado &&
+                x.ESTADO == true &&
+                (!guidExcluir.HasValue || x.GUID_PARADA != guidExcluir.Value));
+        }
+
+        private Core.Entidades.Parada MapearParada(TB_PARADA parada)
+        {
+            return new Core.Entidades.Parada
+            {
+                guid = parada.GUID_PARADA,
+                Nombre = parada.NOMBRE,
+                Descripcion = parada.DESCRIPCION,
+                Latitud = parada.LATITUD,
+                Longitud = parada.LONGITUD
+            };
         }
     }
 }
