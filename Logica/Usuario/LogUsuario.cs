@@ -113,22 +113,10 @@ namespace Logica.Usuario
                 bool correoEnviado = Utilitarios.Utilitarios.EnviarCorreoVerificacion(
                     req.usuario.nombre, req.usuario.apellidos, req.usuario.email, token);
 
-                if (correoEnviado)
-                {
-                    res.resultado    = true;
-                    res.guidUsuario  = guidReturn;
-                    res.error        = null;
-                    tipoBitacora     = enumBitacora.exitoso;
-                }
-                else
-                {
-                    // Usuario creado pero correo falló — retornamos token para activar manualmente
-                    res.resultado         = true;
-                    res.guidUsuario       = guidReturn;
-                    res.tokenVerificacion = token;   // úsalo en POST /api/auth/activar para pruebas
-                    res.error             = null;
-                    tipoBitacora          = enumBitacora.exitoso;
-                }
+                res.resultado    = true;
+                res.mensaje      = "Usuario registrado correctamente. Revise su correo para activar la cuenta.";
+                res.error        = null;
+                tipoBitacora     = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
