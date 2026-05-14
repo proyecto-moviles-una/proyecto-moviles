@@ -182,6 +182,11 @@ namespace Logica.Parada
             return ListarPorRuta(guid);
         }
 
+        public ResListarParadas ListarPorRuta(ReqListarParadasPorRuta req)
+        {
+            return ListarPorRuta(req != null ? req.GuidRuta : null);
+        }
+
         public ResCrearParada ObtenerPorGuid(Guid guid)
         {
             ResCrearParada res = new ResCrearParada();
@@ -251,6 +256,27 @@ namespace Logica.Parada
             }
 
             return ObtenerPorGuid(guidParada);
+        }
+
+        public ResObtenerParada Obtener(ReqObtenerParada req)
+        {
+            ResObtenerParada res = new ResObtenerParada();
+            res.resultado = false;
+            res.error = new List<Error>();
+
+            Guid guidParada;
+            if (req == null || !Guid.TryParse(req.Guid, out guidParada))
+            {
+                res.error.Add(CrearError(EnumErroresParada.paradaNoEncontrada, "Guid de parada invalido"));
+                return res;
+            }
+
+            ResCrearParada resCrear = ObtenerPorGuid(guidParada);
+            res.resultado = resCrear.resultado;
+            res.error = resCrear.error;
+            res.parada = resCrear.parada;
+
+            return res;
         }
 
         public ResCrearParada Editar(Guid guid, ReqCrearParada req)

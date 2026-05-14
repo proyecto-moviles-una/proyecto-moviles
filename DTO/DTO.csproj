@@ -45,6 +45,8 @@
     <Compile Include="Empresa\DTOEmpresa.cs" />
     <Compile Include="Historial\DTOHistorial.cs" />
     <Compile Include="Horario\DTOHorario.cs" />
+    <Compile Include="Parada\DTOListarParadasPorRuta.cs" />
+    <Compile Include="Parada\DTOObtenerParada.cs" />
     <Compile Include="Parada\DTOParada.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ruta\DTOAsociarParadaRuta.cs" />
