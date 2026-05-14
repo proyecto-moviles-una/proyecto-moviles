@@ -19,51 +19,34 @@ namespace API.Controllers
                 ? (TokenInfo)Request.Properties["tokenInfo"]
                 : null;
 
-        // Valida que el guid de la URL sea el mismo del token
-        private HttpResponseMessage validarOwnership(Guid guid)
-        {
-            if (tokenActual == null ||
-                !string.Equals(tokenActual.guidUsuario, guid.ToString(), StringComparison.OrdinalIgnoreCase))
-                return Request.CreateErrorResponse(HttpStatusCode.Forbidden,
-                    "No tiene permiso para acceder a este recurso.");
-            return null;
-        }
-
-        // GET api/favoritos/{guidUsuario}  — lista los favoritos del usuario
+        // GET api/favoritos  — lista los favoritos del usuario autenticado (guid viene del JWT)
         [HttpGet]
-        [Route("api/favoritos/{guidUsuario}")]
-        public HttpResponseMessage obtener(Guid guidUsuario)
+        [Route("api/favoritos")]
+        public HttpResponseMessage obtener()
         {
-            HttpResponseMessage bloqueo = validarOwnership(guidUsuario);
-            if (bloqueo != null) return bloqueo;
-
+            Guid guidUsuario = Guid.Parse(tokenActual.guidUsuario);
             ReqObtenerFavoritos req = new ReqObtenerFavoritos();
             req.guidUsuario = guidUsuario;
             return Request.CreateResponse(HttpStatusCode.OK, new LogFavorito().obtener(req));
         }
 
-        // POST api/favoritos/{guidUsuario}  — agrega un favorito
+        // POST api/favoritos  — agrega un favorito al usuario autenticado (guid viene del JWT)
         [HttpPost]
-        [Route("api/favoritos/{guidUsuario}")]
-        public HttpResponseMessage agregar(Guid guidUsuario, DTOAgregarFavorito dto)
+        [Route("api/favoritos")]
+        public HttpResponseMessage agregar(DTOAgregarFavorito dto)
         {
-            HttpResponseMessage bloqueo = validarOwnership(guidUsuario);
-            if (bloqueo != null) return bloqueo;
-
+            Guid guidUsuario = Guid.Parse(tokenActual.guidUsuario);
             ReqAgregarFavorito req = new ReqAgregarFavorito();
             req.guidUsuario = guidUsuario;
             req.guidRuta    = dto.guidRuta;
             return Request.CreateResponse(HttpStatusCode.OK, new LogFavorito().agregar(req));
         }
 
-        // DELETE api/favoritos/{guidUsuario}/{guidFavorito}  — elimina un favorito
+        // DELETE api/favoritos/{guidFavorito}  — elimina un favorito del usuario autenticado
         [HttpDelete]
-        [Route("api/favoritos/{guidUsuario}/{guidFavorito}")]
-        public HttpResponseMessage eliminar(Guid guidUsuario, Guid guidFavorito)
+        [Route("api/favoritos/{guidFavorito}")]
+        public HttpResponseMessage eliminar(Guid guidFavorito)
         {
-            HttpResponseMessage bloqueo = validarOwnership(guidUsuario);
-            if (bloqueo != null) return bloqueo;
-
             ReqEliminarFavorito req = new ReqEliminarFavorito();
             req.guidFavorito = guidFavorito;
             return Request.CreateResponse(HttpStatusCode.OK, new LogFavorito().eliminar(req));
