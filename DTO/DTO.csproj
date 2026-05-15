@@ -57,6 +57,7 @@
     <Compile Include="Usuario\DTOCerrarSesion.cs" />
     <Compile Include="Usuario\DTOConfirmarCambioCorreo.cs" />
     <Compile Include="Usuario\DTODesactivarUsuario.cs" />
+    <Compile Include="Usuario\DTOEliminarFavorito.cs" />
     <Compile Include="Usuario\DTOEliminarUsuario.cs" />
     <Compile Include="Usuario\DTOInsertarUsuario.cs" />
     <Compile Include="Usuario\DTOLogin.cs" />

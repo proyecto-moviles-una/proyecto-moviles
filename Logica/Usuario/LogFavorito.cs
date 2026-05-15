@@ -109,17 +109,18 @@ namespace Logica.Usuario
                 System.Nullable<int> idReturn    = null;
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
+                int                  spResult    = 0;
 
                 using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
                 {
-                    linq.SP_ELIMINAR_FAVORITO(
+                    spResult = linq.SP_ELIMINAR_FAVORITO(
                         req.guidFavorito,
                         ref idReturn,
                         ref errorIdBD,
                         ref errorDescBD);
                 }
 
-                if (idReturn > 0)
+                if (idReturn == 0)
                 {
                     res.resultado = true;
                     res.error     = null;
