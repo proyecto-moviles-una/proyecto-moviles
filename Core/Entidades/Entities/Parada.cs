@@ -13,5 +13,7 @@ namespace Core.Entidades
         public string Descripcion { get; set; }
         public decimal Latitud { get; set; }
         public decimal Longitud { get; set; }
+        public int? Orden { get; set; }
+        public decimal? DistanciaKm { get; set; }
     }
 }
