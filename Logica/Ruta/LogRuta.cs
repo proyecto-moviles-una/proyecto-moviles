@@ -1,4 +1,4 @@
-using AccesoDatos;
+﻿using AccesoDatos;
 using Core.Entidades;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
@@ -280,5 +280,48 @@ namespace Logica.Ruta
 
             return res;
         }
+        public ResBase DesasociarParada(ReqDesasociarParadaRuta req)
+        {
+            var res = new ResBase { resultado = false, error = new List<Error>() };
+
+            try
+            {
+                if (req == null || req.GuidRuta == Guid.Empty || req.GuidParada == Guid.Empty)
+                {
+                    res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorDesasociandoParadaRuta, Mensaje = "La ruta y la parada son obligatorias" });
+                    return res;
+                }
+
+                System.Nullable<int> idReturn = null;
+                System.Nullable<int> errorIdBD = null;
+                string errorDescBD = null;
+
+                using (var db = new ConexionLinqDataContext())
+                {
+                    db.SP_DESASOCIAR_PARADA_RUTA(
+                        req.GuidRuta,
+                        req.GuidParada,
+                        ref idReturn,
+                        ref errorIdBD,
+                        ref errorDescBD);
+                }
+
+                if (errorIdBD.HasValue && errorIdBD.Value != 0)
+                {
+                    res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorDesasociandoParadaRuta, Mensaje = errorDescBD ?? "Error al desasociar la parada" });
+                    return res;
+                }
+
+                res.resultado = true;
+                res.error = null;
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorDesasociandoParadaRuta, Mensaje = ex.Message });
+            }
+
+            return res;
+        }
     }
 }
+

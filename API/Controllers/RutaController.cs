@@ -1,4 +1,4 @@
-using Core.Entidades;
+﻿using Core.Entidades;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
 using DTO.Ruta;
@@ -76,5 +76,17 @@ namespace API.Controllers
             };
             return new LogRuta().AsociarParada(req);
         }
+        [HttpDelete]
+        [Route("desasociar-parada/{guidRuta}/{guidParada}")]
+        public ResBase DesasociarParada(string guidRuta, string guidParada)
+        {
+            var req = new ReqDesasociarParadaRuta
+            {
+                GuidRuta = new Guid(guidRuta),
+                GuidParada = new Guid(guidParada)
+            };
+            return new LogRuta().DesasociarParada(req);
+        }
     }
 }
+
