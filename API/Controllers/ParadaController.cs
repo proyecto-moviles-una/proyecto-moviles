@@ -45,6 +45,14 @@ namespace API.Controllers
             return new LogParada().Listar();
         }
 
+        // -------- LISTAR CERCANAS --------
+        [HttpGet]
+        [Route("cercanas")]
+        public ResListarParadas ListarCercanas(decimal latitud, decimal longitud, decimal radioKm = 1)
+        {
+            return new LogParada().ListarCercanas(latitud, longitud, radioKm);
+        }
+
         // -------- OBTENER --------
         [HttpGet]
         [Route("obtener/{guid}")]
@@ -59,6 +67,14 @@ namespace API.Controllers
         public ResListarParadas ListarPorRuta(string guidRuta)
         {
             return new LogParada().ListarPorRuta(guidRuta);
+        }
+
+        // -------- LISTAR RUTAS POR PARADA --------
+        [HttpGet]
+        [Route("{guidParada}/rutas")]
+        public ResListarRutas ListarRutasPorParada(string guidParada)
+        {
+            return new LogParada().ListarRutasPorParada(guidParada);
         }
 
         // -------- EDITAR --------
