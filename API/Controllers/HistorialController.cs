@@ -1,49 +1,88 @@
-﻿using System;
-using System.Web.Http;
+using API.Filters;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
 using DTO.Historial;
+using Logica.Auth;
 using Logica.Historial;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 
 namespace API.Controllers
 {
     /// <summary>
     /// Controlador para gestionar historial de consultas
     /// </summary>
+    [JwtAuth]
     [RoutePrefix("api/historial")]
     public class HistorialController : ApiController
     {
+        private TokenInfo tokenActual =>
+            Request.Properties.ContainsKey("tokenInfo")
+                ? (TokenInfo)Request.Properties["tokenInfo"]
+                : null;
+
+        private bool TryObtenerUsuarioToken(out Guid guidUsuario)
+        {
+            guidUsuario = Guid.Empty;
+
+            return tokenActual != null &&
+                   Guid.TryParse(tokenActual.guidUsuario, out guidUsuario);
+        }
 
         /// <summary>
-        /// Registrar consulta en historial
+        /// Registrar consulta en historial para el usuario autenticado
         /// </summary>
         [HttpPost]
         [Route("registrar")]
-        public ResCrearHistorial Registrar(
-            [FromBody] DTOHistorial dto)
+        public HttpResponseMessage Registrar([FromBody] DTOHistorial dto)
         {
-            ReqCrearHistorial req =
-                new ReqCrearHistorial();
+            Guid guidUsuario;
+            if (!TryObtenerUsuarioToken(out guidUsuario))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized,
+                    "Token inválido o sin usuario asociado.");
+            }
 
-            req.GuidUsuario = dto.GuidUsuario;
-            req.GuidRuta = dto.GuidRuta;
+            ReqCrearHistorial req = new ReqCrearHistorial();
 
-            return new LogHistorial().Crear(req);
+            req.GuidUsuario = guidUsuario;
+            req.GuidRuta = dto != null ? dto.GuidRuta : Guid.Empty;
+
+            return Request.CreateResponse(HttpStatusCode.OK, new LogHistorial().Crear(req));
         }
-
-
 
         /// <summary>
-        /// Obtener historial de un usuario
+        /// Obtener historial del usuario autenticado
         /// </summary>
         [HttpGet]
-        [Route("usuario/{guid}")]
-        public ResListarHistorial ListarPorUsuario(
-            Guid guid)
+        [Route("usuario")]
+        public HttpResponseMessage ListarPorUsuario()
         {
-            return new LogHistorial()
-                .ListarPorUsuario(guid);
+            Guid guidUsuario;
+            if (!TryObtenerUsuarioToken(out guidUsuario))
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token inválido o sin usuario asociado.");
+
+            return Request.CreateResponse(HttpStatusCode.OK, new LogHistorial().ListarPorUsuario(guidUsuario));
         }
 
+        [HttpGet]
+        [Route("obtener/{guid}")]
+        public HttpResponseMessage ObtenerPorGuid(string guid)
+        {
+            Guid guidUsuario;
+            if (!TryObtenerUsuarioToken(out guidUsuario))
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token inválido o sin usuario asociado.");
+
+            return Request.CreateResponse(HttpStatusCode.OK, new LogHistorial().ObtenerPorGuid(guidUsuario, new Guid(guid)));
+        }
+
+        [HttpDelete]
+        [Route("eliminar/{guid}")]
+        public HttpResponseMessage Eliminar(string guid)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, new LogHistorial().Eliminar(new Guid(guid)));
+        }
     }
 }

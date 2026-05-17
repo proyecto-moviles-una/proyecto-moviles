@@ -1,4 +1,4 @@
-﻿using AccesoDatos;
+using AccesoDatos;
 using Core.Entidades;
 using Core.Entidades.Entities;
 using Core.Entidades.Request;
@@ -12,48 +12,33 @@ namespace Logica.Historial
 {
     public class LogHistorial
     {
-
         public ResCrearHistorial Crear(ReqCrearHistorial req)
         {
             ResCrearHistorial res = new ResCrearHistorial();
-
             res.resultado = false;
             res.error = new List<Error>();
 
             try
             {
-
                 if (req.GuidUsuario == Guid.Empty)
                 {
-                    res.error.Add(new Error
-                    {
-                        Codigo = (int)ErroresHistorial.usuarioFaltante,
-                        Mensaje = "Usuario obligatorio"
-                    });
+                    res.error.Add(new Error { Codigo = (int)ErroresHistorial.usuarioFaltante, Mensaje = "Usuario obligatorio" });
                 }
 
                 if (req.GuidRuta == Guid.Empty)
                 {
-                    res.error.Add(new Error
-                    {
-                        Codigo = (int)ErroresHistorial.rutaFaltante,
-                        Mensaje = "Ruta obligatoria"
-                    });
+                    res.error.Add(new Error { Codigo = (int)ErroresHistorial.rutaFaltante, Mensaje = "Ruta obligatoria" });
                 }
 
                 if (res.error.Any())
                     return res;
 
-
-                using (ConexionLinqDataContext db =
-                    new ConexionLinqDataContext())
+                using (ConexionLinqDataContext db = new ConexionLinqDataContext())
                 {
-
-                    // Variables OUTPUT del SP
-                    Guid? guidHistorial = Guid.Empty;
-                    int? idReturn = 0;
-                    int? errorId = 0;
-                    string errorDescripcion = "";
+                    Guid? guidHistorial = null;
+                    int? idReturn = null;
+                    int? errorId = null;
+                    string errorDescripcion = null;
 
                     db.SP_REGISTRAR_HISTORIAL(
                         req.GuidUsuario,
@@ -64,9 +49,15 @@ namespace Logica.Historial
                         ref errorDescripcion
                     );
 
-
-                    if (idReturn == 1)
+                    if (idReturn.HasValue && idReturn.Value > 0)
                     {
+                        res.historial = new HistorialViaje
+                        {
+                            GuidHistorial = guidHistorial ?? Guid.Empty,
+                            GuidUsuario = req.GuidUsuario,
+                            GuidRuta = req.GuidRuta
+                        };
+
                         res.resultado = true;
                         res.error = null;
                     }
@@ -74,97 +65,147 @@ namespace Logica.Historial
                     {
                         res.error.Add(new Error
                         {
-                            Codigo = errorId ?? 0,
-                            Mensaje = errorDescripcion
+                            Codigo = errorId ?? (int)ErroresHistorial.errorRegistrandoHistorial,
+                            Mensaje = string.IsNullOrEmpty(errorDescripcion) ? "Error al registrar historial" : errorDescripcion
                         });
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error
                 {
-                    Codigo =
-                     (int)ErroresHistorial.errorRegistrandoHistorial,
-
-                    Mensaje = ex.Message +
-                    (ex.InnerException != null
-                    ? " | " + ex.InnerException.Message
-                    : "")
+                    Codigo = (int)ErroresHistorial.errorRegistrandoHistorial,
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
                 });
             }
-            finally
-            {
-                // bitácora pendiente de integración
-            }
+            finally { }
 
             return res;
         }
 
-
-
-
         public ResListarHistorial ListarPorUsuario(Guid guidUsuario)
         {
-
-            ResListarHistorial res =
-                new ResListarHistorial();
-
+            ResListarHistorial res = new ResListarHistorial();
             res.resultado = false;
             res.error = new List<Error>();
 
             try
             {
-
-                using (ConexionLinqDataContext db =
-                    new ConexionLinqDataContext())
+                if (guidUsuario == Guid.Empty)
                 {
+                    res.error.Add(new Error { Codigo = (int)ErroresHistorial.usuarioFaltante, Mensaje = "Usuario obligatorio" });
+                    return res;
+                }
 
-                    var lista =
-                     db.SP_OBTENER_HISTORIAL_POR_USUARIO(
-                        guidUsuario
-                     ).ToList();
+                using (ConexionLinqDataContext db = new ConexionLinqDataContext())
+                {
+                    var lista = db.SP_OBTENER_HISTORIAL_POR_USUARIO(guidUsuario).ToList();
 
-
-                    res.historial = lista.Select(x =>
-                     new HistorialViaje
-                     {
-                         GuidHistorial = x.GUID_HISTORIAL,
-                         GuidRuta = x.GUID_RUTA,
-                         NombreRuta = x.NOMBRE_RUTA,
-                         Tarifa = x.TARIFA_CONSULTADA ?? 0,
-                         FechaConsulta = x.FECHA_CONSULTA
-                     }).ToList();
-
+                    res.historial = lista.Select(x => new HistorialViaje
+                    {
+                        GuidHistorial = x.GUID_HISTORIAL,
+                        GuidRuta = x.GUID_RUTA,
+                        GuidUsuario = guidUsuario,
+                        NombreRuta = x.NOMBRE_RUTA,
+                        Tarifa = x.TARIFA_CONSULTADA ?? 0,
+                        FechaConsulta = x.FECHA_CONSULTA
+                    }).ToList();
 
                     res.resultado = true;
                     res.error = null;
-
                 }
-
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error
                 {
-                    Codigo =
-                    (int)ErroresHistorial.errorConsultandoHistorial,
-
-                    Mensaje = ex.Message +
-                    (ex.InnerException != null
-                    ? " | " + ex.InnerException.Message
-                    : "")
+                    Codigo = (int)ErroresHistorial.errorConsultandoHistorial,
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
                 });
             }
-            finally
+            finally { }
+
+            return res;
+        }
+
+        public ResCrearHistorial ObtenerPorGuid(Guid guidUsuario, Guid guidHistorial)
+        {
+            ResCrearHistorial res = new ResCrearHistorial();
+            res.resultado = false;
+            res.error = new List<Error>();
+
+            try
             {
-                // bitácora pendiente de integración
+                using (ConexionLinqDataContext db = new ConexionLinqDataContext())
+                {
+                    var item = db.SP_OBTENER_HISTORIAL_POR_USUARIO(guidUsuario)
+                                 .FirstOrDefault(x => x.GUID_HISTORIAL == guidHistorial);
+
+                    if (item == null)
+                    {
+                        res.error.Add(new Error { Codigo = (int)ErroresHistorial.historialNoEncontrado, Mensaje = "Registro no encontrado" });
+                        return res;
+                    }
+
+                    res.historial = new HistorialViaje
+                    {
+                        GuidHistorial = item.GUID_HISTORIAL,
+                        GuidRuta = item.GUID_RUTA,
+                        GuidUsuario = guidUsuario,
+                        NombreRuta = item.NOMBRE_RUTA,
+                        Tarifa = item.TARIFA_CONSULTADA ?? 0,
+                        FechaConsulta = item.FECHA_CONSULTA
+                    };
+                    res.resultado = true;
+                    res.error = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(new Error
+                {
+                    Codigo = (int)ErroresHistorial.errorConsultandoHistorial,
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
+                });
             }
 
             return res;
         }
 
+        public ResBase Eliminar(Guid guidHistorial)
+        {
+            ResBase res = new ResBase { resultado = false, error = new List<Error>() };
+
+            try
+            {
+                using (ConexionLinqDataContext db = new ConexionLinqDataContext())
+                {
+                    var row = db.TB_HISTORIAL_VIAJE.FirstOrDefault(x => x.GUID_HISTORIAL == guidHistorial);
+
+                    if (row == null)
+                    {
+                        res.error.Add(new Error { Codigo = (int)ErroresHistorial.historialNoEncontrado, Mensaje = "Registro no encontrado" });
+                        return res;
+                    }
+
+                    db.TB_HISTORIAL_VIAJE.DeleteOnSubmit(row);
+                    db.SubmitChanges();
+
+                    res.resultado = true;
+                    res.error = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(new Error
+                {
+                    Codigo = (int)ErroresHistorial.errorEliminandoHistorial,
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
+                });
+            }
+
+            return res;
+        }
     }
 }
