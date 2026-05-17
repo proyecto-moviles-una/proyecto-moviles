@@ -36,7 +36,7 @@ namespace AccesoDatos
     #endregion
 		
 		public ConexionLinqDataContext() : 
-				base(global::AccesoDatos.Properties.Settings.Default.bdMiBusConnectionString2, mappingSource)
+				base(global::AccesoDatos.Properties.Settings.Default.bdMiBusConnectionString1, mappingSource)
 		{
 			OnCreated();
 		}
