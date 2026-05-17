@@ -1,4 +1,4 @@
-namespace Core.Enum.Ruta
+﻿namespace Core.Enum.Ruta
 {
     public enum EnumErroresRuta
     {
@@ -11,5 +11,7 @@ namespace Core.Enum.Ruta
         errorEditandoRuta = 7,
         errorEliminandoRuta = 8,
         guidEmpresaInvalido = 9,
+        errorDesasociandoParadaRuta = 10,
     }
 }
+

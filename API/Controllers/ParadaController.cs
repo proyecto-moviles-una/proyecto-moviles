@@ -1,10 +1,9 @@
-﻿
 using System.Web.Http;
+using API.Filters;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
-using Logica.Parada;
 using DTO.Parada;
-using Core.Entidades;
+using Logica.Parada;
 
 namespace API.Controllers
 {
@@ -19,12 +18,14 @@ namespace API.Controllers
         /// </summary>
         /// <param name="dto">Datos de la parada a crear</param>
         /// <returns>Respuesta con la parada creada</returns>
+        [JwtAuth]
         [HttpPost]
         [Route("crear")]
         public ResCrearParada Crear([FromBody] DTOParada dto)
         {
-            ReqCrearParada req = new ReqCrearParada();
+            dto = dto ?? new DTOParada();
 
+            ReqCrearParada req = new ReqCrearParada();
             req.Nombre = dto.Nombre;
             req.Descripcion = dto.Descripcion;
             req.Latitud = dto.Latitud;
@@ -43,27 +44,67 @@ namespace API.Controllers
         {
             return new LogParada().Listar();
         }
+
+        // -------- LISTAR CERCANAS --------
+        [HttpGet]
+        [Route("cercanas")]
+        public ResListarParadas ListarCercanas(decimal latitud, decimal longitud, decimal radioKm = 1)
+        {
+            return new LogParada().ListarCercanas(latitud, longitud, radioKm);
+        }
+
+        // -------- OBTENER --------
+        [HttpGet]
+        [Route("obtener/{guid}")]
+        public ResCrearParada Obtener(string guid)
+        {
+            return new LogParada().ObtenerPorGuid(guid);
+        }
+
+        // -------- LISTAR POR RUTA --------
+        [HttpGet]
+        [Route("ruta/{guidRuta}")]
+        public ResListarParadas ListarPorRuta(string guidRuta)
+        {
+            return new LogParada().ListarPorRuta(guidRuta);
+        }
+
+        // -------- LISTAR RUTAS POR PARADA --------
+        [HttpGet]
+        [Route("{guidParada}/rutas")]
+        public ResListarRutas ListarRutasPorParada(string guidParada)
+        {
+            return new LogParada().ListarRutasPorParada(guidParada);
+        }
+
         // -------- EDITAR --------
+        [JwtAuth]
         [HttpPut]
         [Route("editar/{guid}")]
-        public ResCrearParada Editar(string guid, [FromBody] DTOParada dto)
+        public ResEditarParada Editar(string guid, [FromBody] DTOParada dto)
         {
-            ReqCrearParada req = new ReqCrearParada();
+            dto = dto ?? new DTOParada();
 
+            ReqEditarParada req = new ReqEditarParada();
+            req.Guid = guid;
             req.Nombre = dto.Nombre;
             req.Descripcion = dto.Descripcion;
             req.Latitud = dto.Latitud;
             req.Longitud = dto.Longitud;
 
-            return new LogParada().Editar(new System.Guid(guid), req);
-        }
-        // -------- ELIMINAR --------
-        [HttpDelete]
-        [Route("eliminar/{guid}")]
-        public ResBase Eliminar(string guid)
-        {
-            return new LogParada().Eliminar(new System.Guid(guid));
+            return new LogParada().Editar(req);
         }
 
+        // -------- ELIMINAR --------
+        [JwtAuth]
+        [HttpDelete]
+        [Route("eliminar/{guid}")]
+        public ResEliminarParada Eliminar(string guid)
+        {
+            ReqEliminarParada req = new ReqEliminarParada();
+            req.Guid = guid;
+
+            return new LogParada().Eliminar(req);
+        }
     }
 }
