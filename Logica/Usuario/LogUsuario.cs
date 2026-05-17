@@ -95,13 +95,16 @@ namespace Logica.Usuario
 
                 if (guidReturn == null || guidReturn == Guid.Empty) // si el sp no devuleve el guide significa que fallo
                 {
-                    // Si el SP devolvió errorId=1 es correo duplicado, si no es error genérico
+                    // Si el SP devolvió errorId=1 es correo duplicado, si no es error genérico de BD
                     int codError = (errorIdBD == 1)
                         ? (int)enumErroresAutenticacion.correoYaRegistrado
                         : (int)enumErroresGenerales.errorBaseDatos;
                     string codErrorDesc = (errorIdBD == 1)
                         ? enumErroresAutenticacion.correoYaRegistrado.ToString()
                         : enumErroresGenerales.errorBaseDatos.ToString();
+
+                    if (errorIdBD != 1)
+                        Utilitarios.Utilitarios.registrarErrorBD("SP_INGRESAR_USUARIO", errorIdBD ?? 0, errorDescBD);
 
                     res.error.Add(Utilitarios.Utilitarios.crearError(codError));
                     errorId   = codError;
@@ -264,12 +267,17 @@ namespace Logica.Usuario
                 System.Nullable<int>         errorIdBD   = null;
                 string                       errorDescBD = null;
 
+                string origenSesion = null;
+                System.Web.HttpContext ctxLogin = System.Web.HttpContext.Current;
+                if (ctxLogin != null)
+                    origenSesion = ctxLogin.Request.UserAgent;
+
                 using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
                 {
                     linq.SP_ABRIR_SESION(
                         jwtTemp,
                         spResult.GUID_USUARIO,
-                        "MiBus-App",
+                        origenSesion,
                         ref guidSesion,
                         ref idReturn,
                         ref errorIdBD,
@@ -687,6 +695,7 @@ namespace Logica.Usuario
 
                 if (idReturn == null || idReturn <= 0)
                 {
+                    Utilitarios.Utilitarios.registrarErrorBD("SP_REENVIAR_ACTIVACION", errorIdBD ?? 0, errorDescBD);
                     res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
                     errorId   = (int)enumErroresGenerales.errorBaseDatos;
                     errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
@@ -799,6 +808,7 @@ namespace Logica.Usuario
 
                 if (idReturn == null || idReturn <= 0)
                 {
+                    Utilitarios.Utilitarios.registrarErrorBD("SP_SOLICITAR_CAMBIO_CORREO", errorIdBD ?? 0, errorDescBD);
                     res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
                     errorId   = (int)enumErroresGenerales.errorBaseDatos;
                     errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
@@ -882,6 +892,7 @@ namespace Logica.Usuario
                 }
                 else
                 {
+                    Utilitarios.Utilitarios.registrarErrorBD("SP_CONFIRMAR_CAMBIO_CORREO", errorIdBD ?? 0, errorDescBD);
                     res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
                     errorId   = (int)enumErroresGenerales.errorBaseDatos;
                     errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
@@ -961,6 +972,7 @@ namespace Logica.Usuario
 
                 if (idReturn == null || idReturn <= 0)
                 {
+                    Utilitarios.Utilitarios.registrarErrorBD("SP_SOLICITAR_REACTIVACION", errorIdBD ?? 0, errorDescBD);
                     res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
                     errorId   = (int)enumErroresGenerales.errorBaseDatos;
                     errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
@@ -1055,6 +1067,7 @@ namespace Logica.Usuario
                 }
                 else
                 {
+                    Utilitarios.Utilitarios.registrarErrorBD("SP_REACTIVAR_USUARIO", errorIdBD ?? 0, errorDescBD);
                     res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
                     errorId   = (int)enumErroresGenerales.errorBaseDatos;
                     errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
@@ -1158,16 +1171,13 @@ namespace Logica.Usuario
         {
             try
             {
-                string dispositivo = System.Web.HttpContext.Current?.Request?.UserAgent ?? "desconocido";
-
                 ReqBitacorear reqBit = new ReqBitacorear();
                 reqBit.bitacora = new Bitacora
                 {
-                    dispositivo = dispositivo,
                     clase       = GetType().Name,
                     metodo      = metodo,
                     tipo        = tipo,
-                    errorId     = errorId,
+                    codigoError = errorId,
                     descripcion = errorDesc,
                     request     = JsonConvert.SerializeObject(req),
                     response    = JsonConvert.SerializeObject(res)

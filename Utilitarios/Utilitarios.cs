@@ -8,6 +8,7 @@ using Core.Enum.Generales;
 using Core.Enum.Perfil;
 
 using System;
+using System.Data.SqlClient;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
@@ -83,6 +84,49 @@ namespace Utilitarios
         }
 
         // ?????????????????????????????????????????????????????????????????????
+        // ERRORES DE BASE DE DATOS
+        // ?????????????????????????????????????????????????????????????????????
+
+        /// <summary>
+        /// Registra un error de SP en TB_ERROR_EN_BASE_DATOS usando ADO.NET directo,
+        /// sin LINQ y sin transacción, para que nunca falle por XACT_STATE.
+        /// Llamar desde C# cuando el SP retorna errorIdBD distinto de 0.
+        /// </summary>
+        public static void registrarErrorBD(string storedProcedure, int numero, string descripcion)
+        {
+            try
+            {
+                string connStr;
+                using (ConexionLinqDataContext tmp = new ConexionLinqDataContext())
+                    connStr = tmp.Connection.ConnectionString;
+
+                using (SqlConnection con = new SqlConnection(connStr))
+                using (SqlCommand cmd = new SqlCommand(
+                    "INSERT INTO dbo.TB_ERROR_EN_BASE_DATOS ([STORED_PROCEDURE], NUMERO, DESCRIPCION, FECHA_HORA) " +
+                    "VALUES (@SP, @NUM, @DESC, GETDATE())", con))
+                {
+                    cmd.Parameters.AddWithValue("@SP",   (object)storedProcedure ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@NUM",  numero);
+                    cmd.Parameters.AddWithValue("@DESC", (object)descripcion     ?? DBNull.Value);
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Loguear en el Event Log de Windows para diagnóstico
+                try
+                {
+                    System.Diagnostics.EventLog.WriteEntry(
+                        "MiBusApp",
+                        string.Format("registrarErrorBD falló: {0}", ex.Message),
+                        System.Diagnostics.EventLogEntryType.Error);
+                }
+                catch { }
+            }
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
         // BITÁCORA
         // ?????????????????????????????????????????????????????????????????????
 
@@ -91,17 +135,25 @@ namespace Utilitarios
         {
             try
             {
+                // Si el dispositivo no fue asignado, capturarlo automáticamente del User-Agent
+                if (string.IsNullOrEmpty(req.bitacora.dispositivo))
+                {
+                    System.Web.HttpContext ctx = System.Web.HttpContext.Current;
+                    if (ctx != null)
+                        req.bitacora.dispositivo = ctx.Request.UserAgent;
+                }
+
                 using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
                 {
                     linq.SP_INSERTAR_BITACORA(
-                        req.bitacora.guidUsuario,
                         req.bitacora.clase,
                         req.bitacora.metodo,
                         (short)req.bitacora.tipo,
-                        req.bitacora.errorId,
+                        req.bitacora.codigoError,
                         req.bitacora.descripcion,
                         req.bitacora.request,
-                        req.bitacora.response
+                        req.bitacora.response,
+                        req.bitacora.dispositivo
                     );
                 }
             }
