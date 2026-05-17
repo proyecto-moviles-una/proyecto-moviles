@@ -26,8 +26,8 @@ namespace AccesoDatos.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=mibus.database.windows.net;Initial Catalog=bdMiBus;Persist Security I" +
-            "nfo=True;User ID=mibusroot;Password=mibus2026.;TrustServerCertificate=True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=KHRIZ;Initial Catalog=bdMiBus;Integrated Security=True;Connect Timeou" +
+            "t=30;Encrypt=False;TrustServerCertificate=True")]
         public string bdMiBusConnectionString {
             get {
                 return ((string)(this["bdMiBusConnectionString"]));
@@ -37,11 +37,44 @@ namespace AccesoDatos.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=mibus.database.windows.net;Initial Catalog=bdMiBus;Persist Security I" +
-            "nfo=True;User ID=mibusroot;Password=mibus2026.;TrustServerCertificate=True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=KHRIZ;Initial Catalog=bdMiBus;Integrated Security=True;Connect Timeou" +
+            "t=30;Encrypt=False;TrustServerCertificate=True")]
         public string bdMiBusConnectionString1 {
             get {
                 return ((string)(this["bdMiBusConnectionString1"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=KHRIZ;Initial Catalog=bdMiBus;Integrated Security=True;Connect Timeou" +
+            "t=30;Encrypt=False;TrustServerCertificate=True")]
+        public string bdMiBusConnectionString2 {
+            get {
+                return ((string)(this["bdMiBusConnectionString2"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=mibus.database.windows.net;Initial Catalog=bdMiBus;Persist Security I" +
+            "nfo=True;User ID=mibusroot;TrustServerCertificate=True")]
+        public string bdMiBusConnectionString3 {
+            get {
+                return ((string)(this["bdMiBusConnectionString3"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=mibus.database.windows.net;Initial Catalog=bdMiBus;Persist Security I" +
+            "nfo=True;User ID=mibusroot;TrustServerCertificate=True")]
+        public string bdMiBusConnectionString4 {
+            get {
+                return ((string)(this["bdMiBusConnectionString4"]));
             }
         }
     }
