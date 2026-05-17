@@ -8,14 +8,6 @@ namespace AccesoDatos
 {
     public partial class ConexionLinqDataContext
     {
-        [global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.SP_LOGIN")]
-        public ISingleResult<SP_LOGINResult> SP_LOGIN(
-            [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "CORREO_ELECTRONICO", DbType = "NVarChar(100)")] string cORREO_ELECTRONICO)
-        {
-            IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), cORREO_ELECTRONICO);
-            return ((ISingleResult<SP_LOGINResult>)(result.ReturnValue));
-        }
-
         [global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.SP_OBTENER_HASH_USUARIO")]
         public ISingleResult<SP_LOGINResult> SP_OBTENER_HASH_USUARIO(
             [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "GUID_USUARIO", DbType = "UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO)
@@ -123,17 +115,6 @@ namespace AccesoDatos
             eRRORID          = ((System.Nullable<int>)(result.GetParameterValue(3)));
             eRRORDESCRIPCION = ((string)(result.GetParameterValue(4)));
             return ((int)(result.ReturnValue));
-        }
-    }
-
-    public partial class SP_LOGINResult
-    {
-        private string _HASH_PASSWORD;
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_HASH_PASSWORD", DbType = "NVarChar(MAX)", CanBeNull = true)]
-        public string HASH_PASSWORD
-        {
-            get { return _HASH_PASSWORD; }
-            set { _HASH_PASSWORD = value; }
         }
     }
 

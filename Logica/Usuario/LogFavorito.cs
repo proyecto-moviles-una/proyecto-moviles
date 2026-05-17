@@ -1,5 +1,4 @@
 using AccesoDatos;
-using AccesoDatos;
 using Core.Entidades;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
@@ -109,17 +108,18 @@ namespace Logica.Usuario
                 System.Nullable<int> idReturn    = null;
                 System.Nullable<int> errorIdBD   = null;
                 string               errorDescBD = null;
+                int                  spResult    = 0;
 
                 using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
                 {
-                    linq.SP_ELIMINAR_FAVORITO(
+                    spResult = linq.SP_ELIMINAR_FAVORITO(
                         req.guidFavorito,
                         ref idReturn,
                         ref errorIdBD,
                         ref errorDescBD);
                 }
 
-                if (idReturn > 0)
+                if (idReturn == 0)
                 {
                     res.resultado = true;
                     res.error     = null;
@@ -223,16 +223,13 @@ namespace Logica.Usuario
         {
             try
             {
-                string dispositivo = System.Web.HttpContext.Current?.Request?.UserAgent ?? "desconocido";
-
                 ReqBitacorear reqBit = new ReqBitacorear();
                 reqBit.bitacora = new Bitacora
                 {
-                    dispositivo = dispositivo,
                     clase       = GetType().Name,
                     metodo      = new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name,
                     tipo        = tipo,
-                    errorId     = errorId,
+                    codigoError = errorId,
                     descripcion = errorDesc,
                     request     = JsonConvert.SerializeObject(req),
                     response    = JsonConvert.SerializeObject(res)

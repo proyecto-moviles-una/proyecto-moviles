@@ -1,0 +1,85 @@
+-- ============================================================
+-- DIAGNÓSTICO Y FIX: TB_ERROR_EN_BASE_DATOS
+-- ============================================================
+
+-- Paso 1: Ver las columnas actuales de la tabla
+SELECT 
+    COLUMN_NAME, 
+    DATA_TYPE, 
+    CHARACTER_MAXIMUM_LENGTH,
+    IS_NULLABLE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'TB_ERROR_EN_BASE_DATOS'
+ORDER BY ORDINAL_POSITION;
+GO
+
+-- ============================================================
+-- Paso 2: Crear la tabla si no existe con las columnas correctas
+-- ============================================================
+IF NOT EXISTS (
+    SELECT 1 FROM sys.tables 
+    WHERE name = 'TB_ERROR_EN_BASE_DATOS' AND schema_id = SCHEMA_ID('dbo')
+)
+BEGIN
+    CREATE TABLE dbo.TB_ERROR_EN_BASE_DATOS (
+        ID               INT              IDENTITY(1,1) NOT NULL PRIMARY KEY,
+        GUID_ERROR_BD    UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+        SEVERIDAD        INT              NULL,
+        STORED_PROCEDURE NVARCHAR(200)    NULL,
+        NUMERO           INT              NULL,
+        DESCRIPCION      NVARCHAR(MAX)    NULL,
+        LINEA            INT              NULL,
+        FECHA_REGISTRO   DATETIME         NOT NULL DEFAULT GETDATE()
+    );
+    PRINT 'Tabla TB_ERROR_EN_BASE_DATOS creada.';
+END
+ELSE
+BEGIN
+    PRINT 'Tabla TB_ERROR_EN_BASE_DATOS ya existe. Revisando columnas faltantes...';
+
+    -- Agregar columnas faltantes si no existen
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='TB_ERROR_EN_BASE_DATOS' AND COLUMN_NAME='GUID_ERROR_BD')
+        ALTER TABLE dbo.TB_ERROR_EN_BASE_DATOS ADD GUID_ERROR_BD UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID();
+
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='TB_ERROR_EN_BASE_DATOS' AND COLUMN_NAME='SEVERIDAD')
+        ALTER TABLE dbo.TB_ERROR_EN_BASE_DATOS ADD SEVERIDAD INT NULL;
+
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='TB_ERROR_EN_BASE_DATOS' AND COLUMN_NAME='STORED_PROCEDURE')
+        ALTER TABLE dbo.TB_ERROR_EN_BASE_DATOS ADD [STORED_PROCEDURE] NVARCHAR(200) NULL;
+
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='TB_ERROR_EN_BASE_DATOS' AND COLUMN_NAME='NUMERO')
+        ALTER TABLE dbo.TB_ERROR_EN_BASE_DATOS ADD NUMERO INT NULL;
+
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='TB_ERROR_EN_BASE_DATOS' AND COLUMN_NAME='DESCRIPCION')
+        ALTER TABLE dbo.TB_ERROR_EN_BASE_DATOS ADD DESCRIPCION NVARCHAR(MAX) NULL;
+
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='TB_ERROR_EN_BASE_DATOS' AND COLUMN_NAME='LINEA')
+        ALTER TABLE dbo.TB_ERROR_EN_BASE_DATOS ADD LINEA INT NULL;
+
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='TB_ERROR_EN_BASE_DATOS' AND COLUMN_NAME='FECHA_REGISTRO')
+        ALTER TABLE dbo.TB_ERROR_EN_BASE_DATOS ADD FECHA_REGISTRO DATETIME NOT NULL DEFAULT GETDATE();
+
+    PRINT 'Columnas verificadas/agregadas correctamente.';
+END
+GO
+
+-- ============================================================
+-- Paso 3: Verificar estado final de la tabla
+-- ============================================================
+SELECT 
+    COLUMN_NAME, 
+    DATA_TYPE, 
+    IS_NULLABLE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'TB_ERROR_EN_BASE_DATOS'
+ORDER BY ORDINAL_POSITION;
+GO
+
+-- ============================================================
+-- Paso 4: PRUEBA - Insertar un error de prueba manualmente
+-- ============================================================
+INSERT INTO dbo.TB_ERROR_EN_BASE_DATOS (SEVERIDAD, [STORED_PROCEDURE], NUMERO, DESCRIPCION, LINEA)
+VALUES (16, 'PRUEBA_MANUAL', 9999, 'Registro de prueba para verificar que la tabla funciona', 1);
+
+SELECT TOP 5 * FROM dbo.TB_ERROR_EN_BASE_DATOS ORDER BY ID DESC;
+GO

@@ -1,5 +1,4 @@
 using Core.Entidades.Request;
-using Core.Entidades.Request;
 using Core.Entidades.Response;
 using API.Filters;
 using DTO.Usuario;
@@ -21,17 +20,7 @@ namespace API.Controllers
                 ? (TokenInfo)Request.Properties["tokenInfo"]
                 : null;
 
-        // Valida que el guid de la URL sea el mismo del token (el usuario solo accede a sus datos)
-        private HttpResponseMessage validarOwnership(Guid guid)
-        {
-            if (tokenActual == null ||
-                !string.Equals(tokenActual.guidUsuario, guid.ToString(), StringComparison.OrdinalIgnoreCase))
-                return Request.CreateErrorResponse(HttpStatusCode.Forbidden,
-                    "No tiene permiso para acceder a este recurso.");
-            return null;
-        }
-
-        // GET api/usuarios/listar  — cualquier usuario autenticado puede listar// aqui debo de definir un rol que sea el que vea todo mas esto 
+        // GET api/usuarios/listar  — cualquier usuario autenticado puede listar
         [HttpGet]
         [Route("api/usuarios/listar")]
         public ResObtenerListaUsuarios listar()
@@ -39,27 +28,23 @@ namespace API.Controllers
             return new LogUsuario().obtenerLista(new ReqObtenerListaUsuarios());
         }
 
-        // GET api/usuarios/perfil/{guid}  — solo el propio usuario
+        // GET api/usuarios/perfil  — obtiene el perfil del usuario autenticado (guid viene del JWT)
         [HttpGet]
-        [Route("api/usuarios/perfil/{guid}")]
-        public HttpResponseMessage perfil(Guid guid)
+        [Route("api/usuarios/perfil")]
+        public HttpResponseMessage perfil()
         {
-            HttpResponseMessage bloqueo = validarOwnership(guid);
-            if (bloqueo != null) return bloqueo;
-
+            Guid guid = Guid.Parse(tokenActual.guidUsuario);
             ReqObtenerUsuario req = new ReqObtenerUsuario();
             req.guid = guid;
             return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().obtenerPerfil(req));
         }
 
-        // PUT api/usuarios/perfil/{guid}  — solo el propio usuario
+        // PUT api/usuarios/perfil  — actualiza el perfil del usuario autenticado (guid viene del JWT)
         [HttpPut]
-        [Route("api/usuarios/perfil/{guid}")]
-        public HttpResponseMessage actualizar(Guid guid, DTOActualizarUsuario dtoActualizar)
+        [Route("api/usuarios/perfil")]
+        public HttpResponseMessage actualizar(DTOActualizarUsuario dtoActualizar)
         {
-            HttpResponseMessage bloqueo = validarOwnership(guid);
-            if (bloqueo != null) return bloqueo;
-
+            Guid guid = Guid.Parse(tokenActual.guidUsuario);
             ReqActualizarUsuario req = new ReqActualizarUsuario();
             req.guidUsuario = guid;
             req.nombre      = dtoActualizar.nombre;
@@ -67,40 +52,34 @@ namespace API.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().actualizarPerfil(req));
         }
 
-        // DELETE api/usuarios/{guid}  — solo el propio usuario
+        // DELETE api/usuarios  — elimina la cuenta del usuario autenticado (guid viene del JWT)
         [HttpDelete]
-        [Route("api/usuarios/{guid}")]
-        public HttpResponseMessage eliminar(Guid guid)
+        [Route("api/usuarios")]
+        public HttpResponseMessage eliminar()
         {
-            HttpResponseMessage bloqueo = validarOwnership(guid);
-            if (bloqueo != null) return bloqueo;
-
+            Guid guid = Guid.Parse(tokenActual.guidUsuario);
             ReqEliminarUsuario req = new ReqEliminarUsuario();
             req.guidUsuario = guid;
             return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().eliminar(req));
         }
 
-        // PUT api/usuarios/{guid}/desactivar  — solo el propio usuario
+        // PUT api/usuarios/desactivar  — desactiva la cuenta del usuario autenticado (guid viene del JWT)
         [HttpPut]
-        [Route("api/usuarios/{guid}/desactivar")]
-        public HttpResponseMessage desactivar(Guid guid)
+        [Route("api/usuarios/desactivar")]
+        public HttpResponseMessage desactivar()
         {
-            HttpResponseMessage bloqueo = validarOwnership(guid);
-            if (bloqueo != null) return bloqueo;
-
+            Guid guid = Guid.Parse(tokenActual.guidUsuario);
             ReqDesactivarUsuario req = new ReqDesactivarUsuario();
             req.guidUsuario = guid;
             return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().desactivar(req));
         }
 
-        // PUT api/usuarios/perfil/{guid}/password  — solo el propio usuario
+        // PUT api/usuarios/perfil/password  — cambia la contraseña del usuario autenticado (guid viene del JWT)
         [HttpPut]
-        [Route("api/usuarios/perfil/{guid}/password")]
-        public HttpResponseMessage cambiarPassword(Guid guid, DTOCambiarPassword dto)
+        [Route("api/usuarios/perfil/password")]
+        public HttpResponseMessage cambiarPassword(DTOCambiarPassword dto)
         {
-            HttpResponseMessage bloqueo = validarOwnership(guid);
-            if (bloqueo != null) return bloqueo;
-
+            Guid guid = Guid.Parse(tokenActual.guidUsuario);
             ReqCambiarPassword req = new ReqCambiarPassword();
             req.guidUsuario        = guid;
             req.passwordActual     = dto.passwordActual;
@@ -109,15 +88,12 @@ namespace API.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().cambiarPassword(req));
         }
 
-        // POST api/usuarios/perfil/{guid}/correo/solicitar  — solo el propio usuario
-        // Paso 1: valida password actual, guarda correo pendiente, envía código al nuevo correo
+        // POST api/usuarios/perfil/correo/solicitar  — Paso 1: solicita cambio de correo (guid viene del JWT)
         [HttpPost]
-        [Route("api/usuarios/perfil/{guid}/correo/solicitar")]
-        public HttpResponseMessage solicitarCambioCorreo(Guid guid, DTOSolicitarCambioCorreo dto)
+        [Route("api/usuarios/perfil/correo/solicitar")]
+        public HttpResponseMessage solicitarCambioCorreo(DTOSolicitarCambioCorreo dto)
         {
-            HttpResponseMessage bloqueo = validarOwnership(guid);
-            if (bloqueo != null) return bloqueo;
-
+            Guid guid = Guid.Parse(tokenActual.guidUsuario);
             ReqSolicitarCambioCorreo req = new ReqSolicitarCambioCorreo();
             req.guidUsuario    = guid;
             req.passwordActual = dto.passwordActual;
@@ -125,15 +101,12 @@ namespace API.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().solicitarCambioCorreo(req));
         }
 
-        // POST api/usuarios/perfil/{guid}/correo/confirmar  — solo el propio usuario
-        // Paso 2: valida el código y actualiza el correo oficialmente
+        // POST api/usuarios/perfil/correo/confirmar  — Paso 2: confirma el cambio de correo (guid viene del JWT)
         [HttpPost]
-        [Route("api/usuarios/perfil/{guid}/correo/confirmar")]
-        public HttpResponseMessage confirmarCambioCorreo(Guid guid, DTOConfirmarCambioCorreo dto)
+        [Route("api/usuarios/perfil/correo/confirmar")]
+        public HttpResponseMessage confirmarCambioCorreo(DTOConfirmarCambioCorreo dto)
         {
-            HttpResponseMessage bloqueo = validarOwnership(guid);
-            if (bloqueo != null) return bloqueo;
-
+            Guid guid = Guid.Parse(tokenActual.guidUsuario);
             ReqConfirmarCambioCorreo req = new ReqConfirmarCambioCorreo();
             req.guidUsuario = guid;
             req.codigo      = dto.codigo;

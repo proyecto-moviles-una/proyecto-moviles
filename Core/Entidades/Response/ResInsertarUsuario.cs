@@ -8,7 +8,6 @@ namespace Core.Entidades.Response
 {
     public class ResInsertarUsuario : ResBase
     {
-        public Guid?   guidUsuario       { get; set; }
-        public string  tokenVerificacion { get; set; }   // solo para pruebas — quitar en producción
+        public string mensaje { get; set; }
     }
 }
