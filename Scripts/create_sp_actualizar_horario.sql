@@ -1,0 +1,50 @@
+CREATE OR ALTER PROCEDURE dbo.SP_ACTUALIZAR_HORARIO
+    @GUID_HORARIO     UNIQUEIDENTIFIER,
+    @HORA_SALIDA      TIME,
+    @DIAS_SERVICIO    TINYINT,
+    @IDRETURN         INT OUTPUT,
+    @ERRORID          INT OUTPUT,
+    @ERRORDESCRIPCION NVARCHAR(MAX) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        DECLARE @ID_HORARIO INT;
+
+        SELECT @ID_HORARIO = ID_HORARIO
+        FROM dbo.TB_HORARIO
+        WHERE GUID_HORARIO = @GUID_HORARIO;
+
+        IF @ID_HORARIO IS NULL
+        BEGIN
+            SET @IDRETURN = 0;
+            SET @ERRORID = 3;
+            SET @ERRORDESCRIPCION = 'Horario no encontrado';
+            RETURN;
+        END
+
+        IF @DIAS_SERVICIO IS NULL OR @DIAS_SERVICIO = 0
+        BEGIN
+            SET @IDRETURN = 0;
+            SET @ERRORID = 2;
+            SET @ERRORDESCRIPCION = 'Debe seleccionar al menos un día de servicio';
+            RETURN;
+        END
+
+        UPDATE dbo.TB_HORARIO
+        SET HORA_SALIDA   = @HORA_SALIDA,
+            DIAS_SERVICIO = @DIAS_SERVICIO
+        WHERE ID_HORARIO = @ID_HORARIO;
+
+        SET @IDRETURN = 1;
+        SET @ERRORID = 0;
+        SET @ERRORDESCRIPCION = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @IDRETURN = 0;
+        SET @ERRORID = ERROR_NUMBER();
+        SET @ERRORDESCRIPCION = ERROR_MESSAGE();
+    END CATCH
+END
+GO

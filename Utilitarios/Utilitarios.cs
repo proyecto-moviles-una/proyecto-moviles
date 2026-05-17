@@ -146,14 +146,14 @@ namespace Utilitarios
                 using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
                 {
                     linq.SP_INSERTAR_BITACORA(
+                        null,
                         req.bitacora.clase,
                         req.bitacora.metodo,
-                        (short)req.bitacora.tipo,
+                        (short?)req.bitacora.tipo,
                         req.bitacora.codigoError,
                         req.bitacora.descripcion,
                         req.bitacora.request,
-                        req.bitacora.response,
-                        req.bitacora.dispositivo
+                        req.bitacora.response
                     );
                 }
             }
