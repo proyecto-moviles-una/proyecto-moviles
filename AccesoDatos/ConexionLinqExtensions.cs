@@ -130,6 +130,28 @@ namespace AccesoDatos
         }
     }
 
+    public partial class SP_LOGINResult
+    {
+        private string _ROL;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ROL", DbType = "NVarChar(50)", CanBeNull = true)]
+        public string ROL
+        {
+            get { return _ROL; }
+            set { _ROL = value; }
+        }
+    }
+
+    public partial class SP_OBTENER_USUARIOResult
+    {
+        private string _ROL;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ROL", DbType = "NVarChar(50)", CanBeNull = true)]
+        public string ROL
+        {
+            get { return _ROL; }
+            set { _ROL = value; }
+        }
+    }
+
     public partial class SP_OBTENER_LISTAUSUARIOSResult
     {
         private System.Nullable<int> _ESTADO;
@@ -138,6 +160,14 @@ namespace AccesoDatos
         {
             get { return _ESTADO; }
             set { _ESTADO = value; }
+        }
+
+        private string _ROL;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ROL", DbType = "NVarChar(50)", CanBeNull = true)]
+        public string ROL
+        {
+            get { return _ROL; }
+            set { _ROL = value; }
         }
     }
 
