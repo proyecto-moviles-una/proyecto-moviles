@@ -6,12 +6,18 @@ using Core.Enum.Autenticacion;
 using Core.Enum.Favoritos;
 using Core.Enum.Generales;
 using Core.Enum.Perfil;
-
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web.Hosting;
 
 namespace Utilitarios
 {
@@ -79,6 +85,8 @@ namespace Utilitarios
                 case (int)enumErroresAutenticacion.usuarioNoDesactivado:        return "La cuenta no está desactivada.";
                 case (int)enumErroresGenerales.errorBaseDatos:                  return "Error en base de datos. Intente más tarde.";
                 case (int)enumErroresGenerales.errorNoControlado:               return "Ha ocurrido un error inesperado. Contacte al administrador.";
+                case (int)enumErroresAutenticacion.tokenFCMFaltante:            return "El token FCM del dispositivo es obligatorio.";
+                case (int)enumErroresAutenticacion.errorActualizandoTokenFCM:   return "No se pudo actualizar el token FCM. Intente más tarde.";
                 default:                               return "Ha ocurrido un error inesperado.";
             }
         }
@@ -615,6 +623,90 @@ namespace Utilitarios
                 && email.LastIndexOf("@") == email.IndexOf("@")
                 && email.Contains(".")
                 && email.IndexOf("@") < email.LastIndexOf(".");
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
+        // PUSH NOTIFICATIONS (Firebase Cloud Messaging)
+        // ?????????????????????????????????????????????????????????????????????
+
+        private static readonly object _firebaseLock = new object();
+        private static bool _firebaseInicializado = false;
+
+        /// <summary>
+        /// Inicializa el SDK de Firebase Admin una sola vez (thread-safe).
+        /// Lee la ruta al JSON desde la clave "FirebaseServiceAccountPath" en Web.config.
+        /// </summary>
+        private static void InicializarFirebaseSiHaceFalta()
+        {
+            if (_firebaseInicializado) return;
+            lock (_firebaseLock)
+            {
+                if (_firebaseInicializado) return;
+                if (FirebaseApp.DefaultInstance != null)
+                {
+                    _firebaseInicializado = true;
+                    return;
+                }
+                string rutaConfig = ConfigurationManager.AppSettings["FirebaseServiceAccountPath"];
+                if (string.IsNullOrWhiteSpace(rutaConfig))
+                    throw new InvalidOperationException(
+                        "Falta la clave 'FirebaseServiceAccountPath' en appSettings de Web.config.");
+
+                string rutaFisica = rutaConfig.StartsWith("~")
+                    ? HostingEnvironment.MapPath(rutaConfig)
+                    : rutaConfig;
+
+                FirebaseApp.Create(new AppOptions
+                {
+                    Credential = GoogleCredential.FromFile(rutaFisica)
+                });
+                _firebaseInicializado = true;
+            }
+        }
+
+        /// <summary>
+        /// Envía un push notification a los usuarios que tienen la ruta indicada como favorita.
+        /// Operación BEST-EFFORT: si Firebase falla, devuelve false sin lanzar excepción.
+        /// </summary>
+        /// <param name="guidRuta">GUID de la ruta que fue modificada.</param>
+        /// <param name="titulo">Título visible de la notificación.</param>
+        /// <param name="mensaje">Cuerpo visible de la notificación.</param>
+        /// <returns>true si al menos un push fue aceptado por FCM; false en caso contrario.</returns>
+        public static bool EnviarPushFavoritosPorRuta(Guid guidRuta, string titulo, string mensaje)
+        {
+            try
+            {
+                InicializarFirebaseSiHaceFalta();
+
+                List<string> tokens;
+                using (AccesoDatos.ConexionLinqDataContext linq = new AccesoDatos.ConexionLinqDataContext())
+                {
+                    tokens = linq.SP_OBTENER_TOKENS_FCM_POR_RUTA(guidRuta)
+                                 .Select(r => r.TOKEN_FCM)
+                                 .Where(t => !string.IsNullOrWhiteSpace(t))
+                                 .Distinct()
+                                 .ToList();
+                }
+
+                if (tokens.Count == 0) return true;
+
+                // FCM acepta hasta 500 tokens por llamada
+                var multicast = new MulticastMessage
+                {
+                    Notification = new Notification { Title = titulo, Body = mensaje },
+                    Tokens = tokens
+                };
+
+                var resultado = FirebaseMessaging.DefaultInstance
+                    .SendEachForMulticastAsync(multicast)
+                    .GetAwaiter().GetResult();
+
+                return resultado.SuccessCount > 0;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 

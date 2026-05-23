@@ -296,7 +296,8 @@ namespace Logica.Usuario
                 string jwt = Utilitarios.Utilitarios.generarJWT(
                     spResult.GUID_USUARIO,
                     guidSesion.Value,
-                    spResult.NOMBRE);
+                    spResult.NOMBRE,
+                    spResult.ROL ?? "usuario");
 
                 res.resultado  = true;
                 res.error      = null;
@@ -305,7 +306,8 @@ namespace Logica.Usuario
                 {
                     guid      = spResult.GUID_USUARIO,
                     nombre    = spResult.NOMBRE,
-                    apellidos = spResult.APELLIDOS
+                    apellidos = spResult.APELLIDOS,
+                    rol       = spResult.ROL
                 };
                 res.token     = jwt;
                 tipoBitacora  = enumBitacora.exitoso;
@@ -1098,7 +1100,8 @@ namespace Logica.Usuario
                 nombre    = sp.NOMBRE,
                 apellidos = sp.APELLIDOS,
                 email     = sp.CORREO_ELECTRONICO,
-                estado    = sp.ESTADO
+                estado    = sp.ESTADO,
+                rol       = sp.ROL
             };
         }
 
@@ -1113,7 +1116,8 @@ namespace Logica.Usuario
                     nombre    = item.NOMBRE,
                     apellidos = item.APELLIDOS,
                     email     = item.CORREO_ELECTRONICO,
-                    estado    = item.ESTADO
+                    estado    = item.ESTADO,
+                    rol       = item.ROL
                 });
             }
             return resultado;
