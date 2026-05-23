@@ -27,9 +27,5 @@ namespace Core.Enum.Autenticacion
 
         // Reactivación
         usuarioNoDesactivado    = 47,
-
-        // Push Notifications / Token FCM
-        tokenFCMFaltante           = 50,
-        errorActualizandoTokenFCM  = 51,
     }
 }
