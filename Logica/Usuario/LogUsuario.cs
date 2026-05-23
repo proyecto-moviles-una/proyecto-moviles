@@ -2,6 +2,7 @@ using AccesoDatos;
 using Core.Entidades;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
+using AccesoDatos;
 using Core.Enum;
 using Core.Enum.Autenticacion;
 using Core.Enum.Generales;
@@ -1073,6 +1074,81 @@ namespace Logica.Usuario
                     res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
                     errorId   = (int)enumErroresGenerales.errorBaseDatos;
                     errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorNoControlado));
+                errorId   = (int)enumErroresGenerales.errorNoControlado;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
+            }
+
+            return res;
+        }
+
+        // ?????????????????????????????????????????????????????????????????????
+        // ACTUALIZAR TOKEN FCM
+        // ?????????????????????????????????????????????????????????????????????
+        public ResActualizarTokenFCM actualizarTokenFCM(ReqActualizarTokenFCM req)
+        {
+            ResActualizarTokenFCM res = new ResActualizarTokenFCM();
+            res.resultado = false;
+            res.error     = new List<Error>();
+
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int          errorId      = 0;
+            string       errorDesc    = string.Empty;
+
+            try
+            {
+                // ?? Validaciones ??????????????????????????????????????????
+                if (req.guidUsuario == Guid.Empty)
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.guidDeUsuarioFaltante));
+                    errorId   = (int)enumErroresAutenticacion.guidDeUsuarioFaltante;
+                    errorDesc = enumErroresAutenticacion.guidDeUsuarioFaltante.ToString();
+                    return res;
+                }
+                if (string.IsNullOrWhiteSpace(req.tokenFCM))
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.tokenFCMFaltante));
+                    errorId   = (int)enumErroresAutenticacion.tokenFCMFaltante;
+                    errorDesc = enumErroresAutenticacion.tokenFCMFaltante.ToString();
+                    return res;
+                }
+
+                // ?? Llamar SP ??????????????????????????????????????????????
+                System.Nullable<int> filas       = null;
+                System.Nullable<int> idReturn    = null;
+                System.Nullable<int> errorIdBD   = null;
+                string               errorDescBD = null;
+
+                using (ConexionLinqDataContext linq = new ConexionLinqDataContext())
+                {
+                    linq.SP_ACTUALIZAR_TOKEN_FCM(
+                        req.guidUsuario,
+                        req.tokenFCM,
+                        ref filas,
+                        ref idReturn,
+                        ref errorIdBD,
+                        ref errorDescBD);
+                }
+
+                if (filas.HasValue && filas.Value == 1)
+                {
+                    res.resultado = true;
+                    res.error     = null;
+                    tipoBitacora  = enumBitacora.exitoso;
+                }
+                else
+                {
+                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.errorActualizandoTokenFCM));
+                    errorId   = (int)enumErroresAutenticacion.errorActualizandoTokenFCM;
+                    errorDesc = enumErroresAutenticacion.errorActualizandoTokenFCM.ToString();
                 }
             }
             catch (Exception ex)

@@ -66,6 +66,7 @@
     <Compile Include="Usuario\DTOSolicitarCambioCorreo.cs" />
     <Compile Include="Usuario\DTOSolicitarReactivacion.cs" />
     <Compile Include="Zona\DTOZona.cs" />
+    <Compile Include="Usuario\DTOActualizarTokenFCM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

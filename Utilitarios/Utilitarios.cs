@@ -666,13 +666,15 @@ namespace Utilitarios
 
         /// <summary>
         /// Envía un push notification a los usuarios que tienen la ruta indicada como favorita.
-        /// Operación BEST-EFFORT: si Firebase falla, devuelve false sin lanzar excepción.
+        /// Devuelve un string diagnóstico con el detalle de cada envío (messageId o error por token).
+        /// Operación BEST-EFFORT: si Firebase falla globalmente, devuelve el mensaje de error
+        /// sin lanzar excepción; quien llama decide si lo registra en bitácora o lo ignora.
         /// </summary>
         /// <param name="guidRuta">GUID de la ruta que fue modificada.</param>
         /// <param name="titulo">Título visible de la notificación.</param>
         /// <param name="mensaje">Cuerpo visible de la notificación.</param>
-        /// <returns>true si al menos un push fue aceptado por FCM; false en caso contrario.</returns>
-        public static bool EnviarPushFavoritosPorRuta(Guid guidRuta, string titulo, string mensaje)
+        /// <returns>String con el resumen del envío: tokens encontrados, éxitos, fallos y messageIds.</returns>
+        public static string EnviarPushFavoritosPorRuta(Guid guidRuta, string titulo, string mensaje)
         {
             try
             {
@@ -688,7 +690,8 @@ namespace Utilitarios
                                  .ToList();
                 }
 
-                if (tokens.Count == 0) return true;
+                if (tokens.Count == 0)
+                    return "PUSH_SKIP: No hay tokens FCM registrados para esta ruta.";
 
                 // FCM acepta hasta 500 tokens por llamada
                 var multicast = new MulticastMessage
@@ -701,11 +704,25 @@ namespace Utilitarios
                     .SendEachForMulticastAsync(multicast)
                     .GetAwaiter().GetResult();
 
-                return resultado.SuccessCount > 0;
+                // Construir diagnóstico detallado con messageId de cada token
+                var sb = new System.Text.StringBuilder();
+                sb.AppendFormat("PUSH_RESULT: tokens={0} exitos={1} fallos={2} | ",
+                    tokens.Count, resultado.SuccessCount, resultado.FailureCount);
+
+                for (int i = 0; i < resultado.Responses.Count; i++)
+                {
+                    var r = resultado.Responses[i];
+                    if (r.IsSuccess)
+                        sb.AppendFormat("[{0}] OK messageId={1} | ", i, r.MessageId);
+                    else
+                        sb.AppendFormat("[{0}] ERROR {1} | ", i, r.Exception != null ? r.Exception.Message : "desconocido");
+                }
+
+                return sb.ToString();
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                return string.Format("PUSH_EXCEPTION: {0}", ex.Message);
             }
         }
     }
