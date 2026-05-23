@@ -1,5 +1,4 @@
 using Core.Entidades.Request;
-using Core.Entidades.Request;
 using Core.Entidades.Response;
 using Core.Entidades.Request;
 using Core.Entidades.Response;

@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="bdMiBus" Class="ConexionLinqDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=KHRIZ;Initial Catalog=bdMiBus;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=True" SettingsObjectName="AccesoDatos.Properties.Settings" SettingsPropertyName="bdMiBusConnectionString2" Provider="System.Data.SqlClient" />
   <Table Name="dbo.TB_HISTORIAL_VIAJE" Member="TB_HISTORIAL_VIAJE">
     <Type Name="TB_HISTORIAL_VIAJE">
       <Column Name="ID_HISTORIAL" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -344,5 +343,100 @@
       <Column Name="ESTADO" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="HASH_PASSWORD" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
     </ElementType>
+  </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_EMPRESA" Method="SP_ACTUALIZAR_EMPRESA">
+    <Parameter Name="GUID_EMPRESA" Parameter="gUID_EMPRESA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="NOMBRE" Parameter="nOMBRE" Type="System.String" DbType="NVarChar(150)" />
+    <Parameter Name="TELEFONO" Parameter="tELEFONO" Type="System.String" DbType="NVarChar(20)" />
+    <Parameter Name="CORREO" Parameter="cORREO" Type="System.String" DbType="NVarChar(100)" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ELIMINAR_EMPRESA" Method="SP_ELIMINAR_EMPRESA">
+    <Parameter Name="GUID_EMPRESA" Parameter="gUID_EMPRESA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_ZONA" Method="SP_ACTUALIZAR_ZONA">
+    <Parameter Name="GUID_ZONA" Parameter="gUID_ZONA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="NOMBRE" Parameter="nOMBRE" Type="System.String" DbType="NVarChar(100)" />
+    <Parameter Name="DESCRIPCION" Parameter="dESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ELIMINAR_ZONA" Method="SP_ELIMINAR_ZONA">
+    <Parameter Name="GUID_ZONA" Parameter="gUID_ZONA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_OBTENER_TARIFAS_POR_RUTA" Method="SP_OBTENER_TARIFAS_POR_RUTA">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <ElementType Name="SP_OBTENER_TARIFAS_POR_RUTAResult">
+      <Column Name="GUID_TARIFA" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="GUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="MONTO" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="FECHA_VIGENCIA" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ESTADO" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_OBTENER_TARIFA_POR_GUID" Method="SP_OBTENER_TARIFA_POR_GUID">
+    <Parameter Name="GUID_TARIFA" Parameter="gUID_TARIFA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <ElementType Name="SP_OBTENER_TARIFA_POR_GUIDResult">
+      <Column Name="GUID_TARIFA" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="GUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="MONTO" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="FECHA_VIGENCIA" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ESTADO" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_TARIFA" Method="SP_ACTUALIZAR_TARIFA">
+    <Parameter Name="GUID_TARIFA" Parameter="gUID_TARIFA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="MONTO" Parameter="mONTO" Type="System.Decimal" DbType="Decimal(10,2)" />
+    <Parameter Name="FECHA_VIGENCIA" Parameter="fECHA_VIGENCIA" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ELIMINAR_TARIFA" Method="SP_ELIMINAR_TARIFA">
+    <Parameter Name="GUID_TARIFA" Parameter="gUID_TARIFA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_OBTENER_HORARIO_POR_GUID" Method="SP_OBTENER_HORARIO_POR_GUID">
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" />
+    <ElementType Name="SP_OBTENER_HORARIO_POR_GUIDResult">
+      <Column Name="GUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="GUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="HORA_SALIDA" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
+      <Column Name="DIAS_SERVICIO" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="ESTADO" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_HORARIO" Method="SP_ACTUALIZAR_HORARIO">
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="HORA_SALIDA" Parameter="hORA_SALIDA" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="DIAS_SERVICIO" Parameter="dIAS_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ELIMINAR_HORARIO" Method="SP_ELIMINAR_HORARIO">
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
   </Function>
 </Database>

@@ -1,4 +1,5 @@
-﻿using Core.Entidades;
+﻿using API.Filters;
+using Core.Entidades;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
 using DTO.Ruta;
@@ -8,6 +9,7 @@ using System.Web.Http;
 
 namespace API.Controllers
 {
+    [JwtAuth]
     [RoutePrefix("api/ruta")]
     public class RutaController : ApiController
     {

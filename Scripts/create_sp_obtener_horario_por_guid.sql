@@ -1,0 +1,26 @@
+CREATE OR ALTER PROCEDURE dbo.SP_OBTENER_HORARIO_POR_GUID
+    @GUID_HORARIO UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        SELECT h.GUID_HORARIO,
+               r.GUID_RUTA,
+               h.HORA_SALIDA,
+               h.DIAS_SERVICIO,
+               h.ESTADO
+        FROM dbo.TB_HORARIO h
+        INNER JOIN dbo.TB_RUTA r ON r.ID_RUTA = h.ID_RUTA
+        WHERE h.GUID_HORARIO = @GUID_HORARIO;
+    END TRY
+    BEGIN CATCH
+        SELECT CAST(NULL AS UNIQUEIDENTIFIER) AS GUID_HORARIO,
+               CAST(NULL AS UNIQUEIDENTIFIER) AS GUID_RUTA,
+               CAST(NULL AS TIME)             AS HORA_SALIDA,
+               CAST(0 AS TINYINT)             AS DIAS_SERVICIO,
+               CAST(0 AS BIT)                 AS ESTADO
+        WHERE 1 = 0;
+    END CATCH
+END
+GO
