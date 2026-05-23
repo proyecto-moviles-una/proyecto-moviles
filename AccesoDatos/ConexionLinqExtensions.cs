@@ -8,6 +8,18 @@ namespace AccesoDatos
 {
     public partial class ConexionLinqDataContext
     {
+        private const string AzureConnStr =
+            "Data Source=mibus.database.windows.net;Initial Catalog=bdMiBus;" +
+            "User ID=mibusroot;Password=mibus2026.;" +
+            "Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
+        // Se ejecuta luego de cada constructor generado por el DBML.
+        // Sobreescribe la conexión apuntando siempre al servidor Azure.
+        partial void OnCreated()
+        {
+            this.Connection.ConnectionString = AzureConnStr;
+        }
+
         [global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.SP_OBTENER_HASH_USUARIO")]
         public ISingleResult<SP_LOGINResult> SP_OBTENER_HASH_USUARIO(
             [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "GUID_USUARIO", DbType = "UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO)
@@ -118,6 +130,28 @@ namespace AccesoDatos
         }
     }
 
+    public partial class SP_LOGINResult
+    {
+        private string _ROL;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ROL", DbType = "NVarChar(50)", CanBeNull = true)]
+        public string ROL
+        {
+            get { return _ROL; }
+            set { _ROL = value; }
+        }
+    }
+
+    public partial class SP_OBTENER_USUARIOResult
+    {
+        private string _ROL;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ROL", DbType = "NVarChar(50)", CanBeNull = true)]
+        public string ROL
+        {
+            get { return _ROL; }
+            set { _ROL = value; }
+        }
+    }
+
     public partial class SP_OBTENER_LISTAUSUARIOSResult
     {
         private System.Nullable<int> _ESTADO;
@@ -126,6 +160,14 @@ namespace AccesoDatos
         {
             get { return _ESTADO; }
             set { _ESTADO = value; }
+        }
+
+        private string _ROL;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ROL", DbType = "NVarChar(50)", CanBeNull = true)]
+        public string ROL
+        {
+            get { return _ROL; }
+            set { _ROL = value; }
         }
     }
 
