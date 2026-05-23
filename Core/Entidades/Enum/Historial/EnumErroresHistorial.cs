@@ -12,6 +12,7 @@ namespace Core.Enum.Historial
         rutaFaltante = 2,
         historialNoEncontrado = 3,
         errorRegistrandoHistorial = 4,
-        errorConsultandoHistorial = 5
+        errorConsultandoHistorial = 5,
+        errorEliminandoHistorial = 6
     }
 }

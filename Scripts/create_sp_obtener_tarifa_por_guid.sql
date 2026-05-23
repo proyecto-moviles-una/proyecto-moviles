@@ -1,0 +1,26 @@
+CREATE OR ALTER PROCEDURE dbo.SP_OBTENER_TARIFA_POR_GUID
+    @GUID_TARIFA UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        SELECT t.GUID_TARIFA,
+               r.GUID_RUTA,
+               t.MONTO,
+               t.FECHA_VIGENCIA,
+               t.ESTADO
+        FROM dbo.TB_TARIFA t
+        INNER JOIN dbo.TB_RUTA r ON r.ID_RUTA = t.ID_RUTA
+        WHERE t.GUID_TARIFA = @GUID_TARIFA;
+    END TRY
+    BEGIN CATCH
+        SELECT CAST(NULL AS UNIQUEIDENTIFIER) AS GUID_TARIFA,
+               CAST(NULL AS UNIQUEIDENTIFIER) AS GUID_RUTA,
+               CAST(0 AS DECIMAL(10,2))       AS MONTO,
+               CAST(NULL AS DATETIME)          AS FECHA_VIGENCIA,
+               CAST(0 AS BIT)                 AS ESTADO
+        WHERE 1 = 0;
+    END CATCH
+END
+GO

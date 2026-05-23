@@ -62,12 +62,27 @@ namespace API.Controllers
         {
             Guid guidUsuario;
             if (!TryObtenerUsuarioToken(out guidUsuario))
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized,
-                    "Token inválido o sin usuario asociado.");
-            }
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token inválido o sin usuario asociado.");
 
             return Request.CreateResponse(HttpStatusCode.OK, new LogHistorial().ListarPorUsuario(guidUsuario));
+        }
+
+        [HttpGet]
+        [Route("obtener/{guid}")]
+        public HttpResponseMessage ObtenerPorGuid(string guid)
+        {
+            Guid guidUsuario;
+            if (!TryObtenerUsuarioToken(out guidUsuario))
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token inválido o sin usuario asociado.");
+
+            return Request.CreateResponse(HttpStatusCode.OK, new LogHistorial().ObtenerPorGuid(guidUsuario, new Guid(guid)));
+        }
+
+        [HttpDelete]
+        [Route("eliminar/{guid}")]
+        public HttpResponseMessage Eliminar(string guid)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, new LogHistorial().Eliminar(new Guid(guid)));
         }
     }
 }

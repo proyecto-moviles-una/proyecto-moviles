@@ -1,8 +1,10 @@
-﻿using AccesoDatos;
+using AccesoDatos;
 using Core.Entidades;
 using Core.Entidades.Request;
 using Core.Entidades.Response;
+using Core.Enum;
 using Core.Enum.Ruta;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +16,17 @@ namespace Logica.Ruta
         public ResCrearRuta Crear(ReqCrearRuta req)
         {
             var res = new ResCrearRuta { resultado = false, error = new List<Error>() };
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int errorId = 0;
+            string errorDesc = string.Empty;
 
             try
             {
                 if (string.IsNullOrEmpty(req.Nombre))
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.nombreFaltante, Mensaje = "El nombre es obligatorio" });
+                    errorId = (int)EnumErroresRuta.nombreFaltante;
+                    errorDesc = "El nombre es obligatorio";
                     return res;
                 }
 
@@ -47,6 +54,8 @@ namespace Logica.Ruta
                 if (guidRuta == null || guidRuta == Guid.Empty)
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorCreandoRuta, Mensaje = errorDescBD ?? "Error al crear la ruta" });
+                    errorId = (int)EnumErroresRuta.errorCreandoRuta;
+                    errorDesc = errorDescBD ?? "Error al crear la ruta";
                     return res;
                 }
 
@@ -63,10 +72,17 @@ namespace Logica.Ruta
                 };
                 res.resultado = true;
                 res.error = null;
+                tipoBitacora = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorCreandoRuta, Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "") });
+                errorId = (int)EnumErroresRuta.errorCreandoRuta;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -75,6 +91,9 @@ namespace Logica.Ruta
         public ResListarRutas Listar(bool soloActivas = true)
         {
             var res = new ResListarRutas { resultado = false, error = new List<Error>() };
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int errorId = 0;
+            string errorDesc = string.Empty;
 
             try
             {
@@ -98,10 +117,17 @@ namespace Logica.Ruta
 
                 res.resultado = true;
                 res.error = null;
+                tipoBitacora = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorCreandoRuta, Mensaje = ex.Message });
+                errorId = (int)EnumErroresRuta.errorCreandoRuta;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(tipoBitacora, errorId, errorDesc, soloActivas, res);
             }
 
             return res;
@@ -110,6 +136,9 @@ namespace Logica.Ruta
         public ResCrearRuta ObtenerPorGuid(Guid guid)
         {
             var res = new ResCrearRuta { resultado = false, error = new List<Error>() };
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int errorId = 0;
+            string errorDesc = string.Empty;
 
             try
             {
@@ -120,6 +149,8 @@ namespace Logica.Ruta
                     if (r == null)
                     {
                         res.error.Add(new Error { Codigo = (int)EnumErroresRuta.rutaNoEncontrada, Mensaje = "Ruta no encontrada" });
+                        errorId = (int)EnumErroresRuta.rutaNoEncontrada;
+                        errorDesc = "Ruta no encontrada";
                         return res;
                     }
 
@@ -142,10 +173,17 @@ namespace Logica.Ruta
 
                 res.resultado = true;
                 res.error = null;
+                tipoBitacora = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorCreandoRuta, Mensaje = ex.Message });
+                errorId = (int)EnumErroresRuta.errorCreandoRuta;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(tipoBitacora, errorId, errorDesc, guid, res);
             }
 
             return res;
@@ -154,12 +192,17 @@ namespace Logica.Ruta
         public ResCrearRuta Editar(Guid guid, ReqCrearRuta req)
         {
             var res = new ResCrearRuta { resultado = false, error = new List<Error>() };
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int errorId = 0;
+            string errorDesc = string.Empty;
 
             try
             {
                 if (string.IsNullOrEmpty(req.Nombre))
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.nombreFaltante, Mensaje = "El nombre es obligatorio" });
+                    errorId = (int)EnumErroresRuta.nombreFaltante;
+                    errorDesc = "El nombre es obligatorio";
                     return res;
                 }
 
@@ -184,6 +227,8 @@ namespace Logica.Ruta
                 if (errorIdBD.HasValue && errorIdBD.Value != 0)
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorEditandoRuta, Mensaje = errorDescBD ?? "Error al actualizar la ruta" });
+                    errorId = (int)EnumErroresRuta.errorEditandoRuta;
+                    errorDesc = errorDescBD ?? "Error al actualizar la ruta";
                     return res;
                 }
 
@@ -199,10 +244,17 @@ namespace Logica.Ruta
                 };
                 res.resultado = true;
                 res.error = null;
+                tipoBitacora = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorEditandoRuta, Mensaje = ex.Message });
+                errorId = (int)EnumErroresRuta.errorEditandoRuta;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
@@ -211,6 +263,9 @@ namespace Logica.Ruta
         public ResBase Eliminar(Guid guid)
         {
             var res = new ResBase { resultado = false, error = new List<Error>() };
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int errorId = 0;
+            string errorDesc = string.Empty;
 
             try
             {
@@ -226,15 +281,24 @@ namespace Logica.Ruta
                 if (errorIdBD.HasValue && errorIdBD.Value != 0)
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorEliminandoRuta, Mensaje = errorDescBD ?? "Error al desactivar la ruta" });
+                    errorId = (int)EnumErroresRuta.errorEliminandoRuta;
+                    errorDesc = errorDescBD ?? "Error al desactivar la ruta";
                     return res;
                 }
 
                 res.resultado = true;
                 res.error = null;
+                tipoBitacora = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorEliminandoRuta, Mensaje = ex.Message });
+                errorId = (int)EnumErroresRuta.errorEliminandoRuta;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(tipoBitacora, errorId, errorDesc, guid, res);
             }
 
             return res;
@@ -243,6 +307,9 @@ namespace Logica.Ruta
         public ResAsociarParadaRuta AsociarParada(ReqAsociarParadaRuta req)
         {
             var res = new ResAsociarParadaRuta { resultado = false, error = new List<Error>() };
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int errorId = 0;
+            string errorDesc = string.Empty;
 
             try
             {
@@ -266,29 +333,44 @@ namespace Logica.Ruta
                 if (guidRutaParada == null || guidRutaParada == Guid.Empty)
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorCreandoRuta, Mensaje = errorDescBD ?? "Error al asociar la parada" });
+                    errorId = (int)EnumErroresRuta.errorCreandoRuta;
+                    errorDesc = errorDescBD ?? "Error al asociar la parada";
                     return res;
                 }
 
                 res.GuidRutaParada = guidRutaParada;
                 res.resultado = true;
                 res.error = null;
+                tipoBitacora = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorCreandoRuta, Mensaje = ex.Message });
+                errorId = (int)EnumErroresRuta.errorCreandoRuta;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
         }
+
         public ResBase DesasociarParada(ReqDesasociarParadaRuta req)
         {
             var res = new ResBase { resultado = false, error = new List<Error>() };
+            enumBitacora tipoBitacora = enumBitacora.fallido;
+            int errorId = 0;
+            string errorDesc = string.Empty;
 
             try
             {
                 if (req == null || req.GuidRuta == Guid.Empty || req.GuidParada == Guid.Empty)
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorDesasociandoParadaRuta, Mensaje = "La ruta y la parada son obligatorias" });
+                    errorId = (int)EnumErroresRuta.errorDesasociandoParadaRuta;
+                    errorDesc = "La ruta y la parada son obligatorias";
                     return res;
                 }
 
@@ -309,19 +391,47 @@ namespace Logica.Ruta
                 if (errorIdBD.HasValue && errorIdBD.Value != 0)
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorDesasociandoParadaRuta, Mensaje = errorDescBD ?? "Error al desasociar la parada" });
+                    errorId = (int)EnumErroresRuta.errorDesasociandoParadaRuta;
+                    errorDesc = errorDescBD ?? "Error al desasociar la parada";
                     return res;
                 }
 
                 res.resultado = true;
                 res.error = null;
+                tipoBitacora = enumBitacora.exitoso;
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorDesasociandoParadaRuta, Mensaje = ex.Message });
+                errorId = (int)EnumErroresRuta.errorDesasociandoParadaRuta;
+                errorDesc = ex.Message;
+            }
+            finally
+            {
+                bitacorear(tipoBitacora, errorId, errorDesc, req, res);
             }
 
             return res;
         }
+
+        private void bitacorear(enumBitacora tipo, int errorId, string errorDesc, object req, object res)
+        {
+            try
+            {
+                ReqBitacorear reqBit = new ReqBitacorear();
+                reqBit.bitacora = new Bitacora
+                {
+                    clase       = GetType().Name,
+                    metodo      = new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name,
+                    tipo        = tipo,
+                    codigoError = errorId,
+                    descripcion = errorDesc,
+                    request     = JsonConvert.SerializeObject(req),
+                    response    = JsonConvert.SerializeObject(res)
+                };
+                Utilitarios.Utilitarios.bitacorear(reqBit);
+            }
+            catch { }
+        }
     }
 }
-
