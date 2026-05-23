@@ -21,15 +21,11 @@ namespace API.Controllers
                 : null;
 
         // GET api/usuarios/listar  — cualquier usuario autenticado puede listar
-        // GET api/usuarios/listar  — solo admin puede ver la lista completa
         [HttpGet]
         [Route("api/usuarios/listar")]
-        public HttpResponseMessage listar()
+        public ResObtenerListaUsuarios listar()
         {
-            if (tokenActual == null || tokenActual.rol != "admin")
-                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Acceso denegado. Se requiere rol admin.");
-
-            return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().obtenerLista(new ReqObtenerListaUsuarios()));
+            return new LogUsuario().obtenerLista(new ReqObtenerListaUsuarios());
         }
 
         // GET api/usuarios/perfil  — obtiene el perfil del usuario autenticado (guid viene del JWT)
