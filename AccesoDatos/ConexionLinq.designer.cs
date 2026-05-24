@@ -35,6 +35,12 @@ namespace AccesoDatos
     partial void DeleteTB_HISTORIAL_VIAJE(TB_HISTORIAL_VIAJE instance);
     #endregion
 		
+		public ConexionLinqDataContext() : 
+				base(global::AccesoDatos.Properties.Settings.Default.bdMiBusConnectionString2, mappingSource)
+		{
+			OnCreated();
+		}
+		
 		public ConexionLinqDataContext(string connection) : 
 				base(connection, mappingSource)
 		{

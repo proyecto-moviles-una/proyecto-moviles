@@ -1,3 +1,5 @@
+using Core.Entidades;
+
 namespace Core.Entidades.Response
 {
     /// <summary>
