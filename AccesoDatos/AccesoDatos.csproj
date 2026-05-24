@@ -53,7 +53,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ConexionLinq.dbml</DependentUpon>
     </Compile>
-    <Compile Include="ConexionLinqDataContext.Connection.cs" />
     <Compile Include="ConexionLinqExtensions.cs" />
     <Compile Include="ConexionLinqDataContext.Parada.cs" />
     <Compile Include="ConexionLinqDataContext.RutaParada.cs" />
