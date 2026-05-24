@@ -37,7 +37,7 @@ namespace Logica.Horario
 
                 using (var db = new ConexionLinqDataContext())
                 {
-                    db.SP_INGRESAR_HORARIO(
+                    db.SP_INGRESAR_HORARIO3(
                         req.GuidRuta,
                         req.HoraSalida,
                         req.DiasServicio,
@@ -92,13 +92,13 @@ namespace Logica.Horario
             {
                 using (var db = new ConexionLinqDataContext())
                 {
-                    res.Horarios = db.SP_OBTENER_HORARIOS_POR_RUTA(guidRuta).Select(x => new Core.Entidades.Horario
+                    res.Horarios = db.SP_OBTENER_HORARIOS_POR_RUTA1(guidRuta).Select(x => new Core.Entidades.Horario
                     {
-                        Guid = x.GUID_HORARIO,
+                        Guid = (Guid)x.GUID_HORARIO,
                         GuidRuta = guidRuta,
-                        HoraSalida = x.HORA_SALIDA,
-                        DiasServicio = x.DIAS_SERVICIO,
-                        Estado = x.ESTADO
+                        HoraSalida = (TimeSpan)x.HORA_SALIDA,
+                        DiasServicio = (byte)x.DIAS_SERVICIO,
+                        Estado = (bool)x.ESTADO
                     }).ToList();
                 }
 
@@ -192,7 +192,7 @@ namespace Logica.Horario
 
                 using (var db = new ConexionLinqDataContext())
                 {
-                    db.SP_ACTUALIZAR_HORARIO(guid, req.HoraSalida, req.DiasServicio, ref idReturn, ref errorIdBD, ref errorDescBD);
+                    db.SP_ACTUALIZAR_HORARIO2(guid, req.HoraSalida, req.DiasServicio, ref idReturn, ref errorIdBD, ref errorDescBD);
                 }
 
                 if (errorIdBD.HasValue && errorIdBD.Value != 0)
@@ -244,7 +244,7 @@ namespace Logica.Horario
 
                 using (var db = new ConexionLinqDataContext())
                 {
-                    db.SP_ELIMINAR_HORARIO(guid, ref idReturn, ref errorIdBD, ref errorDescBD);
+                    db.SP_ELIMINAR_HORARIO2(guid, ref idReturn, ref errorIdBD, ref errorDescBD);
                 }
 
                 if (errorIdBD.HasValue && errorIdBD.Value != 0)
