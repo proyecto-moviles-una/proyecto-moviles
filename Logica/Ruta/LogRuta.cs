@@ -212,13 +212,15 @@ namespace Logica.Ruta
 
                 using (var db = new ConexionLinqDataContext())
                 {
-                    db.SP_ACTUALIZAR_RUTA(
+                    db.SP_ACTUALIZAR_RUTA5(
                         guid,
+                        req.GuidEmpresa,
                         req.Nombre,
                         req.NumeroRuta,
                         req.HoraInicio,
                         req.HoraFin,
                         null,
+                        req.GuidZona,
                         ref idReturn,
                         ref errorIdBD,
                         ref errorDescBD);

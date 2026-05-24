@@ -439,4 +439,127 @@
     <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
     <Return Type="System.Int32" />
   </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_RUTA" Method="SP_ACTUALIZAR_RUTA2">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="NOMBRE" Parameter="nOMBRE" Type="System.String" DbType="NVarChar(200)" />
+    <Parameter Name="NUMERO_RUTA" Parameter="nUMERO_RUTA" Type="System.String" DbType="NVarChar(20)" />
+    <Parameter Name="HORA_INICIO" Parameter="hORA_INICIO" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="HORA_FIN" Parameter="hORA_FIN" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="ESTADO_SERVICIO" Parameter="eSTADO_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="GUID_ZONA" Parameter="gUID_ZONA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_OBTENER_HORARIOS_POR_RUTA" Method="SP_OBTENER_HORARIOS_POR_RUTA1">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <ElementType Name="SP_OBTENER_HORARIOS_POR_RUTAResult1">
+      <Column Name="GUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="HORA_SALIDA" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
+      <Column Name="DIAS_SERVICIO" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="ESTADO" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_INGRESAR_HORARIO" Method="SP_INGRESAR_HORARIO1">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="HORA_SALIDA" Parameter="hORA_SALIDA" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="DIAS_SERVICIO" Parameter="dIAS_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" Direction="InOut" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_RUTA" Method="SP_ACTUALIZAR_RUTA3">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="NOMBRE" Parameter="nOMBRE" Type="System.String" DbType="NVarChar(200)" />
+    <Parameter Name="NUMERO_RUTA" Parameter="nUMERO_RUTA" Type="System.String" DbType="NVarChar(20)" />
+    <Parameter Name="ESTADO_SERVICIO" Parameter="eSTADO_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="GUID_ZONA" Parameter="gUID_ZONA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_INGRESAR_HORARIO" Method="SP_INGRESAR_HORARIO2">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="HORA_SALIDA" Parameter="hORA_SALIDA" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="DIAS_SERVICIO" Parameter="dIAS_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" Direction="InOut" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_HORARIO" Method="SP_ACTUALIZAR_HORARIO1">
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="HORA_SALIDA" Parameter="hORA_SALIDA" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="DIAS_SERVICIO" Parameter="dIAS_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ELIMINAR_HORARIO" Method="SP_ELIMINAR_HORARIO1">
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_INGRESAR_HORARIO" Method="SP_INGRESAR_HORARIO3">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="HORA_SALIDA" Parameter="hORA_SALIDA" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="DIAS_SERVICIO" Parameter="dIAS_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" Direction="InOut" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_HORARIO" Method="SP_ACTUALIZAR_HORARIO2">
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="HORA_SALIDA" Parameter="hORA_SALIDA" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="DIAS_SERVICIO" Parameter="dIAS_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ELIMINAR_HORARIO" Method="SP_ELIMINAR_HORARIO2">
+    <Parameter Name="GUID_HORARIO" Parameter="gUID_HORARIO" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_RUTA" Method="SP_ACTUALIZAR_RUTA4">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="GUID_EMPRESA" Parameter="gUID_EMPRESA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="NOMBRE" Parameter="nOMBRE" Type="System.String" DbType="NVarChar(200)" />
+    <Parameter Name="NUMERO_RUTA" Parameter="nUMERO_RUTA" Type="System.String" DbType="NVarChar(20)" />
+    <Parameter Name="HORA_INICIO" Parameter="hORA_INICIO" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="HORA_FIN" Parameter="hORA_FIN" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="ESTADO_SERVICIO" Parameter="eSTADO_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="GUID_ZONA" Parameter="gUID_ZONA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_ACTUALIZAR_RUTA" Method="SP_ACTUALIZAR_RUTA5">
+    <Parameter Name="GUID_RUTA" Parameter="gUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="GUID_EMPRESA" Parameter="gUID_EMPRESA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="NOMBRE" Parameter="nOMBRE" Type="System.String" DbType="NVarChar(200)" />
+    <Parameter Name="NUMERO_RUTA" Parameter="nUMERO_RUTA" Type="System.String" DbType="NVarChar(20)" />
+    <Parameter Name="HORA_INICIO" Parameter="hORA_INICIO" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="HORA_FIN" Parameter="hORA_FIN" Type="System.TimeSpan" DbType="Time" />
+    <Parameter Name="ESTADO_SERVICIO" Parameter="eSTADO_SERVICIO" Type="System.Byte" DbType="TinyInt" />
+    <Parameter Name="GUID_ZONA" Parameter="gUID_ZONA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="IDRETURN" Parameter="iDRETURN" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORID" Parameter="eRRORID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
 </Database>
