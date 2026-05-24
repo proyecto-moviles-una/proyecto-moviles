@@ -1,5 +1,7 @@
 using Core.Entidades.Request;
 using Core.Entidades.Response;
+using Core.Entidades.Request;
+using Core.Entidades.Response;
 using API.Filters;
 using DTO.Usuario;
 using Logica.Auth;
@@ -111,6 +113,19 @@ namespace API.Controllers
             req.guidUsuario = guid;
             req.codigo      = dto.codigo;
             return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().confirmarCambioCorreo(req));
+        }
+
+        // PUT api/usuarios/tokenFCM  — guarda el token FCM del dispositivo (guid viene del JWT)
+        // La app MAUI llama a este endpoint cada vez que arranca o Firebase rota el token.
+        [HttpPut]
+        [Route("api/usuarios/tokenFCM")]
+        public HttpResponseMessage actualizarTokenFCM(DTOActualizarTokenFCM dto)
+        {
+            Guid guid = Guid.Parse(tokenActual.guidUsuario);
+            ReqActualizarTokenFCM req = new ReqActualizarTokenFCM();
+            req.guidUsuario = guid;
+            req.tokenFCM    = dto.tokenFCM;
+            return Request.CreateResponse(HttpStatusCode.OK, new LogUsuario().actualizarTokenFCM(req));
         }
     }
 }

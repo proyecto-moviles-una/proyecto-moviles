@@ -116,6 +116,43 @@ namespace AccesoDatos
             eRRORDESCRIPCION = ((string)(result.GetParameterValue(4)));
             return ((int)(result.ReturnValue));
         }
+
+        [global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.SP_ACTUALIZAR_TOKEN_FCM")]
+        public int SP_ACTUALIZAR_TOKEN_FCM(
+            [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "GUID_USUARIO",     DbType = "UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO,
+            [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "TOKEN_FCM",        DbType = "NVarChar(500)")]     string tOKEN_FCM,
+            [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "FILASACTUALIZADAS", DbType = "Int")]             ref System.Nullable<int> fILASACTUALIZADAS,
+            [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "IDRETURN",         DbType = "Int")]              ref System.Nullable<int> iDRETURN,
+            [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "ERRORID",          DbType = "Int")]              ref System.Nullable<int> eRRORID,
+            [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "ERRORDESCRIPCION", DbType = "NVarChar(MAX)")]    ref string eRRORDESCRIPCION)
+        {
+            IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())),
+                gUID_USUARIO, tOKEN_FCM, fILASACTUALIZADAS, iDRETURN, eRRORID, eRRORDESCRIPCION);
+            fILASACTUALIZADAS = ((System.Nullable<int>)(result.GetParameterValue(2)));
+            iDRETURN          = ((System.Nullable<int>)(result.GetParameterValue(3)));
+            eRRORID           = ((System.Nullable<int>)(result.GetParameterValue(4)));
+            eRRORDESCRIPCION  = ((string)(result.GetParameterValue(5)));
+            return ((int)(result.ReturnValue));
+        }
+
+        [global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.SP_OBTENER_TOKENS_FCM_POR_RUTA")]
+        public ISingleResult<SP_OBTENER_TOKENS_FCM_POR_RUTAResult> SP_OBTENER_TOKENS_FCM_POR_RUTA(
+            [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "GUID_RUTA", DbType = "UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA)
+        {
+            IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA);
+            return ((ISingleResult<SP_OBTENER_TOKENS_FCM_POR_RUTAResult>)(result.ReturnValue));
+        }
+    }
+
+    public partial class SP_OBTENER_TOKENS_FCM_POR_RUTAResult
+    {
+        private string _TOKEN_FCM;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_TOKEN_FCM", DbType = "NVarChar(500)", CanBeNull = true)]
+        public string TOKEN_FCM
+        {
+            get { return _TOKEN_FCM; }
+            set { _TOKEN_FCM = value; }
+        }
     }
 
     public partial class SP_OBTENER_LISTAUSUARIOSResult

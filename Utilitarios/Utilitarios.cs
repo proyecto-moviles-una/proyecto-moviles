@@ -616,6 +616,107 @@ namespace Utilitarios
                 && email.Contains(".")
                 && email.IndexOf("@") < email.LastIndexOf(".");
         }
+
+        // ?????????????????????????????????????????????????????????????????????
+        // PUSH NOTIFICATIONS (Firebase Cloud Messaging)
+        // ?????????????????????????????????????????????????????????????????????
+
+        private static readonly object _firebaseLock = new object();
+        private static bool _firebaseInicializado = false;
+
+        /// <summary>
+        /// Inicializa el SDK de Firebase Admin una sola vez (thread-safe).
+        /// Lee la ruta al JSON desde la clave "FirebaseServiceAccountPath" en Web.config.
+        /// </summary>
+        private static void InicializarFirebaseSiHaceFalta()
+        {
+            if (_firebaseInicializado) return;
+            lock (_firebaseLock)
+            {
+                if (_firebaseInicializado) return;
+                if (FirebaseApp.DefaultInstance != null)
+                {
+                    _firebaseInicializado = true;
+                    return;
+                }
+                string rutaConfig = ConfigurationManager.AppSettings["FirebaseServiceAccountPath"];
+                if (string.IsNullOrWhiteSpace(rutaConfig))
+                    throw new InvalidOperationException(
+                        "Falta la clave 'FirebaseServiceAccountPath' en appSettings de Web.config.");
+
+                string rutaFisica = rutaConfig.StartsWith("~")
+                    ? HostingEnvironment.MapPath(rutaConfig)
+                    : rutaConfig;
+
+                FirebaseApp.Create(new AppOptions
+                {
+                    Credential = GoogleCredential.FromFile(rutaFisica)
+                });
+                _firebaseInicializado = true;
+            }
+        }
+
+        /// <summary>
+        /// Envía un push notification a los usuarios que tienen la ruta indicada como favorita.
+        /// Devuelve un string diagnóstico con el detalle de cada envío (messageId o error por token).
+        /// Operación BEST-EFFORT: si Firebase falla globalmente, devuelve el mensaje de error
+        /// sin lanzar excepción; quien llama decide si lo registra en bitácora o lo ignora.
+        /// </summary>
+        /// <param name="guidRuta">GUID de la ruta que fue modificada.</param>
+        /// <param name="titulo">Título visible de la notificación.</param>
+        /// <param name="mensaje">Cuerpo visible de la notificación.</param>
+        /// <returns>String con el resumen del envío: tokens encontrados, éxitos, fallos y messageIds.</returns>
+        public static string EnviarPushFavoritosPorRuta(Guid guidRuta, string titulo, string mensaje)
+        {
+            try
+            {
+                InicializarFirebaseSiHaceFalta();
+
+                List<string> tokens;
+                using (AccesoDatos.ConexionLinqDataContext linq = new AccesoDatos.ConexionLinqDataContext())
+                {
+                    tokens = linq.SP_OBTENER_TOKENS_FCM_POR_RUTA(guidRuta)
+                                 .Select(r => r.TOKEN_FCM)
+                                 .Where(t => !string.IsNullOrWhiteSpace(t))
+                                 .Distinct()
+                                 .ToList();
+                }
+
+                if (tokens.Count == 0)
+                    return "PUSH_SKIP: No hay tokens FCM registrados para esta ruta.";
+
+                // FCM acepta hasta 500 tokens por llamada
+                var multicast = new MulticastMessage
+                {
+                    Notification = new Notification { Title = titulo, Body = mensaje },
+                    Tokens = tokens
+                };
+
+                var resultado = FirebaseMessaging.DefaultInstance
+                    .SendEachForMulticastAsync(multicast)
+                    .GetAwaiter().GetResult();
+
+                // Construir diagnóstico detallado con messageId de cada token
+                var sb = new System.Text.StringBuilder();
+                sb.AppendFormat("PUSH_RESULT: tokens={0} exitos={1} fallos={2} | ",
+                    tokens.Count, resultado.SuccessCount, resultado.FailureCount);
+
+                for (int i = 0; i < resultado.Responses.Count; i++)
+                {
+                    var r = resultado.Responses[i];
+                    if (r.IsSuccess)
+                        sb.AppendFormat("[{0}] OK messageId={1} | ", i, r.MessageId);
+                    else
+                        sb.AppendFormat("[{0}] ERROR {1} | ", i, r.Exception != null ? r.Exception.Message : "desconocido");
+                }
+
+                return sb.ToString();
+            }
+            catch (Exception ex)
+            {
+                return string.Format("PUSH_EXCEPTION: {0}", ex.Message);
+            }
+        }
     }
 
     // ?????????????????????????????????????????????????????????????????????????

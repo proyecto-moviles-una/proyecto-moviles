@@ -73,7 +73,17 @@ namespace Logica.Tarifa
                 };
                 res.resultado = true;
                 res.error = null;
+
+
+                // BEST-EFFORT: notifica a los usuarios que tienen esta ruta como favorita.
+                // Si Firebase falla, la tarifa ya qued� guardada; el push no la invalida.
+                Utilitarios.Utilitarios.EnviarPushFavoritosPorRuta(
+                    req.GuidRuta,
+                    "Tarifa actualizada",
+                    string.Format("La tarifa de una ruta en tus favoritos cambi� a ?{0:N0}.", req.Monto));
+
                 tipoBitacora = enumBitacora.exitoso;
+
             }
             catch (Exception ex)
             {
