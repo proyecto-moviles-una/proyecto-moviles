@@ -77,5 +77,49 @@ namespace AccesoDatos.Properties {
                 return ((string)(this["bdMiBusConnectionString4"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=mibus.database.windows.net;Initial Catalog=bdMiBus;Persist Security I" +
+            "nfo=True;User ID=mibusroot;TrustServerCertificate=True")]
+        public string bdMiBusConnectionString5 {
+            get {
+                return ((string)(this["bdMiBusConnectionString5"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=mibus.database.windows.net;Initial Catalog=bdMiBus;Persist Security I" +
+            "nfo=True;User ID=mibusroot;TrustServerCertificate=True")]
+        public string bdMiBusConnectionString6 {
+            get {
+                return ((string)(this["bdMiBusConnectionString6"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=mibus.database.windows.net;Initial Catalog=bdMiBus;Persist Security I" +
+            "nfo=True;User ID=mibusroot;TrustServerCertificate=True")]
+        public string bdMiBusConnectionString7 {
+            get {
+                return ((string)(this["bdMiBusConnectionString7"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=mibus.database.windows.net;Initial Catalog=bdMiBus;Persist Security I" +
+            "nfo=True;User ID=mibusroot;TrustServerCertificate=True")]
+        public string bdMiBusConnectionString8 {
+            get {
+                return ((string)(this["bdMiBusConnectionString8"]));
+            }
+        }
     }
 }

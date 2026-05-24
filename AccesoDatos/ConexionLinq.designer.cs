@@ -463,6 +463,126 @@ namespace AccesoDatos
 			eRRORDESCRIPCION = ((string)(result.GetParameterValue(3)));
 			return ((int)(result.ReturnValue));
 		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ACTUALIZAR_RUTA")]
+		public int SP_ACTUALIZAR_RUTA2([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NOMBRE", DbType="NVarChar(200)")] string nOMBRE, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NUMERO_RUTA", DbType="NVarChar(20)")] string nUMERO_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_INICIO", DbType="Time")] System.Nullable<System.TimeSpan> hORA_INICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_FIN", DbType="Time")] System.Nullable<System.TimeSpan> hORA_FIN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ESTADO_SERVICIO", DbType="TinyInt")] System.Nullable<byte> eSTADO_SERVICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_ZONA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_ZONA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA, nOMBRE, nUMERO_RUTA, hORA_INICIO, hORA_FIN, eSTADO_SERVICIO, gUID_ZONA, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(7)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(8)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(9)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_OBTENER_HORARIOS_POR_RUTA")]
+		public ISingleResult<SP_OBTENER_HORARIOS_POR_RUTAResult1> SP_OBTENER_HORARIOS_POR_RUTA1([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA);
+			return ((ISingleResult<SP_OBTENER_HORARIOS_POR_RUTAResult1>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_INGRESAR_HORARIO")]
+		public int SP_INGRESAR_HORARIO1([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_SALIDA", DbType="Time")] System.Nullable<System.TimeSpan> hORA_SALIDA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="DIAS_SERVICIO", DbType="TinyInt")] System.Nullable<byte> dIAS_SERVICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_HORARIO", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> gUID_HORARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA, hORA_SALIDA, dIAS_SERVICIO, gUID_HORARIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			gUID_HORARIO = ((System.Nullable<System.Guid>)(result.GetParameterValue(3)));
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(5)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(6)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ACTUALIZAR_RUTA")]
+		public int SP_ACTUALIZAR_RUTA3([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NOMBRE", DbType="NVarChar(200)")] string nOMBRE, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NUMERO_RUTA", DbType="NVarChar(20)")] string nUMERO_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ESTADO_SERVICIO", DbType="TinyInt")] System.Nullable<byte> eSTADO_SERVICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_ZONA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_ZONA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA, nOMBRE, nUMERO_RUTA, eSTADO_SERVICIO, gUID_ZONA, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(5)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(6)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(7)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_INGRESAR_HORARIO")]
+		public int SP_INGRESAR_HORARIO2([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_SALIDA", DbType="Time")] System.Nullable<System.TimeSpan> hORA_SALIDA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="DIAS_SERVICIO", DbType="TinyInt")] System.Nullable<byte> dIAS_SERVICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_HORARIO", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> gUID_HORARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA, hORA_SALIDA, dIAS_SERVICIO, gUID_HORARIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			gUID_HORARIO = ((System.Nullable<System.Guid>)(result.GetParameterValue(3)));
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(5)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(6)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ACTUALIZAR_HORARIO")]
+		public int SP_ACTUALIZAR_HORARIO1([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_HORARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_HORARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_SALIDA", DbType="Time")] System.Nullable<System.TimeSpan> hORA_SALIDA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="DIAS_SERVICIO", DbType="TinyInt")] System.Nullable<byte> dIAS_SERVICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_HORARIO, hORA_SALIDA, dIAS_SERVICIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(3)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(5)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ELIMINAR_HORARIO")]
+		public int SP_ELIMINAR_HORARIO1([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_HORARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_HORARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_HORARIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(1)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(2)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(3)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_INGRESAR_HORARIO")]
+		public int SP_INGRESAR_HORARIO3([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_SALIDA", DbType="Time")] System.Nullable<System.TimeSpan> hORA_SALIDA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="DIAS_SERVICIO", DbType="TinyInt")] System.Nullable<byte> dIAS_SERVICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_HORARIO", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> gUID_HORARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA, hORA_SALIDA, dIAS_SERVICIO, gUID_HORARIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			gUID_HORARIO = ((System.Nullable<System.Guid>)(result.GetParameterValue(3)));
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(5)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(6)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ACTUALIZAR_HORARIO")]
+		public int SP_ACTUALIZAR_HORARIO2([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_HORARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_HORARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_SALIDA", DbType="Time")] System.Nullable<System.TimeSpan> hORA_SALIDA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="DIAS_SERVICIO", DbType="TinyInt")] System.Nullable<byte> dIAS_SERVICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_HORARIO, hORA_SALIDA, dIAS_SERVICIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(3)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(5)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ELIMINAR_HORARIO")]
+		public int SP_ELIMINAR_HORARIO2([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_HORARIO", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_HORARIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_HORARIO, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(1)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(2)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(3)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ACTUALIZAR_RUTA")]
+		public int SP_ACTUALIZAR_RUTA4([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_EMPRESA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_EMPRESA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NOMBRE", DbType="NVarChar(200)")] string nOMBRE, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NUMERO_RUTA", DbType="NVarChar(20)")] string nUMERO_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_INICIO", DbType="Time")] System.Nullable<System.TimeSpan> hORA_INICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_FIN", DbType="Time")] System.Nullable<System.TimeSpan> hORA_FIN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ESTADO_SERVICIO", DbType="TinyInt")] System.Nullable<byte> eSTADO_SERVICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_ZONA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_ZONA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA, gUID_EMPRESA, nOMBRE, nUMERO_RUTA, hORA_INICIO, hORA_FIN, eSTADO_SERVICIO, gUID_ZONA, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(8)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(9)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(10)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SP_ACTUALIZAR_RUTA")]
+		public int SP_ACTUALIZAR_RUTA5([global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_RUTA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_EMPRESA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_EMPRESA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NOMBRE", DbType="NVarChar(200)")] string nOMBRE, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NUMERO_RUTA", DbType="NVarChar(20)")] string nUMERO_RUTA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_INICIO", DbType="Time")] System.Nullable<System.TimeSpan> hORA_INICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="HORA_FIN", DbType="Time")] System.Nullable<System.TimeSpan> hORA_FIN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ESTADO_SERVICIO", DbType="TinyInt")] System.Nullable<byte> eSTADO_SERVICIO, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="GUID_ZONA", DbType="UniqueIdentifier")] System.Nullable<System.Guid> gUID_ZONA, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IDRETURN", DbType="Int")] ref System.Nullable<int> iDRETURN, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORID", DbType="Int")] ref System.Nullable<int> eRRORID, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ERRORDESCRIPCION", DbType="NVarChar(MAX)")] ref string eRRORDESCRIPCION)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), gUID_RUTA, gUID_EMPRESA, nOMBRE, nUMERO_RUTA, hORA_INICIO, hORA_FIN, eSTADO_SERVICIO, gUID_ZONA, iDRETURN, eRRORID, eRRORDESCRIPCION);
+			iDRETURN = ((System.Nullable<int>)(result.GetParameterValue(8)));
+			eRRORID = ((System.Nullable<int>)(result.GetParameterValue(9)));
+			eRRORDESCRIPCION = ((string)(result.GetParameterValue(10)));
+			return ((int)(result.ReturnValue));
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TB_HISTORIAL_VIAJE")]
@@ -2560,6 +2680,86 @@ namespace AccesoDatos
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ESTADO", DbType="Bit NOT NULL")]
 		public bool ESTADO
+		{
+			get
+			{
+				return this._ESTADO;
+			}
+			set
+			{
+				if ((this._ESTADO != value))
+				{
+					this._ESTADO = value;
+				}
+			}
+		}
+	}
+	
+	public partial class SP_OBTENER_HORARIOS_POR_RUTAResult1
+	{
+		
+		private System.Nullable<System.Guid> _GUID_HORARIO;
+		
+		private System.Nullable<System.TimeSpan> _HORA_SALIDA;
+		
+		private System.Nullable<byte> _DIAS_SERVICIO;
+		
+		private System.Nullable<bool> _ESTADO;
+		
+		public SP_OBTENER_HORARIOS_POR_RUTAResult1()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GUID_HORARIO", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> GUID_HORARIO
+		{
+			get
+			{
+				return this._GUID_HORARIO;
+			}
+			set
+			{
+				if ((this._GUID_HORARIO != value))
+				{
+					this._GUID_HORARIO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HORA_SALIDA", DbType="Time")]
+		public System.Nullable<System.TimeSpan> HORA_SALIDA
+		{
+			get
+			{
+				return this._HORA_SALIDA;
+			}
+			set
+			{
+				if ((this._HORA_SALIDA != value))
+				{
+					this._HORA_SALIDA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DIAS_SERVICIO", DbType="TinyInt")]
+		public System.Nullable<byte> DIAS_SERVICIO
+		{
+			get
+			{
+				return this._DIAS_SERVICIO;
+			}
+			set
+			{
+				if ((this._DIAS_SERVICIO != value))
+				{
+					this._DIAS_SERVICIO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ESTADO", DbType="Bit")]
+		public System.Nullable<bool> ESTADO
 		{
 			get
 			{
