@@ -2305,17 +2305,19 @@ namespace AccesoDatos
 	
 	public partial class SP_LOGINResult
 	{
-		
+
 		private System.Guid _GUID_USUARIO;
-		
+
 		private string _NOMBRE;
-		
+
 		private string _APELLIDOS;
-		
+
 		private System.Nullable<int> _ESTADO;
-		
+
 		private string _HASH_PASSWORD;
-		
+
+		private string _ROL;
+
 		public SP_LOGINResult()
 		{
 		}
@@ -2399,8 +2401,24 @@ namespace AccesoDatos
 				}
 			}
 		}
+
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ROL", DbType="NVarChar(50)")]
+		public string ROL
+		{
+			get
+			{
+				return this._ROL;
+			}
+			set
+			{
+				if ((this._ROL != value))
+				{
+					this._ROL = value;
+				}
+			}
+		}
 	}
-	
+
 	public partial class SP_OBTENER_TARIFAS_POR_RUTAResult
 	{
 		
