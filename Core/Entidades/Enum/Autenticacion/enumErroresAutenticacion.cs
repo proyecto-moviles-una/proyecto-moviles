@@ -2,7 +2,7 @@ namespace Core.Enum.Autenticacion
 {
     public enum enumErroresAutenticacion
     {
-        // Registro / activación
+        // Registro / activaciï¿½n
         nombreFaltante          = 1,
         apellidosFaltante       = 2,
         emailFaltante           = 3,
@@ -18,14 +18,18 @@ namespace Core.Enum.Autenticacion
         cuentaYaActiva          = 13,
         correoNoRegistrado      = 14,
 
-        // Sesión
+        // Sesiï¿½n
         guidSesionFaltante      = 20,
         sesionInvalida          = 21,
         errorAbrirSesion        = 22,
         sesionYaCerrada         = 23,
         accesoNoAutorizado      = 24,
 
-        // Reactivación
+        // Reactivaciï¿½n
         usuarioNoDesactivado    = 47,
+
+        // Token FCM
+        tokenFCMFaltante            = 50,
+        errorActualizandoTokenFCM   = 51,
     }
 }
