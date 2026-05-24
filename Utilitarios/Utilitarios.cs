@@ -6,12 +6,19 @@ using Core.Enum.Autenticacion;
 using Core.Enum.Favoritos;
 using Core.Enum.Generales;
 using Core.Enum.Perfil;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web.Hosting;
 
 namespace Utilitarios
 {
@@ -77,6 +84,8 @@ namespace Utilitarios
                 case (int)enumErroresPerfil.codigoVerificacionInvalido:         return "El código de verificación es incorrecto.";
                 case (int)enumErroresPerfil.sinSolicitudCambioCorreo:           return "No hay solicitud de cambio de correo pendiente.";
                 case (int)enumErroresAutenticacion.usuarioNoDesactivado:        return "La cuenta no está desactivada.";
+                case (int)enumErroresAutenticacion.tokenFCMFaltante:            return "El token FCM es obligatorio.";
+                case (int)enumErroresAutenticacion.errorActualizandoTokenFCM:   return "No se pudo actualizar el token FCM.";
                 case (int)enumErroresGenerales.errorBaseDatos:                  return "Error en base de datos. Intente más tarde.";
                 case (int)enumErroresGenerales.errorNoControlado:               return "Ha ocurrido un error inesperado. Contacte al administrador.";
                 default:                               return "Ha ocurrido un error inesperado.";
