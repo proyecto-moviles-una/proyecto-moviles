@@ -193,16 +193,16 @@ namespace Logica.Ruta
         {
             var res = new ResCrearRuta { resultado = false, error = new List<Error>() };
             enumBitacora tipoBitacora = enumBitacora.fallido;
-            int errorId = 0;
-            string errorDesc = string.Empty;
+            int          errorId      = 0;
+            string       errorDesc    = string.Empty;
 
             try
             {
                 if (string.IsNullOrEmpty(req.Nombre))
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.nombreFaltante, Mensaje = "El nombre es obligatorio" });
-                    errorId = (int)EnumErroresRuta.nombreFaltante;
-                    errorDesc = "El nombre es obligatorio";
+                    errorId   = (int)EnumErroresRuta.nombreFaltante;
+                    errorDesc = EnumErroresRuta.nombreFaltante.ToString();
                     return res;
                 }
 
@@ -227,8 +227,8 @@ namespace Logica.Ruta
                 if (errorIdBD.HasValue && errorIdBD.Value != 0)
                 {
                     res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorEditandoRuta, Mensaje = errorDescBD ?? "Error al actualizar la ruta" });
-                    errorId = (int)EnumErroresRuta.errorEditandoRuta;
-                    errorDesc = errorDescBD ?? "Error al actualizar la ruta";
+                    errorId   = (int)EnumErroresRuta.errorEditandoRuta;
+                    errorDesc = errorDescBD ?? EnumErroresRuta.errorEditandoRuta.ToString();
                     return res;
                 }
 
@@ -243,13 +243,20 @@ namespace Logica.Ruta
                     HoraFin = req.HoraFin
                 };
                 res.resultado = true;
-                res.error = null;
-                tipoBitacora = enumBitacora.exitoso;
+                res.error     = null;
+                tipoBitacora  = enumBitacora.exitoso;
+
+                // BEST-EFFORT: notifica a los usuarios que tienen esta ruta como favorita.
+                // Si Firebase falla, la edición ya quedó guardada; el push no la invalida.
+                res.PushDiagnostico = Utilitarios.Utilitarios.EnviarPushFavoritosPorRuta(
+                    guid,
+                    "Ruta actualizada",
+                    string.Format("La ruta '{0}' que tienes en favoritos fue modificada.", req.Nombre));
             }
             catch (Exception ex)
             {
                 res.error.Add(new Error { Codigo = (int)EnumErroresRuta.errorEditandoRuta, Mensaje = ex.Message });
-                errorId = (int)EnumErroresRuta.errorEditandoRuta;
+                errorId   = (int)EnumErroresRuta.errorEditandoRuta;
                 errorDesc = ex.Message;
             }
             finally
@@ -289,6 +296,14 @@ namespace Logica.Ruta
                 res.resultado = true;
                 res.error = null;
                 tipoBitacora = enumBitacora.exitoso;
+
+                // BEST-EFFORT: notifica a quienes tienen esta ruta en favoritos
+                // que fue eliminada/desactivada. Si Firebase falla, la operación
+                // principal ya quedó guardada.
+                Utilitarios.Utilitarios.EnviarPushFavoritosPorRuta(
+                    guid,
+                    "Ruta eliminada",
+                    "Una ruta que tenías en favoritos ya no está disponible.");
             }
             catch (Exception ex)
             {
@@ -414,7 +429,9 @@ namespace Logica.Ruta
             return res;
         }
 
-        private void bitacorear(enumBitacora tipo, int errorId, string errorDesc, object req, object res)
+        private void bitacorear(enumBitacora tipo, int errorId,
+                                string errorDesc, object req, object res,
+                                [System.Runtime.CompilerServices.CallerMemberName] string metodo = "")
         {
             try
             {
@@ -422,7 +439,7 @@ namespace Logica.Ruta
                 reqBit.bitacora = new Bitacora
                 {
                     clase       = GetType().Name,
-                    metodo      = new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name,
+                    metodo      = metodo,
                     tipo        = tipo,
                     codigoError = errorId,
                     descripcion = errorDesc,
