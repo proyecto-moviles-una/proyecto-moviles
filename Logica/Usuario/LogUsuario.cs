@@ -237,7 +237,11 @@ namespace Logica.Usuario
                 }
 
                 // ?? Verificar contraseña con BCrypt ????????????????????????
-                if (!Utilitarios.Utilitarios.verificarPassword(req.password, spResult.HASH_PASSWORD))
+                string hashPassword = string.IsNullOrWhiteSpace(spResult.HASH_PASSWORD)
+                    ? spResult.PASSWORD
+                    : spResult.HASH_PASSWORD;
+
+                if (!Utilitarios.Utilitarios.verificarPassword(req.password, hashPassword))
                 {
                     res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresAutenticacion.loginIncorrecto));
                     errorId   = (int)enumErroresAutenticacion.loginIncorrecto;
@@ -297,7 +301,8 @@ namespace Logica.Usuario
                 string jwt = Utilitarios.Utilitarios.generarJWT(
                     spResult.GUID_USUARIO,
                     guidSesion.Value,
-                    spResult.NOMBRE);
+                    spResult.NOMBRE,
+                    NormalizarRol(spResult.ROL));
 
                 res.resultado  = true;
                 res.error      = null;
@@ -306,7 +311,8 @@ namespace Logica.Usuario
                 {
                     guid      = spResult.GUID_USUARIO,
                     nombre    = spResult.NOMBRE,
-                    apellidos = spResult.APELLIDOS
+                    apellidos = spResult.APELLIDOS,
+                    rol       = NormalizarRol(spResult.ROL)
                 };
                 res.token     = jwt;
                 tipoBitacora  = enumBitacora.exitoso;
@@ -696,10 +702,28 @@ namespace Logica.Usuario
 
                 if (idReturn == null || idReturn <= 0)
                 {
-                    Utilitarios.Utilitarios.registrarErrorBD("SP_REENVIAR_ACTIVACION", errorIdBD ?? 0, errorDescBD);
-                    res.error.Add(Utilitarios.Utilitarios.crearError((int)enumErroresGenerales.errorBaseDatos));
-                    errorId   = (int)enumErroresGenerales.errorBaseDatos;
-                    errorDesc = errorDescBD ?? enumErroresGenerales.errorBaseDatos.ToString();
+                    int codError;
+
+                    switch (errorIdBD ?? 0)
+                    {
+                        case 1:
+                            codError = (int)enumErroresAutenticacion.correoNoRegistrado;
+                            break;
+                        case 2:
+                            codError = (int)enumErroresAutenticacion.cuentaYaActiva;
+                            break;
+                        case 3:
+                            codError = (int)enumErroresAutenticacion.usuarioDesactivado;
+                            break;
+                        default:
+                            codError = (int)enumErroresGenerales.errorBaseDatos;
+                            Utilitarios.Utilitarios.registrarErrorBD("SP_REENVIAR_ACTIVACION", errorIdBD ?? 0, errorDescBD);
+                            break;
+                    }
+
+                    res.error.Add(Utilitarios.Utilitarios.crearError(codError));
+                    errorId   = codError;
+                    errorDesc = errorDescBD ?? codError.ToString();
                     return res;
                 }
 
@@ -1174,7 +1198,8 @@ namespace Logica.Usuario
                 nombre    = sp.NOMBRE,
                 apellidos = sp.APELLIDOS,
                 email     = sp.CORREO_ELECTRONICO,
-                estado    = sp.ESTADO
+                estado    = sp.ESTADO,
+                rol       = NormalizarRol(sp.ROL)
             };
         }
 
@@ -1189,7 +1214,8 @@ namespace Logica.Usuario
                     nombre    = item.NOMBRE,
                     apellidos = item.APELLIDOS,
                     email     = item.CORREO_ELECTRONICO,
-                    estado    = item.ESTADO
+                    estado    = item.ESTADO,
+                    rol       = NormalizarRol(item.ROL)
                 });
             }
             return resultado;
@@ -1241,6 +1267,21 @@ namespace Logica.Usuario
         // ?????????????????????????????????????????????????????????????????????
         // BITÁCORA (privado — igual que el profe en Finally)
         // ?????????????????????????????????????????????????????????????????????
+        private static string NormalizarRol(string rol)
+        {
+            if (string.IsNullOrWhiteSpace(rol))
+                return "usuario";
+
+            string valor = rol.Trim().ToLowerInvariant();
+            if (valor == "2" || valor == "admin" || valor == "administrador")
+                return "admin";
+
+            if (valor == "1" || valor == "usuario" || valor == "user")
+                return "usuario";
+
+            return valor;
+        }
+
         private void bitacorear(enumBitacora tipo, int errorId,
                                 string errorDesc, object req, object res,
                                 [System.Runtime.CompilerServices.CallerMemberName] string metodo = "")

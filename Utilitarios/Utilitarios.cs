@@ -701,9 +701,11 @@ namespace Utilitarios
                     Tokens = tokens
                 };
 
-                var resultado = FirebaseMessaging.DefaultInstance
-                    .SendEachForMulticastAsync(multicast)
-                    .GetAwaiter().GetResult();
+                var envioTask = FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(multicast);
+                if (!envioTask.Wait(TimeSpan.FromSeconds(8)))
+                    return string.Format("PUSH_TIMEOUT: Firebase no respondio en 8 segundos. tokens={0}", tokens.Count);
+
+                var resultado = envioTask.GetAwaiter().GetResult();
 
                 // Construir diagnóstico detallado con messageId de cada token
                 var sb = new System.Text.StringBuilder();

@@ -8,6 +8,48 @@ namespace AccesoDatos
 {
     public partial class ConexionLinqDataContext
     {
+        partial void OnCreated()
+        {
+            string connectionString = ObtenerConnectionStringConfigurada();
+            if (!string.IsNullOrWhiteSpace(connectionString))
+                this.Connection.ConnectionString = PrepararConnectionString(connectionString);
+        }
+
+        private static string ObtenerConnectionStringConfigurada()
+        {
+            string[] nombres =
+            {
+                "AccesoDatos.Properties.Settings.bdMiBusConnectionString2",
+                "AccesoDatos.Properties.Settings.bdMiBusConnectionString",
+                "bdMiBusConnectionString"
+            };
+
+            foreach (string nombre in nombres)
+            {
+                var setting = global::System.Configuration.ConfigurationManager.ConnectionStrings[nombre];
+                if (!string.IsNullOrWhiteSpace(setting?.ConnectionString))
+                    return setting.ConnectionString;
+            }
+
+            return string.Empty;
+        }
+
+        private static string PrepararConnectionString(string connectionString)
+        {
+            var builder = new global::System.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
+
+            if ((builder.DataSource ?? string.Empty).IndexOf("database.windows.net", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                builder.Encrypt = true;
+                builder.TrustServerCertificate = true;
+
+                if (builder.ConnectTimeout <= 0 || builder.ConnectTimeout > 30)
+                    builder.ConnectTimeout = 30;
+            }
+
+            return builder.ConnectionString;
+        }
+
         [global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.SP_OBTENER_HASH_USUARIO")]
         public ISingleResult<SP_LOGINResult> SP_OBTENER_HASH_USUARIO(
             [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "GUID_USUARIO", DbType = "UniqueIdentifier")] System.Nullable<System.Guid> gUID_USUARIO)
@@ -155,6 +197,36 @@ namespace AccesoDatos
         }
     }
 
+    public partial class SP_LOGINResult
+    {
+        private string _ROL;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ROL", DbType = "NVarChar(50)", CanBeNull = true)]
+        public string ROL
+        {
+            get { return _ROL; }
+            set { _ROL = value; }
+        }
+
+        private string _PASSWORD;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_PASSWORD", Name = "PASSWORD", DbType = "NVarChar(MAX)", CanBeNull = true)]
+        public string PASSWORD
+        {
+            get { return _PASSWORD; }
+            set { _PASSWORD = value; }
+        }
+    }
+
+    public partial class SP_OBTENER_USUARIOResult
+    {
+        private string _ROL;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ROL", DbType = "NVarChar(50)", CanBeNull = true)]
+        public string ROL
+        {
+            get { return _ROL; }
+            set { _ROL = value; }
+        }
+    }
+
     public partial class SP_OBTENER_LISTAUSUARIOSResult
     {
         private System.Nullable<int> _ESTADO;
@@ -163,6 +235,14 @@ namespace AccesoDatos
         {
             get { return _ESTADO; }
             set { _ESTADO = value; }
+        }
+
+        private string _ROL;
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ROL", DbType = "NVarChar(50)", CanBeNull = true)]
+        public string ROL
+        {
+            get { return _ROL; }
+            set { _ROL = value; }
         }
     }
 
