@@ -562,4 +562,22 @@
     <Parameter Name="ERRORDESCRIPCION" Parameter="eRRORDESCRIPCION" Type="System.String" DbType="NVarChar(MAX)" Direction="InOut" />
     <Return Type="System.Int32" />
   </Function>
+  <Function Name="dbo.SP_OBTENER_PARADAS_CON_RUTAS_POR_ZONA" Method="SP_OBTENER_PARADAS_CON_RUTAS_POR_ZONA">
+    <Parameter Name="GUID_ZONA" Parameter="gUID_ZONA" Type="System.Guid" DbType="UniqueIdentifier" />
+    <ElementType Name="SP_OBTENER_PARADAS_CON_RUTAS_POR_ZONAResult">
+      <Column Name="GUID_PARADA" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="NOMBRE_PARADA" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="DESCRIPCION_PARADA" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="LATITUD" Type="System.Decimal" DbType="Decimal(10,7)" CanBeNull="true" />
+      <Column Name="LONGITUD" Type="System.Decimal" DbType="Decimal(10,7)" CanBeNull="true" />
+      <Column Name="GUID_RUTA" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="NUMERO_RUTA" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="NOMBRE_RUTA" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="HORA_INICIO" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
+      <Column Name="HORA_FIN" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
+      <Column Name="ESTADO_SERVICIO" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="GUID_ZONA" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="NOMBRE_ZONA" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+    </ElementType>
+  </Function>
 </Database>

@@ -573,6 +573,86 @@ namespace Logica.Parada
             return res;
         }
 
+        public ResListarParadasConRutas ListarCercanasConRutasPorZona(decimal? latitud, decimal? longitud, decimal radioKm, Guid guidZona)
+        {
+            ResListarParadasConRutas res = new ResListarParadasConRutas();
+            res.resultado = false;
+            res.error = new List<Error>();
+
+            try
+            {
+                if (latitud.HasValue && (latitud < -90 || latitud > 90))
+                {
+                    res.error.Add(CrearError(EnumErroresParada.latitudInvalida, "Latitud invalida"));
+                    return res;
+                }
+
+                if (longitud.HasValue && (longitud < -180 || longitud > 180))
+                {
+                    res.error.Add(CrearError(EnumErroresParada.longitudInvalida, "Longitud invalida"));
+                    return res;
+                }
+
+                using (ConexionLinqDataContext db = new ConexionLinqDataContext())
+                {
+                    Guid? guidZonaNullable = guidZona == Guid.Empty ? (Guid?)null : guidZona;
+
+                    var filas = db.SP_OBTENER_PARADAS_CON_RUTAS_POR_ZONA(guidZonaNullable).ToList();
+
+                    bool filtrarDistancia = latitud.HasValue && longitud.HasValue;
+
+                    res.Paradas = filas
+                        .GroupBy(f => f.GUID_PARADA)
+                        .Select(g =>
+                        {
+                            var first = g.First();
+                            decimal dist = filtrarDistancia
+                                ? CalcularDistanciaKm(latitud.Value, longitud.Value, first.LATITUD ?? 0, first.LONGITUD ?? 0)
+                                : 0m;
+
+                            return new ParadaConRutas
+                            {
+                                guid        = first.GUID_PARADA,
+                                Nombre      = first.NOMBRE_PARADA,
+                                Descripcion = first.DESCRIPCION_PARADA,
+                                Latitud     = first.LATITUD ?? 0,
+                                Longitud    = first.LONGITUD ?? 0,
+                                DistanciaKm = filtrarDistancia ? dist : (decimal?)null,
+                                Rutas = g.Select(r => new Core.Entidades.Ruta
+                                {
+                                    Guid           = r.GUID_RUTA,
+                                    GuidZona       = r.GUID_ZONA,
+                                    NombreZona     = r.NOMBRE_ZONA,
+                                    NumeroRuta     = r.NUMERO_RUTA,
+                                    Nombre         = r.NOMBRE_RUTA,
+                                    HoraInicio     = r.HORA_INICIO,
+                                    HoraFin        = r.HORA_FIN,
+                                    EstadoServicio = r.ESTADO_SERVICIO
+                                }).ToList()
+                            };
+                        })
+                        .Where(p => !filtrarDistancia || p.DistanciaKm.Value <= radioKm)
+                        .OrderBy(p => p.DistanciaKm ?? 0)
+                        .ThenBy(p => p.Nombre)
+                        .ToList();
+
+                    res.resultado = true;
+                    res.error = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.resultado = false;
+                res.error.Add(new Error
+                {
+                    Codigo = (int)EnumErroresParada.paradaNoEncontrada,
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
+                });
+            }
+
+            return res;
+        }
+
         private Error CrearError(EnumErroresParada codigo, string mensaje)
         {
             return new Error
