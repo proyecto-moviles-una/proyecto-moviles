@@ -416,3 +416,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Firebase service account credentials
+API/App_Data/moviles-abe1b-firebase-adminsdk-fbsvc-fe5d20b70f.json
