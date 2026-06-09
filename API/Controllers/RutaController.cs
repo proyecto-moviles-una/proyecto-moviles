@@ -37,6 +37,20 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("buscar")]
+        public ResListarRutas Buscar(string texto = "")
+        {
+            return new LogRuta().Buscar(texto);
+        }
+
+        [HttpGet]
+        [Route("paradas-asociadas")]
+        public ResListarRutaParadaAsociaciones ListarParadasAsociadas()
+        {
+            return new LogRuta().ListarParadasAsociadas();
+        }
+
+        [HttpGet]
         [Route("obtener/{guid}")]
         public ResCrearRuta ObtenerPorGuid(string guid)
         {

@@ -133,6 +133,74 @@ namespace Logica.Ruta
             return res;
         }
 
+        public ResListarRutas Buscar(string texto, bool soloActivas = true)
+        {
+            ResListarRutas res = Listar(soloActivas);
+            if (!res.resultado)
+                return res;
+
+            string filtro = (texto ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(filtro))
+            {
+                res.Rutas = new List<Core.Entidades.Ruta>();
+                return res;
+            }
+
+            res.Rutas = (res.Rutas ?? new List<Core.Entidades.Ruta>())
+                .Where(r =>
+                    Contiene(r.NumeroRuta, filtro) ||
+                    Contiene(r.Nombre, filtro) ||
+                    Contiene(r.NombreEmpresa, filtro) ||
+                    Contiene(r.NombreZona, filtro))
+                .OrderBy(r => r.NumeroRuta)
+                .ThenBy(r => r.Nombre)
+                .ToList();
+
+            return res;
+        }
+
+        public ResListarRutaParadaAsociaciones ListarParadasAsociadas()
+        {
+            var res = new ResListarRutaParadaAsociaciones
+            {
+                resultado = false,
+                error = new List<Error>(),
+                Asociaciones = new List<RutaParadaAsociacion>()
+            };
+
+            try
+            {
+                using (var db = new ConexionLinqDataContext())
+                {
+                    const string sql = @"
+SELECT
+    r.GUID_RUTA AS GuidRuta,
+    p.GUID_PARADA AS GuidParada,
+    rp.ORDEN AS Orden
+FROM dbo.TB_R_RUTA_PARADA rp
+INNER JOIN dbo.TB_RUTA r ON r.ID_RUTA = rp.ID_RUTA
+INNER JOIN dbo.TB_PARADA p ON p.ID_PARADA = rp.ID_PARADA
+WHERE p.ESTADO = 1
+ORDER BY r.NUMERO_RUTA, rp.ORDEN, p.NOMBRE";
+
+                    res.Asociaciones = db.ExecuteQuery<RutaParadaAsociacion>(sql).ToList();
+                }
+
+                res.resultado = true;
+                res.error = null;
+            }
+            catch (Exception ex)
+            {
+                res.error.Add(new Error
+                {
+                    Codigo = (int)EnumErroresRuta.errorCreandoRuta,
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
+                });
+            }
+
+            return res;
+        }
+
         public ResCrearRuta ObtenerPorGuid(Guid guid)
         {
             var res = new ResCrearRuta { resultado = false, error = new List<Error>() };
@@ -451,6 +519,12 @@ namespace Logica.Ruta
                 Utilitarios.Utilitarios.bitacorear(reqBit);
             }
             catch { }
+        }
+
+        private static bool Contiene(string valor, string filtro)
+        {
+            return !string.IsNullOrWhiteSpace(valor) &&
+                   valor.IndexOf(filtro, StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
 }

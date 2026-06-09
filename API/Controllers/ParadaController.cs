@@ -46,6 +46,14 @@ namespace API.Controllers
             return new LogParada().Listar();
         }
 
+        // -------- BUSCAR --------
+        [HttpGet]
+        [Route("buscar")]
+        public ResListarParadas Buscar(string texto = "")
+        {
+            return new LogParada().Buscar(texto);
+        }
+
         // -------- LISTAR CERCANAS --------
         [HttpGet]
         [Route("cercanas")]

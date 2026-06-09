@@ -112,6 +112,55 @@ namespace Logica.Parada
             return res;
         }
 
+        public ResListarParadas Buscar(string texto)
+        {
+            ResListarParadas res = new ResListarParadas();
+            res.resultado = false;
+            res.error = new List<Error>();
+
+            try
+            {
+                string filtro = (texto ?? string.Empty).Trim();
+                res.paradas = new List<Core.Entidades.Parada>();
+
+                if (string.IsNullOrWhiteSpace(filtro))
+                {
+                    res.resultado = true;
+                    res.error = null;
+                    return res;
+                }
+
+                using (ConexionLinqDataContext db = new ConexionLinqDataContext())
+                {
+                    var lista = db.TB_PARADAs
+                                  .Where(p => p.ESTADO == true &&
+                                      (p.NOMBRE.Contains(filtro) ||
+                                       (p.DESCRIPCION != null && p.DESCRIPCION.Contains(filtro))))
+                                  .OrderBy(p => p.NOMBRE)
+                                  .ToList();
+
+                    res.paradas = lista.Select(MapearParada).ToList();
+                    res.resultado = true;
+                    res.error = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.resultado = false;
+                res.error.Add(new Error
+                {
+                    Codigo = (int)EnumErroresParada.paradaNoEncontrada,
+                    Mensaje = ex.Message + (ex.InnerException != null ? " | " + ex.InnerException.Message : "")
+                });
+            }
+            finally
+            {
+                // bitacora pendiente de integracion
+            }
+
+            return res;
+        }
+
         public ResListarParadas ListarCercanas(decimal latitud, decimal longitud, decimal radioKm)
         {
             ResListarParadas res = new ResListarParadas();
