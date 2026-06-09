@@ -1,3 +1,4 @@
+using System;
 using System.Web.Http;
 using API.Filters;
 using Core.Entidades.Request;
@@ -59,6 +60,18 @@ namespace API.Controllers
         public ResCrearParada Obtener(string guid)
         {
             return new LogParada().ObtenerPorGuid(guid);
+        }
+
+        // -------- LISTAR CERCANAS POR ZONA --------
+        [HttpGet]
+        [Route("cercanas-por-zona")]
+        public ResListarParadasConRutas ListarCercanasConRutasPorZona(string guidZona = null, decimal? latitud = null, decimal? longitud = null, decimal radioKm = 5)
+        {
+            Guid guid = Guid.Empty;
+            if (!string.IsNullOrWhiteSpace(guidZona))
+                Guid.TryParse(guidZona, out guid);
+
+            return new LogParada().ListarCercanasConRutasPorZona(latitud, longitud, radioKm, guid);
         }
 
         // -------- LISTAR POR RUTA --------
